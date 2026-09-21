@@ -1,0 +1,15 @@
+/* Section closing slides in the established DCC classroom style. */
+.chapter-recap{padding-top:38px}
+.chapter-recap h1{font-size:48px;line-height:1.15;margin:28px 0 20px;letter-spacing:-1.3px}
+.chapter-recap-table{width:100%;table-layout:fixed;border-collapse:collapse;margin-top:34px}
+.chapter-recap-table col:first-child{width:270px}
+.chapter-recap-table th,.chapter-recap-table td{padding:26px 0;border-bottom:1px solid #d1d9d6;text-align:left;vertical-align:top}
+.chapter-recap-table th{padding-right:34px;font:700 28px/1.3 Lato,Arial,sans-serif;color:var(--accent)}
+.chapter-recap-table td{font-size:27px;line-height:1.4}
+.chapter-recap-table code{font:650 .87em/1.4 ui-monospace,Menlo,Consolas,monospace;color:#365873;white-space:nowrap}
+.chapter-recap-takeaway{position:absolute;left:66px;right:66px;bottom:77px;margin:0;padding:6px 0 6px 20px;border-left:4px solid var(--accent);font-size:25px;line-height:1.4}
+.recap-five .chapter-recap-table{margin-top:26px}
+.recap-five .chapter-recap-table th,.recap-five .chapter-recap-table td{padding-top:20px;padding-bottom:20px;font-size:26px}
+.recap-status{font-size:20px;color:var(--muted);margin:0}
+.recap-draft .chapter-recap-table{margin-top:16px}
+.recap-draft .chapter-recap-table th,.recap-draft .chapter-recap-table td{padding-top:23px;padding-bottom:23px}

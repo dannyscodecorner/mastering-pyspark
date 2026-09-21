@@ -1,0 +1,141 @@
+/* A dictionary pause before the motivation and the worked example. */
+:is(#immutable-definition, #lazy-definition, #skew-definition) .id-entry {
+  margin: 150px 0 0 68px;
+}
+:is(#immutable-definition, #lazy-definition, #skew-definition) h1 {
+  margin: 0 0 20px;
+  font-size: 112px;
+  line-height: 1.08;
+  letter-spacing: -3px;
+}
+:is(#immutable-definition, #lazy-definition, #skew-definition) .id-pronunciation {
+  display: flex;
+  align-items: baseline;
+  gap: 30px;
+  margin: 0;
+  color: #626a6d;
+  font-size: 30px;
+  line-height: 1.4;
+}
+:is(#immutable-definition, #lazy-definition, #skew-definition) .id-pronunciation em {
+  font-size: 27px;
+}
+:is(#immutable-definition, #lazy-definition, #skew-definition) .id-definition {
+  margin: 46px 0 24px;
+  font-size: 40px;
+  line-height: 1.4;
+}
+:is(#immutable-definition, #lazy-definition, #skew-definition) .id-source {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.4;
+}
+:is(#immutable-definition, #lazy-definition, #skew-definition) .id-source a {
+  color: #626a6d;
+  text-decoration-color: #bdcddd;
+  text-underline-offset: 4px;
+}
+
+/* Explain the distributed-processing motivation before the Python example. */
+#immutability .im-lead {
+  margin: 0 0 28px;
+  color: #626a6d;
+  font-size: 28px;
+  line-height: 1.4;
+}
+#immutability .im-reasons {
+  display: block;
+  margin: 0;
+  border-top: 1px solid #bdcddd;
+}
+#immutability .im-reasons > div {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  column-gap: 34px;
+  align-items: baseline;
+  padding: 23px 0;
+  border-bottom: 1px solid #d5dfe6;
+}
+#immutability .im-reasons dt {
+  color: #286faf;
+  font: 700 29px/1.3 Lato, Arial, sans-serif;
+}
+#immutability .im-reasons dd {
+  margin: 0;
+  font-size: 27px;
+  line-height: 1.4;
+}
+#immutability .im-question {
+  margin: 30px 0 0;
+  border-left: 4px solid #286faf;
+  padding-left: 22px;
+  font: 700 33px/1.3 'Roboto Slab', Georgia, serif;
+  letter-spacing: -.5px;
+}
+
+/* One current Python binding; the DataFrame descriptions stay in place. */
+#immutability-reference .rb-code {
+  margin: 12px 0 10px;
+  padding: 17px 24px;
+  font-size: 31px;
+  line-height: 1.5;
+}
+#immutability-reference .rb-code-part {
+  border-radius: 3px;
+  padding: 3px 0;
+  transition: background-color .25s ease, box-shadow .25s ease;
+}
+#immutability-reference .rb-lesson.live[data-point="1"] .rb-rhs,
+#immutability-reference .rb-lesson.live[data-point="2"] .rb-lhs {
+  background: #435363;
+  box-shadow: 0 3px 0 #83bde3;
+}
+#immutability-reference .lesson-rail { margin-bottom: 10px; }
+#immutability-reference .rb-figure { margin: 0; }
+#immutability-reference .rb-diagram { height: 290px; }
+#immutability-reference .rb-diagram text { fill: #292d30; }
+#immutability-reference .rb-card {
+  fill: #f2f6f9;
+  stroke: #89a8c0;
+  stroke-width: 2;
+}
+#immutability-reference .rb-card-b { fill: #e8f1f8; stroke: #286faf; }
+#immutability-reference .rb-heading { font-size: 31px; font-weight: 700; }
+#immutability-reference .rb-detail { font-size: 24px; fill: #626a6d; }
+#immutability-reference .rb-column-label { font-size: 20px; fill: #626a6d; }
+#immutability-reference .rb-column {
+  fill: #fafaf8;
+  stroke: #b2c7d7;
+  stroke-width: 1.5;
+}
+#immutability-reference .rb-mono { font: 25px ui-monospace, Menlo, Consolas, monospace; }
+#immutability-reference .rb-connector { stroke: #286faf; stroke-width: 3; }
+#immutability-reference .rb-arrowhead { fill: #286faf; stroke: none; }
+#immutability-reference .rb-binding { transform: translateX(708px); }
+#immutability-reference .rb-binding-box { fill: #286faf; }
+#immutability-reference .rb-binding text { fill: #fff; text-anchor: middle; }
+#immutability-reference .rb-binding-label { font-size: 19px; }
+#immutability-reference .rb-binding-name { font: 700 30px ui-monospace, Menlo, Consolas, monospace; }
+#immutability-reference .rb-lesson.live:not(.static-view)[data-point="0"] .rb-created {
+  opacity: 0;
+  visibility: hidden;
+}
+#immutability-reference .rb-lesson.live:not(.static-view):is([data-point="0"], [data-point="1"]) .rb-binding {
+  transform: translateX(0);
+}
+#immutability-reference .lesson-cues { min-height: 70px; margin-top: 6px; }
+#immutability-reference .lesson-cues strong { font-size: 24px; }
+#immutability-reference .lesson-cues span { font-size: 23px; }
+#immutability-reference .rb-lesson.static-view .lesson-controls { display: none; }
+#immutability-reference .rb-lesson.static-view * { transition: none; }
+
+@media print, (prefers-reduced-motion: reduce) {
+  #immutability-reference .rb-lesson * { transition: none !important; animation: none !important; }
+  #immutability-reference .rb-lesson .rb-created { opacity: 1 !important; visibility: visible !important; }
+  #immutability-reference .rb-lesson .rb-binding { transform: translateX(708px) !important; }
+  #immutability-reference .rb-lesson .lesson-controls,
+  #immutability-reference .rb-lesson .lesson-rail { display: none !important; }
+  #immutability-reference .rb-lesson .lesson-cues p { display: none !important; }
+  #immutability-reference .rb-lesson .lesson-cues p:last-child { display: block !important; }
+  #immutability-reference .rb-lesson .rb-code-part { background: transparent !important; box-shadow: none !important; }
+}

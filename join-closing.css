@@ -1,0 +1,71 @@
+/* Keep the six-sale report continuous through the chapter's final pitfall and fix. */
+.join-closing h1{font-size:44px;line-height:1.2;margin:16px 0 10px}
+.jc-lesson .lesson-cues{min-height:80px}
+.jc-query{height:52px;margin:0 0 18px}
+.jc-query pre{font-size:21px;line-height:1.35;padding:12px 16px;margin:0;border-radius:4px;background:#252d33}
+.jc-multiply-layout{display:grid;grid-template-columns:280px 42px 424px 42px 1fr;gap:18px;height:366px}
+.jc-multiply-layout h2,.jc-fix-layout h2{font:700 25px/1.25 Lato,Arial,sans-serif;color:#345b68;margin:0 0 15px}
+.jc-output h2{min-height:31px}
+.jc-arrow{padding-top:135px;font-size:35px;color:#70939c;text-align:center}
+.jc-table{width:100%;border-collapse:separate;border-spacing:0 4px;table-layout:fixed;margin:0;font-size:22px;line-height:1.2}
+.jc-table th{text-align:left;font-size:17px;font-weight:400;color:#627b84;padding:0 9px 7px;background:transparent}
+.jc-table td{padding:6px 9px;background:transparent;white-space:nowrap}
+.jc-table td:first-child{font-weight:700}
+.jc-table:not(.jc-products) td:last-child{text-align:right;font-weight:700}
+.jc-table:not(.jc-products) th:last-child{text-align:right}
+.jc-books{background:#d7eeee;color:#066b7b}
+.jc-games{background:#fbedd5;color:#80581f}
+.jc-null{background:#e7eaf1;color:#506179}
+.jc-extra{background:#e9efea;color:#56685d}
+.jc-products th:nth-child(1){width:30%}.jc-products th:nth-child(2){width:34%}.jc-products th:nth-child(3){width:36%}
+.jc-products td:nth-child(3){font-family:ui-monospace,Menlo,monospace;font-size:19px}
+.jc-products .jc-old{background:#fbedd5;color:#80581f}
+.jc-products .jc-old td{border-top:1px solid #c18b42;border-bottom:1px solid #c18b42}
+.jc-small{font-size:19px;line-height:1.45;color:#536e79;margin:15px 0 0}
+.jc-small code,.jc-output-note code{font-size:inherit;color:#087e91;font-weight:700}
+.jc-question{font-size:30px;line-height:1.4;color:#335964;margin:28px 0 25px}
+.jc-question strong{font-size:38px;color:#087e91}
+.jc-output-note{font-size:23px;line-height:1.4;color:#436572;margin:22px 0 0}
+.jc-output-note strong{color:#087e91}
+.jc-pairs{font-size:21px;border-spacing:0 3px}
+.jc-pairs td{padding:5px 9px}
+.jc-pairs th:nth-child(1){width:30%}.jc-pairs th:nth-child(2){width:30%}.jc-pairs th:nth-child(3){width:40%}
+.jc-pairs .jc-pair-old{background:#fbedd5;color:#80581f}
+.jc-totals{font-size:27px;border-spacing:0 8px}
+.jc-totals td{padding:10px}
+.jc-totals .jc-inflated td:last-child{color:#985916;background:#fbedd5}
+.jc-rule{height:51px;margin:0 0 19px;padding:10px 16px;border-left:3px solid #7fb1b9;background:#edf4f2;font-size:23px;color:#426875}
+.jc-rule strong{color:#087e91}
+.jc-fix-layout{display:grid;grid-template-columns:730px 1fr;gap:50px;height:356px}
+.jc-fix-code pre{font-size:22px;line-height:1.27;padding:16px 20px;margin:0;background:#252d33;border-radius:4px}
+.jc-fix .jc-output-note{font-size:22px;margin-top:18px}
+.jc-state{display:none}.jc-state.jc-final{display:block}
+.jc-lesson.live .jc-state{display:none}
+.jc-lesson.live[data-point="0"] .jc-p0,.jc-lesson.live[data-point="1"] .jc-p1,.jc-lesson.live[data-point="2"] .jc-p2,.jc-lesson.live[data-point="3"] .jc-p3{display:block}
+.jc-multiply.live[data-point="0"] .jc-old{display:none}
+.jc-multiply.live[data-point="0"] .jc-after-1{visibility:hidden}
+.jc-multiply.live[data-point="1"] .jc-old{animation:jc-appear .45s both}
+.jc-multiply.live[data-point="2"] .jc-b1{outline:2px solid #087e91;outline-offset:-2px}
+.jc-fix.live:not([data-point="0"]) .jc-old,.jc-fix:not(.live) .jc-old{opacity:.35;text-decoration:line-through}
+@keyframes jc-appear{from{opacity:0}to{opacity:1}}
+.jc-lesson.static-view *{animation:none!important;transition:none!important}
+@media(prefers-reduced-motion:reduce){.jc-lesson *{animation:none!important;transition:none!important}}
+@media print{.jc-lesson .jc-state{display:none!important}.jc-lesson .jc-final{display:block!important}.jc-multiply .jc-old{display:table-row!important;animation:none!important}.jc-after-1{visibility:visible!important}.jc-lesson .lesson-cues p{display:none!important}.jc-lesson .lesson-cues p:last-child{display:block!important}.jc-lesson .lesson-controls{display:none!important}}
+
+/* Chapter exit: a static comparison, ready for the presenter to sum up. */
+.jc-exit h1{margin:18px 0 12px;font-size:48px}
+.jc-exit-scope{margin:0 0 24px;font-size:23px;line-height:1.4;color:#60747c}
+.jc-comparison{width:100%;border-collapse:collapse;table-layout:fixed;margin:0;font-size:23px;line-height:1.4}
+.jc-comparison col:first-child{width:19%}
+.jc-comparison col:nth-child(2){width:39%}
+.jc-comparison col:nth-child(3){width:42%}
+.jc-comparison th,.jc-comparison td{text-align:left;vertical-align:top;padding:17px 24px;border-bottom:1px solid #ccd9da}
+.jc-comparison thead th{font-size:26px;line-height:1.25;padding-top:0;padding-bottom:15px;color:#506874}
+.jc-comparison thead th:first-child,.jc-comparison tbody th{padding-left:0}
+.jc-comparison tbody th{font-size:23px;font-weight:700;color:#345b68}
+.jc-comparison thead th:last-child{color:#087e91}
+.jc-comparison td:last-child{background:#eaf3f1}
+.jc-comparison td strong{font-weight:700;color:#087e91}
+.jc-exit-takeaway{margin:26px 0 0;border-left:4px solid #087e91;padding:0 0 0 18px}
+.jc-exit-takeaway p{margin:0;font-size:26px;line-height:1.4;font-weight:700;color:#087e91}
+.jc-exit-takeaway small{display:block;margin-top:9px;font-size:20px;line-height:1.4;color:#526c76}

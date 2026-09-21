@@ -1,0 +1,144 @@
+/* Chapter 08: active work, with the machinery clear of the title. */
+#section-8.hands-on-cover {
+  isolation: isolate;
+  background: #292d30;
+}
+#section-8.hands-on-cover::after { display: none; }
+#section-8.hands-on-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, #131a20c4 0%, #131a20a3 34%, #131a2042 62%, #131a201a 100%);
+}
+#section-8 .quarry-art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#section-8 .eyebrow,
+#section-8 footer { color: #f3b59f; }
+#section-8 footer { text-shadow: 0 1px 4px #131a20; }
+#section-8 .quarry-title {
+  position: absolute;
+  left: 92px;
+  top: 215px;
+}
+#section-8 .quarry-title > span {
+  display: block;
+  width: 80px;
+  padding-bottom: 22px;
+  border-bottom: 2px solid #e39b88;
+  color: #f3b59f;
+  font: 400 30px Lato, Arial, sans-serif;
+  letter-spacing: .25em;
+}
+#section-8 .quarry-title h1 {
+  margin: 24px 0 22px;
+  color: #fafaf8;
+  font-size: 80px;
+  line-height: 1.08;
+  letter-spacing: -2px;
+  text-shadow: 0 2px 20px #11181c55;
+}
+#section-8 .quarry-title p {
+  margin: 0;
+  color: #eee2da;
+  font-size: 31px;
+  line-height: 1.4;
+}
+
+/* Guided exercises use the deck's existing code-and-result language. */
+.ho-lesson h1 { font-size: 52px; margin-bottom: 26px; }
+.ho-lesson .subtitle { margin-top: -14px; }
+.ho-lesson h2 { font-size: 27px; color: var(--accent); margin-bottom: 20px; }
+.ho-lesson p, .ho-lesson li, .ho-lesson dd { font-size: 27px; line-height: 1.4; }
+.ho-lesson p { margin: 0 0 22px; }
+.ho-lesson pre {
+  margin: 0 0 24px;
+  padding: 23px 25px;
+  font-size: 24px;
+  line-height: 1.42;
+  white-space: pre;
+}
+.ho-lesson pre code { font: inherit; }
+.ho-columns { display: grid; grid-template-columns: 1.65fr 1fr; gap: 42px; align-items: start; }
+.ho-columns > div { min-width: 0; }
+.ho-equal { grid-template-columns: 1fr 1fr; }
+.ho-equal pre { font-size: 24px; }
+.ho-table { width: 100%; border-collapse: collapse; font-size: 26px; line-height: 1.4; margin: 0 0 23px; }
+.ho-table th { text-align: left; color: var(--accent); font-size: 23px; padding: 12px 14px; border-bottom: 2px solid #bd8f82; }
+.ho-table td { padding: 15px 14px; border-bottom: 1px solid #d8dcdb; vertical-align: top; }
+.ho-table td:first-child, .ho-table th:first-child { padding-left: 0; }
+.ho-steps { padding-left: 30px; margin: 0; }
+.ho-steps li { margin: 0 0 24px; padding-left: 8px; }
+.ho-lesson .ho-note { color: #626a6d; font-size: 24px; line-height: 1.4; margin: 22px 0 0; }
+.ho-lesson .ho-takeaway {
+  position: absolute; bottom: 76px; left: 66px; right: 66px;
+  border-left: 3px solid var(--accent); padding: 9px 0 9px 20px;
+  margin: 0; font-size: 26px; line-height: 1.4;
+}
+.ho-lesson .ho-resource { position: absolute; bottom: 144px; left: 66px; margin: 0; font-size: 24px; }
+.ho-resource a { color: var(--accent); text-underline-offset: 4px; }
+.ho-takeaway a { color: var(--accent); text-underline-offset: 4px; }
+.ho-definitions { display: block; margin: 20px 0 0; }
+.ho-definitions > div { display: grid; grid-template-columns: 340px 1fr; gap: 35px; padding: 15px 0; border-bottom: 1px solid #d8dcdb; }
+.ho-definitions dt { font-size: 26px; font-weight: 700; }
+.ho-definitions dd { margin: 0; }
+.ho-key-points { display: block; margin: 0; }
+.ho-key-points > div { margin-bottom: 29px; }
+.ho-key-points dt { font-size: 27px; font-weight: 700; color: var(--accent); }
+.ho-key-points dd { margin: 8px 0 0; }
+.ho-lesson .ho-reconciliation { margin-top: 25px; font-size: 34px; letter-spacing: .01em; }
+.ho-reconciliation strong { color: var(--accent); }
+.ho-columns .ho-reconciliation { font-size: 28px; margin-top: 14px; }
+.ho-rejected { color: #8a5449; }
+#pyspark-inputs pre { font-size: 25px; margin-bottom: 18px; }
+#pyspark-inputs .ho-table { font-size: 24px; }
+#pyspark-inputs .ho-table td { padding-top: 6px; padding-bottom: 6px; }
+#pyspark-cleaning pre { font-size: 23px; line-height: 1.34; }
+#pyspark-streaming-reader .ho-columns { margin-bottom: 22px; }
+#pyspark-streaming-reader .ho-columns .ho-note { margin-top: 8px; font-size: 23px; }
+#pyspark-streaming-reader > pre { font-size: 24px; }
+#pyspark-streaming-arrivals .ho-table { margin: 10px 0 35px; }
+#pyspark-python-functions .ho-note { font-size: 25px; }
+
+#data-work .ho-resource { bottom: 94px; }
+
+/* Exercise briefs: a task, a check and a small code starting point. */
+.ho-workgrid {
+  display: grid;
+  grid-template-columns: 1.18fr 1fr;
+  gap: 68px;
+  align-items: start;
+}
+.ho-workgrid > div { min-width: 0; }
+.ho-exercise .ho-workgrid > div > :last-child { margin-bottom: 0; }
+.ho-exercise .ho-steps li { margin-bottom: 18px; }
+.ho-exercise .ho-steps li:last-child { margin-bottom: 0; }
+.ho-exercise .ho-note { margin-top: 12px; }
+.ho-exercise .ho-key-points > div { margin-bottom: 22px; }
+.ho-exercise .ho-key-points > div:last-child { margin-bottom: 0; }
+.ho-exercise .ho-key-points dd { font-size: 26px; }
+.ho-exercise .ho-reconciliation { font-size: 28px; margin-top: 22px; }
+.ho-exercise .ho-table { margin-bottom: 16px; }
+.ho-exercise .ho-table td { padding-top: 8px; padding-bottom: 8px; }
+.ho-hint { position: absolute; bottom: 94px; left: 66px; right: 66px; }
+.ho-hint h2 { font: 700 22px Lato, Arial, sans-serif; margin: 0 0 12px; }
+.ho-hint pre { margin: 0; padding: 18px 24px; font-size: 24px; line-height: 1.4; }
+#pyspark-inputs .ho-hint pre { font-size: 24px; margin: 0; }
+#pyspark-cleaning .ho-hint pre { font-size: 24px; line-height: 1.4; }
+.ho-agenda { list-style: none; padding: 0; margin: 0; }
+.ho-agenda li { display: flex; gap: 24px; padding: 14px 0; border-bottom: 1px solid #d8dcdb; }
+.ho-agenda li:first-child { padding-top: 0; }
+.ho-agenda li > span { flex: 0 0 52px; color: var(--accent); font-weight: 700; }
+.ho-agenda strong { font-weight: 700; }
+.ho-agenda li p { margin: 5px 0 0; font-size: 24px; color: var(--muted); }
+.ho-setup-grid { grid-template-columns: 1fr 1fr; gap: 60px; }
+.ho-setup-grid pre { font-size: 25px; padding: 21px 24px; }
+.ho-setup-grid .ho-steps li { font-size: 26px; margin-bottom: 14px; }
+.ho-setup-grid .ho-note { font-size: 24px; margin: 16px 0; }
+.ho-setup-pass { padding-top: 14px; }
