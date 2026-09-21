@@ -1,0 +1,9 @@
+"""Teaching order for closing."""
+
+from surface import Chapter
+from chapters.closing.closing import slide_closing
+
+pub def closing_chapter() -> Chapter:
+    return Chapter(number="0", title="DCC / SPARK TRAINING", first_page=1, slides=[
+        slide_closing(),
+    ])

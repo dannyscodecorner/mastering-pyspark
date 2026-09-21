@@ -1,0 +1,62 @@
+"""Query walkthrough slide."""
+
+from surface import Frame, NodeKind, Slide, Surface, TeachingStep, code, code_block, group, heading, line_break, paragraph, span, text
+
+pub def query_walkthrough() -> Slide:
+    return Slide(
+        slug="dataframe-example",
+        title="Spark is Lazy",
+        frame=Frame.Lesson,
+        subtitle="Describe the work first. Request the result afterwards.",
+        content=[
+            group([
+                group([
+                    code_block("""filtered = sales.filter(col("amount") > 20)
+
+amounts = filtered.select("amount")
+
+amounts.show()"""),
+                    paragraph([
+                        text("Same sales: books 25 · games 40"),
+                        line_break(),
+                        text("books 15 · music 10"),
+                    ]),
+                ], style="lazy-script"),
+                group([
+                    span("sales", style="lazy-stage source-stage"),
+                    span("↓", style="lazy-connector filter-reveal"),
+                    span("Filter · amount > 20", style="lazy-stage filter-reveal"),
+                    span("↓", style="lazy-connector select-reveal"),
+                    span("Select · amount", style="lazy-stage select-reveal"),
+                    group([
+                        text("show() requests rows →"),
+                    ], style="lazy-request action-reveal"),
+                    group([
+                        span("amount"),
+                        Surface(kind=NodeKind.Bold, content="25"),
+                        Surface(kind=NodeKind.Bold, content="40"),
+                    ], style="lazy-output action-reveal"),
+                    paragraph([
+                        span("Plan described · result not computed", style="before-action"),
+                        span("Execute the required plan", style="after-action"),
+                    ], style="lazy-plan-status"),
+                ], style="lazy-plan"),
+            ], style="lazy-walk-grid"),
+        ],
+        lesson_style="lazy-walk",
+        steps=[
+            TeachingStep(label="Existing DataFrame",
+                heading="The data we already know",
+                explanation="Assume sales already exists. We are following the query we build from it."),
+            TeachingStep(label="Filter",
+                heading="filter() returns a new DataFrame",
+                explanation="The filter is added to the plan. It has not scanned the rows to produce filtered."),
+            TeachingStep(label="Select",
+                heading="select() extends that plan",
+                explanation="We ask for one column. Still no result rows have been requested."),
+            TeachingStep(label="Action",
+                heading="show() is the action",
+                explanation="Spark executes the required work and displays the requested rows. No ordering is guaranteed here."),
+        ],
+        notes="Based on original slides 24–27. Follow the preceding dictionary entry with this concrete walkthrough. Read the code line by line using Next point. Before revealing the action ask: Have we computed the filtered rows yet? After select ask: What do we need to make this run? The diagram is the conceptual request, not an exact physical plan or a promise of one job/stage. show may issue more than one job and only requests a limited number of rows; exact task count is not taught here. sales is an existing DataFrame containing the same four records, with col imported. Reads/schema inference/metadata discovery and analysis can do work before an action; we intentionally start from an existing DataFrame. Errors can occur during analysis or execution, not universally at action time. Output order is illustrative, not guaranteed without orderBy. Sources: https://spark.apache.org/docs/3.5.8/api/python/getting_started/quickstart_df.html ; https://spark.apache.org/docs/latest/spark-connect-gotchas.html",
+    )

@@ -1,0 +1,37 @@
+"""Closing slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, node, paragraph, prose, span, text
+
+pub def slide_closing() -> Slide:
+    return Slide(
+        slug="closing",
+        title="Recap and Questions",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("07 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Recap and Questions", level=1),
+            group([
+            paragraph([
+                span("01"),
+                text("Where does this code execute?"),
+            ]),
+            paragraph([
+                span("02"),
+                text("What work causes data to move?"),
+            ]),
+            paragraph([
+                span("03"),
+                text("What evidence explains the behaviour?"),
+            ]),
+        ], style="closing-prompts"),
+            prose("Discussion · recap · next steps", style="takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("56"),
+        ]),
+        ],
+        notes="Sample recap layout. Resources and client-specific follow-up links to be added.",
+    )

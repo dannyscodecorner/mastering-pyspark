@@ -1,0 +1,25 @@
+"""Teaching order for chapter 05."""
+
+from surface import Chapter
+from chapters.chapter_05.cover import slide_section_5
+from chapters.chapter_05.operations import slide_operations
+from chapters.chapter_05.catalyst_planning import slide_catalyst_planning
+from chapters.chapter_05.execution_stages import slide_execution_stages
+from chapters.chapter_05.execution_placement import slide_execution_placement
+from chapters.chapter_05.execution_shuffle import slide_execution_shuffle
+from chapters.chapter_05.adaptive_execution import slide_adaptive_execution
+from chapters.chapter_05.explain_plan import slide_explain_plan
+from chapters.chapter_05.query_execution_recap import slide_query_execution_recap
+
+pub def chapter_05_chapter() -> Chapter:
+    return Chapter(number="5", title="05 / FROM QUERY TO EXECUTION", first_page=1, slides=[
+        slide_section_5(),
+        slide_operations(),
+        slide_catalyst_planning(),
+        slide_execution_stages(),
+        slide_execution_placement(),
+        slide_execution_shuffle(),
+        slide_adaptive_execution(),
+        slide_explain_plan(),
+        slide_query_execution_recap(),
+    ])

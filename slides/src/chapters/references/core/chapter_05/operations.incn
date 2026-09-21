@@ -1,0 +1,50 @@
+"""Operations slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, node, prose, span, text
+
+pub def slide_operations() -> Slide:
+    return Slide(
+        slug="operations",
+        title="Spark Execution Model",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("05 / SPARK EXECUTION MODEL"),
+        ], style="eyebrow"),
+            heading("Spark Execution Model", level=1),
+            prose("Logical plans, physical plans and execution", style="subtitle"),
+            node(NodeKind.OrderedList, children=[
+            node(NodeKind.ListItem, children=[
+                span("01"),
+                text("Logical planning, physical planning and code generation"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("02"),
+                text("Partitions, jobs, stages and tasks"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("03"),
+                text("Shuffles, joins and the cost of moving data"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("04"),
+                text("Skew and adaptive query execution"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("05"),
+                text("Repeated actions, caching and recovery"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("06"),
+                text("Explain output and evidence in the Spark UI"),
+            ]),
+        ], style="topic-list"),
+            span("CONTENT SKELETON", style="draft-label"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("46"),
+        ]),
+        ],
+        notes="Workshop slides 29–30 are the seed. This is the main expansion. The driver/executor picture from section 1 now gains scheduling and data-movement detail.",
+    )

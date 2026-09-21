@@ -1,0 +1,48 @@
+"""Working pyspark recap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_working_pyspark_recap() -> Slide:
+    return Slide(
+        slug="working-pyspark-recap",
+        title="Working with PySpark: recap",
+        frame=Frame.Composed,
+        styles="slide chapter-recap",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Working with PySpark: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="What we built and checked", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Functions", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Built-in functions create expressions we can compose and reuse."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Input quality", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="We cleaned keys, parsed values and retained rejected records."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Correctness", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Five accepted sales reached the report; the total stayed 100.00."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Streaming", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="The same transformations worked as new files arrived, with query progress and a checkpoint."),
+                ]),
+            ]),
+        ], style="chapter-recap-table"),
+            prose("Next: take this pipeline to AWS Glue and configure how it runs.", style="chapter-recap-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("116"),
+        ]),
+        ],
+        notes="Close the concrete exercise. Eight raw records became five accepted plus three rejected. The left join retained the unmatched M1 sale. Batch and incremental category reports agree. We inspected and stopped the running query, resumed with its checkpoint, and wrote the accepted rows to a separate Parquet sink. The tiny fixture proves behaviour and arithmetic, not performance at scale. The local project supplies the chapter08 environment; validate native Windows separately. Chapter09 owns platform configuration, dependencies, access and runtime monitoring. All helper functions are in the portable pipeline.py module.",
+    )

@@ -1,0 +1,74 @@
+"""Pyspark streaming query slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, code_block, group, heading, line_break, node, paragraph, span, text
+
+pub def slide_pyspark_streaming_query() -> Slide:
+    return Slide(
+        slug="pyspark-streaming-query",
+        title="Exercise 6 · Process arriving files",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 6 · Process arriving files", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, children=[
+                        text("Use "),
+                        code("readStream"),
+                        text(" on the empty incoming folder, with the known schema."),
+                    ]),
+                    node(NodeKind.ListItem, content="Reuse the transformations and static product lookup. Start the Complete-mode memory report."),
+                    node(NodeKind.ListItem, content="Publish files 01 and 02 separately. Inspect the report and query progress after each."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Expected report after the first two arrivals", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="File added", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Sales so far", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Total", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="01"),
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="65.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="02"),
+                            node(NodeKind.Cell, content="4"),
+                            node(NodeKind.Cell, content="90.00"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                paragraph([
+                    text("Inspect "),
+                    code("spark.table(TABLE_NAME)"),
+                    text("."),
+                    line_break(),
+                    text("Leave file 03 for the next exercise."),
+                ], style="ho-note"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""stream_raw = spark.readStream.schema(raw.schema).parquet(spark_path(INCOMING))
+publish_arrival(DATA_ROOT, INCOMING, 1)
+query.processAllAvailable()"""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("112"),
+        ]),
+        ],
+        notes="Run the Exercise6 cells in order: streaming reader, shared cleaning/enrichment/aggregate, writer, start, arrival01, then arrival02. stream_report describes the result; writer configures the output; query is the running handle. The provided writer uses a unique memory-table name, Complete mode, a checkpoint and a two-second processing trigger. Query progress may be absent before the first completed batch. Use show on the bounded memory table, never directly on the streaming DataFrame. The arrival helper exposes completed files atomically. processAllAvailable makes this finite demonstration deterministic; each file is not a guaranteed physical micro-batch boundary. The report has four accepted sales/90 after02. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )

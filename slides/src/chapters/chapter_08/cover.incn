@@ -1,0 +1,31 @@
+"""Cover slide."""
+
+from surface import Chapter, Frame, NodeKind, Slide, attr, group, image, line_break, node, prose, rich_heading, span, text
+
+pub def slide_section_8() -> Slide:
+    return Slide(
+        slug="section-8",
+        title="Working with PySpark",
+        frame=Frame.Composed,
+        styles="slide dark hands-on-cover",
+        content=[
+            image("assets/hands-on-quarry-dusk.png", "An active stone quarry, with an excavator loading a haul truck and more machinery working in the distance.", style="quarry-art"),
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            group([
+            span("08", attributes=[attr("aria-hidden", "true")]),
+            rich_heading([
+                text("Working with"),
+                line_break(),
+                text("PySpark"),
+            ], level=1),
+            prose("Time to get hands-on"),
+        ], style="quarry-title"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("104"),
+        ]),
+        ],
+        notes="We have explored how Spark executes a query. Now use that understanding to build a pipeline. Use the local uv project and prepared Parquet inputs. Complete the setup check before class. Introduce functions as F, transform and validate the data, and write the result. Chapter 09 will reuse the pipeline in AWS Glue, where we configure its environment and inspect execution. The quarry is chapter artwork expressing active work, not a diagram of Spark internals.",
+    )

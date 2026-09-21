@@ -1,0 +1,55 @@
+"""Streaming sinks slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_streaming_sinks() -> Slide:
+    return Slide(
+        slug="streaming-sinks",
+        title="Streaming sinks",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming sinks", level=1),
+            group([
+            group([
+                span("Destination"),
+                span("What happens to the output"),
+                span("Micro-batch modes"),
+            ], style="ss-sink-head"),
+            group([
+                heading("Files", level=2),
+                prose("Write results to storage."),
+                span("Append"),
+            ], style="ss-sink-row"),
+            group([
+                heading("Kafka", level=2),
+                prose("Publish result records to a topic."),
+                span("Append · Update · Complete"),
+            ], style="ss-sink-row"),
+            group([
+                heading("foreach / foreachBatch", level=2),
+                prose("Send output through your own writer."),
+                span("Append · Update · Complete"),
+            ], style="ss-sink-row"),
+            group([
+                heading("Console", level=2),
+                prose("Print results for debugging."),
+                span("Append · Update · Complete"),
+            ], style="ss-sink-row"),
+            group([
+                heading("Memory", level=2),
+                prose("Query a small in-memory table for debugging."),
+                span("Append · Complete"),
+            ], style="ss-sink-row"),
+        ], style="ss-sink-table"),
+            prose("Choose an output mode that the query and destination both support.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("98"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 14. Keep the original destination list. Kafka does not by itself turn all end-to-end effects into exactly-once delivery. foreach is row-oriented; foreachBatch receives each micro-batch as a DataFrame and the batch ID. Its external writes need appropriate retry/idempotence handling. Memory sink supports Append and Complete, and is not fault-tolerant; console and memory are for small debugging examples. File sink supports Append. These are built-in micro-batch sink modes; operator restrictions still apply. Real-time has a different connector matrix and does not support foreachBatch. Do not treat Complete as a universal overwrite operation or Update as automatic upsert. Other table connectors can have different support. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )

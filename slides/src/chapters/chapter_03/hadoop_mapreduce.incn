@@ -1,0 +1,180 @@
+"""Hadoop mapreduce slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, group, heading, node, prose, span, text
+from components import step_rail, step_cues
+
+pub def slide_hadoop_mapreduce() -> Slide:
+    steps = [
+        TeachingStep(label="Input",
+            heading="Start with the question",
+            explanation="What is the total per category? The input is split so tasks can work in parallel.",
+            cue_key="0", numbered=true),
+        TeachingStep(label="Map",
+            heading="Map · emit a common key",
+            explanation="Each map task emits category–amount pairs from its own input split.",
+            cue_key="1", numbered=true),
+        TeachingStep(label="Shuffle",
+            heading="Shuffle · matching keys must meet",
+            explanation="The books records came from different tasks. Bring their amounts together before adding them.",
+            cue_key="2", numbered=true),
+        TeachingStep(label="Reduce",
+            heading="Reduce · combine each group",
+            explanation="Add the amounts for each category: books 40, games 40, music 10.",
+            cue_key="3", numbered=true),
+        TeachingStep(label="Write",
+            heading="Finish this job",
+            explanation="Write the output to HDFS so another job can use it.",
+            cue_key="4", numbered=true),
+        TeachingStep(label="Read again",
+            heading="Now do another calculation",
+            explanation="That next job reads the intermediate output back. Repeated jobs repeat this storage round trip.",
+            cue_key="5", numbered=true),
+    ]
+    return Slide(
+        slug="hadoop-mapreduce",
+        title="How MapReduce works",
+        frame=Frame.Composed,
+        styles="slide lesson-slide ",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("How MapReduce works", level=1),
+            group([
+            prose("What is the total per category?", style="subtitle"),
+            step_rail(steps),
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="mapreduce job", attributes=[attr("id", "mapreduce-job-title")]),
+                node(NodeKind.SvgDescription, content="Four records are mapped in two tasks, shuffled by category, reduced to totals, written to HDFS and read by a later job.", attributes=[attr("id", "mapreduce-job-desc")]),
+                node(NodeKind.SvgText, content="Input records", style="scene-heading", attributes=[attr("x", "20"), attr("y", "28")]),
+                node(NodeKind.SvgText, content="Parallel map tasks", style="scene-heading mid-heading", attributes=[attr("x", "462"), attr("y", "28")]),
+                node(NodeKind.SvgText, content="Group by key → reduce", style="scene-heading right-heading", attributes=[attr("x", "934"), attr("y", "28")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "8"), attr("y", "52"), attr("width", "278"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "8"), attr("y", "228"), attr("width", "278"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgText, content="Input split A", style="tiny", attributes=[attr("x", "22"), attr("y", "71")]),
+                node(NodeKind.SvgText, content="Input split B", style="tiny", attributes=[attr("x", "22"), attr("y", "247")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 78)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record games source-tile", attributes=[attr("transform", "translate(24 140)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 252)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music source-tile", attributes=[attr("transform", "translate(24 314)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "434"), attr("y", "52"), attr("width", "288"), attr("height", "160"), attr("rx", "10")]),
+                    node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "434"), attr("y", "228"), attr("width", "288"), attr("height", "160"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Map task A", style="tiny", attributes=[attr("x", "448"), attr("y", "71")]),
+                    node(NodeKind.SvgText, content="Map task B", style="tiny", attributes=[attr("x", "448"), attr("y", "247")]),
+                ], style="map-boundaries"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="books", attributes=[attr("d", "M702 105H786Q806 105 826 105H918")]),
+                    node(NodeKind.SvgPath, style="books", attributes=[attr("d", "M702 279H764C838 279 786 155 854 155H918")]),
+                    node(NodeKind.SvgPath, style="games", attributes=[attr("d", "M702 167H762C828 167 788 239 854 239H918")]),
+                    node(NodeKind.SvgPath, style="music", attributes=[attr("d", "M702 341H800Q820 341 840 329H918")]),
+                ], style="shuffle-paths"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="books group-box", attributes=[attr("x", "922"), attr("y", "63"), attr("width", "362"), attr("height", "117"), attr("rx", "10")]),
+                    node(NodeKind.SvgRectangle, style="games group-box", attributes=[attr("x", "922"), attr("y", "209"), attr("width", "362"), attr("height", "63"), attr("rx", "10")]),
+                    node(NodeKind.SvgRectangle, style="music group-box", attributes=[attr("x", "922"), attr("y", "299"), attr("width", "362"), attr("height", "63"), attr("rx", "10")]),
+                ], style="group-shells"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(books,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="25)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(games,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-1"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(books,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="15)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-2"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(music,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="10)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record music ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-3"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(944 89)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(944 213)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record music ", attributes=[attr("transform", "translate(944 303)")]),
+                    node(NodeKind.SvgText, content="25 + 15", style="tiny", attributes=[attr("x", "962"), attr("y", "167")]),
+                ], style="sum-results"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="storage-box", attributes=[attr("x", "458"), attr("y", "62"), attr("width", "374"), attr("height", "302"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="HDFS · job output", style="scene-heading", attributes=[attr("x", "480"), attr("y", "102")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(484 127)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(484 197)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record music ", attributes=[attr("transform", "translate(484 267)")]),
+                ], style="storage-result"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "924"), attr("y", "102"), attr("width", "362"), attr("height", "210"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Next calculation", style="scene-heading", attributes=[attr("x", "948"), attr("y", "146")]),
+                    node(NodeKind.SvgText, content="Read the stored output", style="small", attributes=[attr("x", "948"), attr("y", "191")]),
+                    node(NodeKind.SvgText, content="Process it again", style="small", attributes=[attr("x", "948"), attr("y", "234")]),
+                    node(NodeKind.SvgPath, style="read-route", attributes=[attr("d", "M832 207H919")]),
+                ], style="next-job"),
+            ], attributes=[attr("viewBox", "0 0 1308 410"), attr("role", "img"), attr("aria-labelledby", "mapreduce-job-title mapreduce-job-desc")]),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson", attributes=[attr("data-lesson", "mapreduce"), attr("data-point", "5")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("27"),
+        ]),
+        ],
+        notes="Source: original course 2.1 slides 7–9 and https://hadoop.apache.org/docs/r3.2.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html . Start by asking attendees to predict where the two books records must meet. Advance one step at a time. Input split A/B are teaching examples; an HDFS block is not automatically one input split. Map tasks process independently; shuffle transfers and sorts intermediate pairs so equal keys reach the same reducer. Groups shown do not imply one reducer per key. Omit combiners for clarity. Map output is buffered/spilled locally, not necessarily written to HDFS. The HDFS write shown is job output between jobs. MapReduce also provides task retries and fault tolerance; Spark did not invent those. End with why this is useful AND costly for iterative or interactive reuse. No claim that all disk use disappears in Spark.",
+    )

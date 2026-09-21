@@ -1,0 +1,78 @@
+"""Streaming watermarks slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, line_break, node, paragraph, prose, span, strong, text
+
+pub def slide_streaming_watermarks() -> Slide:
+    return Slide(
+        slug="streaming-watermarks",
+        title="When can an old window close?",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-watermark-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("When can an old window close?", level=1),
+            group([
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("""window_counts = (
+    events
+    .withWatermark("event_time", "10 minutes")
+    .groupBy(
+        F.window("event_time", "10 minutes")
+    )
+    .count()
+)"""),
+                ], style="language-python"),
+                paragraph([
+                    text("This run uses "),
+                    code(".outputMode(\"append\")"),
+                    text("."),
+                    line_break(),
+                    text("It publishes a window once its count is final."),
+                ], style="ss-watermark-output"),
+            ]),
+            group([
+                heading("Later, event time reaches 12:21", level=2),
+                node(NodeKind.DefinitionList, children=[
+                    group([
+                        node(NodeKind.Term, content="Greatest event time observed"),
+                        node(NodeKind.Definition, content="12:21"),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="Allowed delay"),
+                        node(NodeKind.Definition, content="− 10 min"),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="Watermark advances to"),
+                        node(NodeKind.Definition, content="12:11"),
+                    ]),
+                ], style="ss-watermark-math"),
+                group([
+                    strong("12:00–12:10 · count 3"),
+                    span("Once Spark applies that watermark:"),
+                    span("Publish the final count and remove its state."),
+                ], style="ss-final-window"),
+                prose("A later arrival for this closed window will no longer revise its count.", style="ss-watermark-late"),
+            ], style="ss-watermark-example"),
+        ], style="ss-watermark-grid"),
+            paragraph([
+            text("The watermark follows event-time progress, not the wall clock."),
+            line_break(),
+            span("A longer delay allows more late data, but keeps state longer and delays final Append results."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("94"),
+        ]),
+        ],
+        notes="""This is an alternative run of the timestamped query, configured before start, with a ten-minute delay and Append output. It is not an in-place edit to a running query. Return to the first interval whose count became3. The late12:03 cat was nine minutes behind the then-greatest observed time12:12, inside this allowance. Later input with event time12:21 permits the single-stream watermark to advance to12:11. Once that watermark is applied in a subsequent micro-batch and the first window is finalized, Append emits count3 and its aggregation state can be removed. A future event for that already-closed window cannot revise the published count. The new12:21 event belongs to a later window, omitted from this close-up.
+
+Do not equate the window width with the watermark delay: both happen to be ten minutes here, but they are separate settings. Window width defines groups; delay defines lateness tolerance relative to observed event time. Watermark advancement and cleanup happen through query execution, not at an exact wall-clock instant. Idle input may leave a window open. Data within the threshold is guaranteed inclusion; data beyond it may or may not be processed, depending on watermark/state progress. Do not teach the delay as a universal exact cutoff for individual records.
+
+withWatermark must precede the aggregation and use its event-time column. Append waits for finality, Update can publish provisional counts before cleanup, and Complete retains all aggregate groups instead of cleaning them up this way. Return to these distinctions in the following compatibility table. The state-store backend and multiple-input watermark policies are outside this single-stream example.
+
+https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.withWatermark.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#conditions-for-watermarking-to-clean-aggregation-state""",
+    )

@@ -1,0 +1,23 @@
+"""Cover slide."""
+
+from surface import Frame, Slide, emphasis, group, image, line_break, prose, rich_heading, text
+
+pub def cover() -> Slide:
+    return Slide(
+        slug="section-4",
+        title="Lazy Pandas",
+        frame=Frame.Cover,
+        content=[
+            image("assets/lazy-pandas-intro.png", "A panda resting on glass-like data tables, with data tiles waiting nearby.", style="lazy-intro-image"),
+            group([], style="lazy-intro-shade"),
+            group([
+                rich_heading([
+                    text("Lazy"),
+                    line_break(),
+                    emphasis("Pandas"),
+                ], level=1),
+                prose("Pandas? … Lazy? …"),
+            ], style="lazy-intro-copy"),
+        ],
+        notes="Continue the handoff from the previous slide: “But first… let’s talk about Lazy Pandas.” Let the image land, then ask: “Any idea how this relates to the story you just heard about DataFrames?” Pause and take answers before explaining. Listen for whether participants distinguish describing transformations from executing the work. If needed, prompt: “When we wrote that filter and select, had Spark already processed the data?” Keep Catalyst as an open thread to return to; do not explain the optimiser here. The panda is a visual pun, not a claim that the pandas library evaluates lazily. Transition into transformations and actions after the audience has responded.",
+    )

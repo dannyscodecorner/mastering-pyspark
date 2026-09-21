@@ -1,0 +1,54 @@
+"""History intro slide."""
+
+from surface import Frame, NodeKind, Slide, emphasis, group, image, line_break, node, paragraph, rich_heading, span, strong, text
+
+pub def slide_history_intro() -> Slide:
+    return Slide(
+        slug="history-intro",
+        title="A Brief History of Spark",
+        frame=Frame.Composed,
+        styles="slide history-intro",
+        content=[
+            image("assets/history/mountain-journey.png", "A mountain ridge traced by a teal and orange path towards the summit", style="history-mountain"),
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            rich_heading([
+                text("A Brief"),
+                line_break(),
+                text("History of"),
+                line_break(),
+                emphasis("Spark"),
+            ], level=1),
+            paragraph([
+                text("From research ideas to"),
+                line_break(),
+                text("an open-source data engine."),
+            ]),
+            span("2003 — 2026", style="history-period"),
+        ], style="history-intro-copy"),
+            image("assets/history/spark-reverse.svg", "Apache Spark", style="history-intro-logo"),
+            group([
+            strong("2003 / 04"),
+            span("The foundations"),
+        ], style="summit-marker summit-one"),
+            group([
+            strong("2009"),
+            span("Spark begins"),
+        ], style="summit-marker summit-two"),
+            group([
+            strong("2013"),
+            span("Apache"),
+        ], style="summit-marker summit-three"),
+            group([
+            strong("2026"),
+            span("Spark 4.x"),
+        ], style="summit-marker summit-four"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("09"),
+        ]),
+        ],
+        notes="Pause after the Spark Applications explanation. “We’ve seen how Spark works: the driver, executors, tasks, and data moving between them. How did we get here?” Introduce the historical journey: Google’s distributed-systems papers and Hadoop, Spark’s research origins, then its evolution as an Apache project. The mountain is a visual metaphor, not a claim that progress is linear or complete. The summit is the current point in our story, not the end of Spark’s development. Advance to start with the 2003/2004 papers. Background generated from the user’s supplied visual reference through Product Design; dates and text are editable HTML. Official Spark logo identifies the topic.",
+    )

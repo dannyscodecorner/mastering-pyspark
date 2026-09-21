@@ -1,0 +1,45 @@
+"""Teaching order for core reference 03."""
+
+from surface import Chapter
+from chapters.references.core.chapter_03.cover import slide_section_3
+from chapters.references.core.chapter_03.hadoop_mapreduce import slide_hadoop_mapreduce
+from chapters.references.core.chapter_03.mapreduce_jobs import slide_mapreduce_jobs
+from chapters.references.core.chapter_03.rdd_foundation import slide_rdd_foundation
+from chapters.references.core.chapter_03.rdd_reuse import slide_rdd_reuse
+from chapters.references.core.chapter_03.rdd_why import slide_rdd_why
+from chapters.references.core.chapter_03.dataframe_meaning import slide_dataframe_meaning
+from chapters.references.core.chapter_03.dataframe_why import slide_dataframe_why
+from chapters.references.core.chapter_03.dataset_context import slide_dataset_context
+from chapters.references.core.chapter_03.data_views import slide_data_views
+from chapters.references.core.chapter_03.data_distributed import slide_data_distributed
+from chapters.references.core.chapter_03.data_transform import slide_data_transform
+from chapters.references.core.chapter_03.core_abstractions import slide_core_abstractions
+from chapters.references.core.chapter_03.rdd_api import slide_rdd_api
+from chapters.references.core.chapter_03.dataset_api import slide_dataset_api
+from chapters.references.core.chapter_03.dataframe_api import slide_dataframe_api
+from chapters.references.core.chapter_03.dataframe_partitions import slide_dataframe_partitions
+from chapters.references.core.chapter_03.immutability import slide_immutability
+from chapters.references.core.chapter_03.immutability_reference import slide_immutability_reference
+
+pub def core_reference_03_chapter() -> Chapter:
+    return Chapter(number="3", title="Spark’s Core Abstractions", first_page=1, slides=[
+        slide_section_3(),
+        slide_hadoop_mapreduce(),
+        slide_mapreduce_jobs(),
+        slide_rdd_foundation(),
+        slide_rdd_reuse(),
+        slide_rdd_why(),
+        slide_dataframe_meaning(),
+        slide_dataframe_why(),
+        slide_dataset_context(),
+        slide_data_views(),
+        slide_data_distributed(),
+        slide_data_transform(),
+        slide_core_abstractions(),
+        slide_rdd_api(),
+        slide_dataset_api(),
+        slide_dataframe_api(),
+        slide_dataframe_partitions(),
+        slide_immutability(),
+        slide_immutability_reference(),
+    ])

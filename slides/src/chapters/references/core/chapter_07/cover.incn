@@ -1,0 +1,32 @@
+"""Cover slide."""
+
+from surface import Frame, NodeKind, Slide, group, line_break, node, prose, rich_heading, span, text
+
+pub def slide_section_7() -> Slide:
+    return Slide(
+        slug="section-7",
+        title="Working with PySpark",
+        frame=Frame.Composed,
+        styles="slide dark",
+        content=[
+            group([
+            text("07 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            group([
+            span("07", style="chapter-number"),
+            group([
+                rich_heading([
+                    text("Working with"),
+                    line_break(),
+                    text("PySpark"),
+                ], level=1),
+                prose("Data preparation, deployment and AWS Glue"),
+            ]),
+        ], style="divider"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("51"),
+        ]),
+        ],
+        notes="",
+    )

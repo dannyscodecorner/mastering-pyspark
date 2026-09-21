@@ -1,0 +1,94 @@
+"""Hadoop mapreduce slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_hadoop_mapreduce() -> Slide:
+    return Slide(
+        slug="hadoop-mapreduce",
+        title="Hadoop and MapReduce",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Hadoop and MapReduce", level=1),
+            prose("Store the records. Group matching keys. Compute the totals.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Hadoop and MapReduce", attributes=[attr("id", "hadoop-mapreduce-title")]),
+                node(NodeKind.SvgDescription, content="Store the records. Group matching keys. Compute the totals.", attributes=[attr("id", "hadoop-mapreduce-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "hadoop-mapreduce-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "8"), attr("width", "330"), attr("height", "360"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Hadoop", style="trial-title", attributes=[attr("x", "30"), attr("y", "48")]),
+                    node(NodeKind.SvgText, content="HDFS: distributed storage", style="trial-note", attributes=[attr("x", "30"), attr("y", "90")]),
+                    node(NodeKind.SvgText, content="MapReduce: processing", style="trial-note", attributes=[attr("x", "30"), attr("y", "124")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "30"), attr("y", "158")]),
+                    node(NodeKind.SvgText, content="Our question:", style="trial-note", attributes=[attr("x", "30"), attr("y", "192")]),
+                    node(NodeKind.SvgText, content="sales total per category", style="trial-note", attributes=[attr("x", "30"), attr("y", "226")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "HDFS stores data; MapReduce processes it")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "370"), attr("y", "8"), attr("width", "330"), attr("height", "360"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Map → shuffle / sort", style="trial-title", attributes=[attr("x", "392"), attr("y", "48")]),
+                    node(NodeKind.SvgText, content="Emit key / value pairs", style="trial-note", attributes=[attr("x", "392"), attr("y", "90")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "392"), attr("y", "124")]),
+                    node(NodeKind.SvgText, content="books → [25, 15]", style="trial-note", attributes=[attr("x", "392"), attr("y", "158")]),
+                    node(NodeKind.SvgText, content="games → [40]", style="trial-note", attributes=[attr("x", "392"), attr("y", "192")]),
+                    node(NodeKind.SvgText, content="music → [10]", style="trial-note", attributes=[attr("x", "392"), attr("y", "226")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M338 186H370"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "Map emits category and amount; shuffle groups matching keys")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "732"), attr("y", "8"), attr("width", "568"), attr("height", "360"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Reduce → output", style="trial-title", attributes=[attr("x", "754"), attr("y", "48")]),
+                    node(NodeKind.SvgText, content="books: 25 + 15 = 40", style="trial-note", attributes=[attr("x", "754"), attr("y", "90")]),
+                    node(NodeKind.SvgText, content="games: 40", style="trial-note", attributes=[attr("x", "754"), attr("y", "124")]),
+                    node(NodeKind.SvgText, content="music: 10", style="trial-note", attributes=[attr("x", "754"), attr("y", "158")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "754"), attr("y", "192")]),
+                    node(NodeKind.SvgText, content="Write the results to storage", style="trial-note", attributes=[attr("x", "754"), attr("y", "226")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M700 186H732"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Reduce sums each group")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "hadoop-mapreduce-title hadoop-mapreduce-desc")]),
+            group([
+                paragraph([
+                    strong("Hadoop and MapReduce"),
+                    span("Store the records. Group matching keys. Compute the totals."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Separate storage from processing"),
+                    span("Hadoop is an ecosystem. HDFS stores files; MapReduce is a processing framework."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Bring matching keys together"),
+                    span("Map emits category–amount pairs. Shuffle and sort group records by key."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Reduce each group"),
+                    span("Sum each category’s amounts, then write the job’s output."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Hadoop and MapReduce. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("24"),
+        ]),
+        ],
+        notes="Original source: Sections/Section 2 - Working with PySpark/2.1 - Getting to Know Spark.pptx, slides 7–9. Use the four familiar sales. Ask where the two books records need to meet. The grouping shows reducer input, not a Python list actually created by the framework. Combiners may partially aggregate locally; omitted here. Map output may be buffered and spilled locally; it is not all written to HDFS. HDFS output here is the job output. Hadoop also includes resource management; this is a focused storage/processing distinction. https://hadoop.apache.org/docs/r3.2.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html",
+    )

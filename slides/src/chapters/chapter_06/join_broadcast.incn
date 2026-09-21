@@ -1,0 +1,243 @@
+"""Join broadcast slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, node, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_broadcast() -> Slide:
+    steps = [
+        TeachingStep(label="Original inputs",
+            heading="Return to the original input partitions.",
+            explanation="What changes if the complete products lookup is small enough to broadcast?",
+            cue_key="", numbered=false),
+        TeachingStep(label="Build at the driver",
+            heading="The driver collects products and builds a complete lookup.",
+            explanation="This preparation needs time and memory before the executors can use it.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Copy the lookup",
+            heading="Distribute that lookup to the participating executors.",
+            explanation="Each executor now has B1, G1 and X1 available to its join tasks.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Match B1 locally",
+            heading="Each B1 sale can now find books where it already is.",
+            explanation="The sales partitions stay in place; this join does not need to reshuffle them by product_id.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Complete the join",
+            heading="The same five sales emerge from the left join.",
+            explanation="Broadcast costs network and memory. The complete build side must be safe to hold, not just small on disk.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-broadcast",
+        title="Broadcast hash joins",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-mechanics ",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Broadcast hash joins", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("sales.join(products, on=\"product_id\", how=\"left\")"),
+                ], style="language-python"),
+                span("The same five sales and three products"),
+            ], style="jm-query"),
+            group([
+                group([
+                    span("The products input is split across the workers.", style="jm-only jm-p0"),
+                    group([
+                        strong("Driver builds the complete products lookup"),
+                        group([
+                            span("B1"),
+                            span("books"),
+                        ], style="jm-record jm-books "),
+                        group([
+                            span("G1"),
+                            span("games"),
+                        ], style="jm-record jm-games "),
+                        group([
+                            span("X1"),
+                            span("accessories"),
+                        ], style="jm-record jm-extra "),
+                    ], style="jm-driver-lookup jm-after-1"),
+                ], style="jm-broadcast-preparation"),
+                group([
+                    span("Original input partitions"),
+                    span("Broadcast lookup in each executor"),
+                    span("Joined rows"),
+                ], style="jm-broadcast-labels"),
+                group([
+                    heading("Worker A", level=2),
+                    group([
+                        group([
+                            heading("Sales", level=3),
+                            group([
+                                span("B1"),
+                                span("25"),
+                            ], style="jm-record jm-books "),
+                            group([
+                                span("G1"),
+                                span("40"),
+                            ], style="jm-record jm-games "),
+                        ]),
+                        group([
+                            heading("Products", level=3),
+                            group([
+                                span("G1"),
+                                span("games"),
+                            ], style="jm-record jm-games "),
+                        ]),
+                    ], style="jm-original-inputs"),
+                    group([
+                        span("Executor 1", style="jm-executor-tag"),
+                        group([
+                            span("B1"),
+                            span("books"),
+                        ], style="jm-record jm-books jm-lookup-B1"),
+                        group([
+                            span("G1"),
+                            span("games"),
+                        ], style="jm-record jm-games jm-lookup-G1"),
+                        group([
+                            span("X1"),
+                            span("accessories"),
+                        ], style="jm-record jm-extra jm-lookup-X1"),
+                    ], style="jm-broadcast-copy jm-after-2"),
+                    span("→", style="jm-local-match-arrow jm-after-3", attributes=[attr("aria-hidden", "true")]),
+                    group([
+                        group([
+                            span("B1"),
+                            span("25"),
+                            span("books"),
+                        ], style="jm-record jm-books jm-after-3 jm-b1-output"),
+                        group([
+                            span("G1"),
+                            span("40"),
+                            span("games"),
+                        ], style="jm-record jm-games jm-after-4"),
+                    ], style="jm-broadcast-result"),
+                ], style="jm-broadcast-lane", attributes=[attr("style", "--lane:0")]),
+                group([
+                    heading("Worker B", level=2),
+                    group([
+                        group([
+                            heading("Sales", level=3),
+                            group([
+                                span("B1"),
+                                span("15"),
+                            ], style="jm-record jm-books "),
+                            group([
+                                span("M1"),
+                                span("10"),
+                            ], style="jm-record jm-missing "),
+                        ]),
+                        group([
+                            heading("Products", level=3),
+                            group([
+                                span("X1"),
+                                span("accessories"),
+                            ], style="jm-record jm-extra "),
+                        ]),
+                    ], style="jm-original-inputs"),
+                    group([
+                        span("Executor 2", style="jm-executor-tag"),
+                        group([
+                            span("B1"),
+                            span("books"),
+                        ], style="jm-record jm-books jm-lookup-B1"),
+                        group([
+                            span("G1"),
+                            span("games"),
+                        ], style="jm-record jm-games jm-lookup-G1"),
+                        group([
+                            span("X1"),
+                            span("accessories"),
+                        ], style="jm-record jm-extra jm-lookup-X1"),
+                    ], style="jm-broadcast-copy jm-after-2"),
+                    span("→", style="jm-local-match-arrow jm-after-3", attributes=[attr("aria-hidden", "true")]),
+                    group([
+                        group([
+                            span("B1"),
+                            span("15"),
+                            span("books"),
+                        ], style="jm-record jm-books jm-after-3 jm-b1-output"),
+                        group([
+                            span("M1"),
+                            span("10"),
+                            span("NULL"),
+                        ], style="jm-record jm-missing jm-after-4"),
+                    ], style="jm-broadcast-result"),
+                ], style="jm-broadcast-lane", attributes=[attr("style", "--lane:1")]),
+                group([
+                    heading("Worker C", level=2),
+                    group([
+                        group([
+                            heading("Sales", level=3),
+                            group([
+                                span("B1"),
+                                span("10"),
+                            ], style="jm-record jm-books "),
+                        ]),
+                        group([
+                            heading("Products", level=3),
+                            group([
+                                span("B1"),
+                                span("books"),
+                            ], style="jm-record jm-books "),
+                        ]),
+                    ], style="jm-original-inputs"),
+                    group([
+                        span("Executor 3", style="jm-executor-tag"),
+                        group([
+                            span("B1"),
+                            span("books"),
+                        ], style="jm-record jm-books jm-lookup-B1"),
+                        group([
+                            span("G1"),
+                            span("games"),
+                        ], style="jm-record jm-games jm-lookup-G1"),
+                        group([
+                            span("X1"),
+                            span("accessories"),
+                        ], style="jm-record jm-extra jm-lookup-X1"),
+                    ], style="jm-broadcast-copy jm-after-2"),
+                    span("→", style="jm-local-match-arrow jm-after-3", attributes=[attr("aria-hidden", "true")]),
+                    group([
+                        group([
+                            span("B1"),
+                            span("10"),
+                            span("books"),
+                        ], style="jm-record jm-books jm-after-3 jm-b1-output"),
+                    ], style="jm-broadcast-result"),
+                ], style="jm-broadcast-lane", attributes=[attr("style", "--lane:2")]),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L10 5L0 10Z")]),
+                        ], attributes=[attr("id", "jm-broadcast-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "5"), attr("markerHeight", "5"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgPath, style="jm-broadcast-wire", attributes=[attr("d", "M620 48V104Q620 112 628 112H698")]),
+                    node(NodeKind.SvgPath, style="jm-broadcast-wire", attributes=[attr("d", "M640 48V204Q640 212 648 212H698")]),
+                    node(NodeKind.SvgPath, style="jm-broadcast-wire", attributes=[attr("d", "M660 48V304Q660 312 668 312H698")]),
+                ], style="jm-broadcast-routes jm-after-2", attributes=[attr("viewBox", "0 0 1308 396"), attr("aria-hidden", "true")]),
+            ], style="jm-broadcast-scene"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson jm-lesson jm-broadcast", attributes=[attr("data-lesson", flag=true), attr("data-point", "4")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("67"),
+        ]),
+        ],
+        notes="""This is the alternative to the shuffled strategies, so explicitly return to the original input placement from “Same key. Different places.” rather than continue from their already-paid shuffle. Worker A holds B1/25 and G1/40 with G1/games, B has B1/15 and M1/10 with X1/accessories, and C has B1/10 with B1/books. The products source remains visible as provenance. Step 1 collects the build-side relation and builds the hashed relation at the driver. Step 2 distributes the complete relation, containing B1, G1 and X1, to each participating executor. The drawn routes are conceptual dissemination, not the literal topology of Spark's torrent/block broadcast implementation. One prepared broadcast relation can be shared by tasks on an executor; do not imply one full copy is required per task. Spark may fetch broadcast blocks as tasks need them.
+
+Step 3 highlight all B1 sales in their original locations and B1/books in every copied lookup. Those sales now match locally. Step 4 adds G1/40/games and M1/10/NULL and preserves all 5 sales totaling 100. Each lookup includes X1 even though it produces no sale. No hash redistribution of the large sales input is required for this join. This does not mean there is zero network traffic, nor that existing skew in the sales input has vanished. The full build side has to be safe for the driver and executors; compressed file size is not its in-memory hash size. Broadcast selection depends on supported join type, build side, statistics, thresholds and hints, and AQE may convert an eligible plan. Avoiding a shuffle by initially planning broadcast is different from converting after upstream shuffle work has already run. No measured speedup is claimed.
+Sources: https://spark.apache.org/docs/latest/sql-performance-tuning.html ; https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/exchange/BroadcastExchangeExec.scala ; https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/joins/BroadcastHashJoinExec.scala""",
+    )

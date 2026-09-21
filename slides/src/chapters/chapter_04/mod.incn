@@ -1,0 +1,30 @@
+"""Teaching order for chapter 04."""
+
+from surface import Chapter
+from chapters.chapter_04.cover import cover
+from chapters.chapter_04.pandas_and_spark import pandas_and_spark
+from chapters.chapter_04.lazy_definition import lazy_definition
+from chapters.chapter_04.query_walkthrough import query_walkthrough
+from chapters.chapter_04.transformations_and_actions import transformations_and_actions
+from chapters.chapter_04.action_results import action_results
+from chapters.chapter_04.repeated_actions import repeated_actions
+from chapters.chapter_04.why_wait import why_wait
+from chapters.chapter_04.recap import recap
+
+pub def chapter() -> Chapter:
+    return Chapter(
+        number="04",
+        title="LAZY PANDAS",
+        first_page=38,
+        slides=[
+            cover(),
+            pandas_and_spark(),
+            lazy_definition(),
+            query_walkthrough(),
+            transformations_and_actions(),
+            action_results(),
+            repeated_actions(),
+            why_wait(),
+            recap(),
+        ],
+    )

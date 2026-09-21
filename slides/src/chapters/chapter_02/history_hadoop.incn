@@ -1,0 +1,145 @@
+"""History hadoop slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, image, node, prose, span, text
+
+pub def slide_history_hadoop() -> Slide:
+    return Slide(
+        slug="history-hadoop",
+        title="2006 — Hadoop",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey ",
+        attributes=[attr("data-history-index", "1")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  focal"),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(16px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("02 / 12", style="history-stop-count"),
+            prose("An open-source implementation", style="history-kicker"),
+            heading("Hadoop", level=1),
+            node(NodeKind.Figure, children=[
+                group([
+                    image("assets/history/hadoop.jpg", "Apache Hadoop", style="history-project-logo"),
+                    node(NodeKind.Svg, children=[
+                        node(NodeKind.SvgTitle, content="Hadoop", attributes=[attr("id", "hist-1-title")]),
+                        node(NodeKind.SvgDescription, content="Hadoop combines distributed storage with MapReduce processing; jobs can be chained through stored output.", attributes=[attr("id", "hist-1-desc")]),
+                        node(NodeKind.SvgDefinitions, children=[
+                            node(NodeKind.SvgMarker, children=[
+                                node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L10 5L0 10"), attr("fill", "#54797d")]),
+                            ], attributes=[attr("id", "hj-arrow-1"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                        ]),
+                        node(NodeKind.SvgGroup, children=[
+                            node(NodeKind.SvgText, content="HADOOP MAPREDUCE", style="hj-label", attributes=[attr("x", "20"), attr("y", "30")]),
+                            node(NodeKind.SvgPath, style="hj-arrow", attributes=[attr("d", "M195 95 H245")]),
+                            node(NodeKind.SvgPath, style="hj-arrow", attributes=[attr("d", "M425 95 H475")]),
+                            node(NodeKind.SvgPath, style="hj-arrow", attributes=[attr("d", "M655 95 H705")]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node neutral", attributes=[attr("x", "20"), attr("y", "60"), attr("width", "175"), attr("height", "70"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="Map", style="hj-node-title", attributes=[attr("x", "107.5"), attr("y", "102.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node neutral", attributes=[attr("x", "245"), attr("y", "60"), attr("width", "180"), attr("height", "70"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="Shuffle / sort", style="hj-node-title", attributes=[attr("x", "335.0"), attr("y", "102.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node neutral", attributes=[attr("x", "475"), attr("y", "60"), attr("width", "180"), attr("height", "70"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="Reduce", style="hj-node-title", attributes=[attr("x", "565.0"), attr("y", "102.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node neutral", attributes=[attr("x", "705"), attr("y", "60"), attr("width", "125"), attr("height", "70"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="Output", style="hj-node-title", attributes=[attr("x", "767.5"), attr("y", "102.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node teal", attributes=[attr("x", "20"), attr("y", "190"), attr("width", "810"), attr("height", "72"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="HDFS", style="hj-node-title", attributes=[attr("x", "425.0"), attr("y", "221.0"), attr("text-anchor", "middle")]),
+                                node(NodeKind.SvgText, content="Distributed storage", style="hj-node-sub", attributes=[attr("x", "425.0"), attr("y", "251.0"), attr("text-anchor", "middle")]),
+                            ]),
+                        ], attributes=[attr("style", "--hj-marker:url(#hj-arrow-1)")]),
+                    ], attributes=[attr("viewBox", "0 0 850 290"), attr("role", "img"), attr("aria-labelledby", "hist-1-title hist-1-desc")]),
+                ], style="hadoop-history-art"),
+            ], style="history-visual"),
+            prose("Hadoop brings distributed storage and MapReduce processing into an open-source project.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("13"),
+        ]),
+        ],
+        notes="""Visual assets: see assets/history/CREDITS.md. Official logos identify the projects, not sponsorship. The Berkeley photo was taken in 2013 and illustrates the location, not the founding event. 2006 — Hadoop.
+
+Hadoop emerged from Nutch in 2006. HDFS and Hadoop MapReduce implement ideas inspired by the Google papers. Explain the appeal: scale across machines and recover from failures. Hadoop is broader than its MapReduce execution engine; Spark can use Hadoop storage and resource-management components.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://research.google/pubs/the-google-file-system/
+https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/
+https://svn.apache.org/repos/asf/hadoop/common/tags/release-0.2.0/site/index.html
+https://spark.apache.org/history
+https://www.usenix.org/conference/hotcloud-10/spark-cluster-computing-working-sets""",
+    )

@@ -2,20 +2,28 @@
 
 ## Presentation sources
 
-| Content | File in `slides/src/` |
+| Content | Location in `slides/src/` |
 | --- | --- |
-| Welcome, biography and agenda | `opening.incn` |
-| Chapters 01–09 | `chapter_01.incn` through `chapter_09.incn` |
-| Closing | `closing.incn` |
-| Core-abstraction references | `core_reference_*.incn` |
-| Join references | `joins_reference_00.incn` |
+| Welcome, biography and agenda | `chapters/opening/` |
+| Chapters 01–09 | `chapters/chapter_01/` through `chapters/chapter_09/` |
+| Closing | `chapters/closing/` |
+| Core-abstraction references | `chapters/references/core/chapter_*/` |
+| Join references | `chapters/references/joins/` |
 | Document and chapter order | `documents.incn` |
 | Slide, surface and teaching-step types | `surface.incn` |
 | Shared teaching components | `components.incn` |
+| General text helpers and inline tests | `helper.incn` |
 | HTML rendering | `html_target.incn` |
 
-Each slide is a function returning a `Slide`. Chapters list those functions in
-teaching order. `TeachingStep` values supply lesson labels and narration cues.
+Each slide has its own named module containing a function returning a `Slide`.
+The chapter's `mod.incn` imports those functions and lists them in teaching order;
+file names do not determine the order. For example, edit
+`chapters/chapter_01/pyspark_code.incn` for the PySpark code slide, and
+`chapters/chapter_01/mod.incn` to change that chapter's sequence. `documents.incn`
+imports the chapter modules using paths such as `chapters.chapter_01`. Shared
+imports such as `surface`, `components` and `helper` stay at the source root.
+
+`TeachingStep` values supply lesson labels and narration cues.
 The existing styles and JavaScript controllers remain under `slides/web/`.
 This is a course-specific surface model, not Pallay’s public API.
 

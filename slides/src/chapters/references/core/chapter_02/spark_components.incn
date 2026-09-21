@@ -1,0 +1,88 @@
+"""Spark components slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_spark_components() -> Slide:
+    return Slide(
+        slug="spark-components",
+        title="Spark’s Main Components",
+        frame=Frame.Composed,
+        styles="slide",
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            heading("Spark’s Main Components", level=1),
+            prose("Different capabilities, shared execution engine.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Spark’s main components", attributes=[attr("id", "components-title")]),
+                node(NodeKind.SvgDescription, content="PySpark provides Python access to Spark SQL, Structured Streaming and MLlib. Structured Streaming builds on Spark SQL. GraphX uses Scala. All share Spark’s distributed execution engine.", attributes=[attr("id", "components-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgLinearGradient, children=[
+                        node(NodeKind.SvgStop, attributes=[attr("stop-color", "#873f35")]),
+                        node(NodeKind.SvgStop, attributes=[attr("offset", "1"), attr("stop-color", "#422c31")]),
+                    ], attributes=[attr("id", "components-python"), attr("x2", "1"), attr("y2", "1")]),
+                    node(NodeKind.SvgLinearGradient, children=[
+                        node(NodeKind.SvgStop, attributes=[attr("stop-color", "#164e68")]),
+                        node(NodeKind.SvgStop, attributes=[attr("offset", "1"), attr("stop-color", "#102f43")]),
+                    ], attributes=[attr("id", "components-sql"), attr("x2", "1"), attr("y2", "1")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "20"), attr("y", "8"), attr("width", "952"), attr("height", "76"), attr("rx", "12"), attr("fill", "url(#components-python)"), attr("stroke", "#e38c65")]),
+                    node(NodeKind.SvgText, content="Python API · PySpark", style="cmp-heading", attributes=[attr("x", "48"), attr("y", "55")]),
+                    node(NodeKind.SvgText, content="Write your application in Python", style="cmp-sub", attributes=[attr("x", "604"), attr("y", "54")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M340 84V112M820 84V112"), attr("stroke", "#f0b290"), attr("fill", "none")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "20"), attr("y", "112"), attr("width", "636"), attr("height", "236"), attr("rx", "14"), attr("fill", "url(#components-sql)"), attr("stroke", "#4fc9e0")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgEllipse, attributes=[attr("cx", "64"), attr("cy", "146"), attr("rx", "20"), attr("ry", "7")]),
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M44 146V177C44 187 84 187 84 177V146M44 162C44 172 84 172 84 162")]),
+                    ], attributes=[attr("fill", "none"), attr("stroke", "#86e5ef")]),
+                    node(NodeKind.SvgText, content="Spark SQL", style="cmp-heading", attributes=[attr("x", "108"), attr("y", "155")]),
+                    node(NodeKind.SvgText, content="DataFrames · SQL · structured data", style="cmp-sub", attributes=[attr("x", "108"), attr("y", "188")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "44"), attr("y", "216"), attr("width", "588"), attr("height", "108"), attr("rx", "10"), attr("fill", "#154a4d"), attr("stroke", "#51c6b4")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "76"), attr("cy", "252"), attr("r", "16"), attr("stroke", "#a3eee0"), attr("fill", "none")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M76 240V252L85 258"), attr("stroke", "#a3eee0"), attr("fill", "none")]),
+                    node(NodeKind.SvgText, content="Structured Streaming", style="cmp-heading", attributes=[attr("x", "108"), attr("y", "255")]),
+                    node(NodeKind.SvgText, content="Streaming tables, built on Spark SQL", style="cmp-sub", attributes=[attr("x", "108"), attr("y", "290")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "680"), attr("y", "112"), attr("width", "292"), attr("height", "236"), attr("rx", "14"), attr("fill", "#283c32"), attr("stroke", "#819e6a")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M716 155L750 137L782 163L743 180Z")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "716"), attr("cy", "155"), attr("r", "6")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "750"), attr("cy", "137"), attr("r", "6")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "782"), attr("cy", "163"), attr("r", "6")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "743"), attr("cy", "180"), attr("r", "6")]),
+                    ], attributes=[attr("stroke", "#bed2a3"), attr("fill", "#283c32")]),
+                    node(NodeKind.SvgText, content="MLlib", style="cmp-heading", attributes=[attr("x", "708"), attr("y", "232")]),
+                    node(NodeKind.SvgText, content="Machine learning", style="cmp-sub", attributes=[attr("x", "708"), attr("y", "268")]),
+                    node(NodeKind.SvgText, content="at scale", style="cmp-sub", attributes=[attr("x", "708"), attr("y", "298")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "996"), attr("y", "112"), attr("width", "292"), attr("height", "236"), attr("rx", "14"), attr("fill", "#3d3028"), attr("stroke", "#ae825e")]),
+                    node(NodeKind.SvgText, content="SCALA API", style="cmp-small", attributes=[attr("x", "1024"), attr("y", "67")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M1035 147L1067 168L1103 140M1067 168L1092 189M1067 168L1030 190")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "1035"), attr("cy", "147"), attr("r", "6")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "1067"), attr("cy", "168"), attr("r", "6")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "1103"), attr("cy", "140"), attr("r", "6")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "1092"), attr("cy", "189"), attr("r", "6")]),
+                        node(NodeKind.SvgCircle, attributes=[attr("cx", "1030"), attr("cy", "190"), attr("r", "6")]),
+                    ], attributes=[attr("stroke", "#ddb68c"), attr("fill", "#3d3028")]),
+                    node(NodeKind.SvgText, content="GraphX", style="cmp-heading", attributes=[attr("x", "1024"), attr("y", "232")]),
+                    node(NodeKind.SvgText, content="Graph processing", style="cmp-sub", attributes=[attr("x", "1024"), attr("y", "268")]),
+                    node(NodeKind.SvgText, content="and analytics", style="cmp-sub", attributes=[attr("x", "1024"), attr("y", "298")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M338 348V372M826 348V372M1142 348V372"), attr("stroke", "#9aacc0"), attr("fill", "none")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "20"), attr("y", "372"), attr("width", "1268"), attr("height", "96"), attr("rx", "12"), attr("fill", "#332c44"), attr("stroke", "#a78cbd")]),
+                    node(NodeKind.SvgText, content="Spark Core", style="cmp-heading", attributes=[attr("x", "48"), attr("y", "414")]),
+                    node(NodeKind.SvgText, content="Distributed execution engine", style="cmp-sub", attributes=[attr("x", "48"), attr("y", "446")]),
+                    node(NodeKind.SvgText, content="Task scheduling · memory management", style="cmp-sub", attributes=[attr("x", "584"), attr("y", "414")]),
+                    node(NodeKind.SvgText, content="Fault tolerance · distributed data", style="cmp-sub", attributes=[attr("x", "584"), attr("y", "446")]),
+                ], attributes=[attr("stroke-width", "2")]),
+            ], attributes=[attr("viewBox", "0 0 1308 480"), attr("role", "img"), attr("aria-labelledby", "components-title components-desc")]),
+        ], style="components-stack"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("22"),
+        ]),
+        ],
+        notes="""That is how Spark developed. Here is what we mean by Spark today. Start at the foundation: Spark Core handles distributed execution. Above it, Spark SQL gives us structured data and DataFrames. Structured Streaming is built on Spark SQL: show its position inside that box. MLlib and GraphX complete the overview; they are context, not additional course topics. Python reaches SQL, Structured Streaming and MLlib through PySpark. The Python band intentionally stops before GraphX, whose API is Scala. This is a capability map, not a call sequence or a complete API inventory; PySpark also exposes the RDD API. Legacy DStream Spark Streaming is omitted in favour of Structured Streaming. Transition: These capabilities share the same engine. Now let’s look at how we represent the data that engine works on.
+Sources: https://spark.apache.org/streaming/ ; https://spark.apache.org/docs/latest/graphx-programming-guide.html ; https://spark.apache.org/docs/latest/ml-guide.html""",
+    )

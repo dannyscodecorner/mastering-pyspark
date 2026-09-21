@@ -1,0 +1,91 @@
+"""Streaming output compatibility slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_streaming_output_compatibility() -> Slide:
+    return Slide(
+        slug="streaming-output-compatibility",
+        title="Which output modes can the query use?",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-compat",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Which output modes can the query use?", level=1),
+            prose("Micro-batch execution · common query shapes in Apache Spark 4.2", style="ss-output-scope"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Output-mode compatibility for representative micro-batch queries", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, attributes=[attr("style", "width:568px")]),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Query", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Append", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Update", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Complete", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("select / filter"),
+                        span("No aggregation"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Running word count"),
+                        span("No time window"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Windowed count + watermark"),
+                        span("Tumbling or sliding event-time window"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Stream–stream join"),
+                        span("A supported join and condition"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                ]),
+            ]),
+        ], style="ss-output-compat-table"),
+            paragraph([
+            text("The query, sink and execution mode must all support the choice."),
+            line_break(),
+            span("Real-time mode currently supports Update only."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("95"),
+        ]),
+        ],
+        notes="""This is a focused compatibility check, not every combination of stateful operators. The window row assumes withWatermark precedes the aggregation on the same event-time column. Session windows and custom stateful APIs have additional restrictions. Append and Update emit equivalent rows for the simple stateless example. Unsupported choices fail validation; Spark does not quietly change modes.
+
+Append waits until event-time progress finalizes a window. Update can publish provisional counts and later revise them. Complete keeps all aggregate groups, including older windows. Refer back to the late cat and the finalized12:00–12:10 window. Complete retains older groups; it does not get the same state cleanup as Append or Update.
+
+Sink support is a separate check, shown on the upcoming sink slide. Output mode alone does not establish retry or delivery guarantees. Real-time's current Update-only restriction is independent of this micro-batch table; runtime operator support must also be checked.
+
+Query compatibility: https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes
+Window finality and cost: https://docs.databricks.com/aws/en/structured-streaming/output-mode
+Real-time restriction: https://docs.databricks.com/aws/en/structured-streaming/real-time/reference#execution-modes ; https://apache.github.io/spark/streaming/real-time-mode.html#requirements (in-progress documentation)""",
+    )

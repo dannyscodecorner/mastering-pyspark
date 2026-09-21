@@ -1,0 +1,47 @@
+"""Streaming model slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, prose, rich_heading, span, text
+
+pub def slide_streaming_model() -> Slide:
+    return Slide(
+        slug="streaming-model",
+        title="Spark Structured Streaming",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Spark Structured Streaming", level=1),
+            prose("The DataFrame API for data that keeps arriving.", style="ss-lead"),
+            group([
+            group([
+                span("THIS CHAPTER", style="ss-kicker"),
+                rich_heading([
+                    text("Structured"),
+                    line_break(),
+                    text("Streaming"),
+                ], level=2),
+                prose("DataFrames and Spark SQL"),
+                code("pyspark.sql"),
+            ], style="ss-api-current"),
+            span("≠", style="ss-not-equal", attributes=[attr("aria-label", "is different from")]),
+            group([
+                span("THE OLDER API", style="ss-kicker"),
+                rich_heading([
+                    text("Spark"),
+                    line_break(),
+                    text("Streaming"),
+                ], level=2),
+                prose("DStreams, built on RDDs"),
+                code("pyspark.streaming"),
+            ], style="ss-api-legacy"),
+        ], style="ss-api-comparison"),
+            prose("We will keep using the DataFrame model we already know.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("77"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 4–6 and 12. Keep the naming distinction brief. Spark Streaming is the older DStream API. Structured Streaming belongs to Spark SQL and uses DataFrames in PySpark. This is not a switch to DStreams. The older slide12 notes contained unrelated ML/MLlib text and are not reused. Overview: https://spark.apache.org/docs/4.2.0/streaming/index.html",
+    )

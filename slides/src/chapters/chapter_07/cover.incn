@@ -1,0 +1,30 @@
+"""Cover slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, image, line_break, node, rich_heading, span, text
+
+pub def slide_section_7() -> Slide:
+    return Slide(
+        slug="section-7",
+        title="Structured Streaming",
+        frame=Frame.Composed,
+        styles="slide dark joins-waterfall-cover streaming-cover",
+        content=[
+            image("assets/joins-waterfalls.png", "Waterfalls flowing continuously into a deep teal pool.", style="joins-waterfall-art"),
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            group([
+            span("07", attributes=[attr("aria-hidden", "true")]),
+            rich_heading([
+                text("Structured"),
+                line_break(),
+                text("Streaming"),
+            ], level=1),
+        ], style="joins-waterfall-title"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("76"),
+        ]),
+        ],
+        notes="The same DataFrame model, now with data that keeps arriving. Follow the original section 8.2 and 8.3 narrative: Spark SQL, the unbounded input table, the programming model, output modes, word count, sources and sinks, and converting and managing a query. The waterfall is chapter artwork, not a literal model of Spark execution.",
+    )

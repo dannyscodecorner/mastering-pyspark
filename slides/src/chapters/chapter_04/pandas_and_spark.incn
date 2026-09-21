@@ -1,0 +1,33 @@
+"""Pandas and spark slide."""
+
+from surface import Frame, Slide, group, line_break, paragraph, strong, text
+from components import ApiRow, api_comparison
+
+pub def pandas_and_spark() -> Slide:
+    return Slide(
+        slug="lazy-pandas",
+        title="Pandas vs. Spark DataFrames",
+        frame=Frame.Lesson,
+        subtitle="The operations look familiar. When they run is different.",
+        content=[
+            api_comparison([
+                ApiRow(operation="Select", pandas="df[[\"category\", \"amount\"]]", spark="df.select(\"category\", \"amount\")"),
+                ApiRow(operation="Filter", pandas="df[df[\"amount\"] > 20]", spark="df.filter(col(\"amount\") > 20)"),
+                ApiRow(operation="Sort", pandas="df.sort_values(\"amount\")", spark="df.orderBy(\"amount\")"),
+                ApiRow(operation="Display rows", pandas="print(df.head(5))", spark="df.show(5)"),
+            ]),
+            group([
+                paragraph([
+                    strong("pandas"),
+                    text("These operations compute as called."),
+                ]),
+                paragraph([
+                    strong("Spark"),
+                    text("Transformations build a plan."),
+                    line_break(),
+                    text("An action requests execution."),
+                ]),
+            ], style="lazy-timing"),
+        ],
+        notes="Based on original workshop slide 23. Start from familiarity, not a comprehensive API cheat sheet. Ask which operations people recognise. Assume df is an existing DataFrame, and col is imported from pyspark.sql.functions. These are separate snippets, not one program. Standard in-memory pandas is generally eager for these operations; pandas copy-on-write is a different concept, not Spark-style lazy query execution. We are not discussing pandas API on Spark here. No obsolete DataFrame.append; no invalid pandas header=True. Transition: let us watch what happens as we write a few Spark transformations. Source: https://spark.apache.org/docs/3.5.8/api/python/getting_started/quickstart_df.html",
+    )

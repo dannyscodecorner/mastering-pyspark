@@ -1,0 +1,119 @@
+"""Streaming complete slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_streaming_complete() -> Slide:
+    return Slide(
+        slug="streaming-complete",
+        title="Output mode: Complete",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-emission-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Output mode: Complete", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                code("words.groupBy(\"word\").count()"),
+            ], style="language-python"),
+            node(NodeKind.Preformatted, children=[
+                code(".outputMode(\"complete\")"),
+            ], style="language-python"),
+        ], style="ss-emission-code"),
+            group([
+            group([
+                heading("New input", level=2),
+                prose("Batch 3", style="ss-emission-label"),
+                group([
+                    code("dog"),
+                    code("owl"),
+                ], style="ss-record-list"),
+            ], style="ss-emission-input"),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Running counts", level=2),
+                prose("Two counts change", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Running word counts before and after Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Before", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Now", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, children=[
+                                text("cat"),
+                                span("unchanged"),
+                            ], attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="2"),
+                        ], style="ss-emission-unchanged"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="4"),
+                        ], style="ss-emission-changed"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="2"),
+                        ], style="ss-emission-changed"),
+                    ]),
+                ], style="ss-emission-counts"),
+            ]),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Sent to the sink", level=2),
+                prose("Every result row", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Rows emitted by Complete after Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="count", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="4"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                    ]),
+                ], style="ss-emission-sent"),
+                prose("3 rows emitted", style="ss-emission-total"),
+            ], style="ss-emission-output"),
+        ], style="ss-emission-flow"),
+            paragraph([
+            text("Complete sends cat 2 again, even though its count did not change."),
+            line_break(),
+            span("All groups are retained in Complete mode."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("88"),
+        ]),
+        ],
+        notes="""The same word-count query and original cat/dog/owl data as the incremental example. We zoom into Batch 3: the previous counts are cat 2, dog 3 and owl 1; the arriving records are dog and owl. Spark updates only dog and owl, producing cat 2, dog 4 and owl 2. Read from the new input through the result to the records emitted to the sink.
+
+Complete sends all three result rows, including unchanged cat 2. It still computes incrementally; it does not reread the entire source. It retains all aggregate groups, so a watermark does not evict old groups in Complete mode. It is not a universal instruction to overwrite an arbitrary sink.
+
+The two code blocks are query and writer-setting fragments; a compatible sink and start() are required. These are micro-batch examples and row order is illustrative. Original diagrams remain in the source backup and corpus; this version uses actual rows instead of generic document glyphs.
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )

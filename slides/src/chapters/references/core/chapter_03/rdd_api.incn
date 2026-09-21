@@ -1,0 +1,85 @@
+"""Rdd api slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, span, strong, text
+
+pub def slide_rdd_api() -> Slide:
+    return Slide(
+        slug="rdd-api",
+        title="Resilient Distributed Dataset API",
+        frame=Frame.Composed,
+        styles="slide core-slide migrated",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Resilient Distributed Dataset API", level=1),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="RDDs and partitions", attributes=[attr("id", "rdd-partitions-title")]),
+                node(NodeKind.SvgDescription, content="A collection is split into partitions; tasks can process different partitions in parallel.", attributes=[attr("id", "rdd-partitions-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "rdd-partitions-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "12"), attr("y", "12"), attr("width", "1280"), attr("height", "320"), attr("rx", "6"), attr("fill", "#f1f5f8"), attr("stroke", "#9badb9"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="RDD · one distributed collection", style="core-svg-heading", attributes=[attr("x", "36"), attr("y", "52")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "One collection, divided into partitions")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "40"), attr("y", "86"), attr("width", "380"), attr("height", "158"), attr("rx", "6"), attr("fill", "#e8f0f7"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Partition 0", style="core-svg-heading", attributes=[attr("x", "60"), attr("y", "120")]),
+                    node(NodeKind.SvgText, content="(\"books\", 25)", style="core-svg-code", attributes=[attr("x", "60"), attr("y", "164")]),
+                    node(NodeKind.SvgText, content="(\"games\", 40)", style="core-svg-code", attributes=[attr("x", "60"), attr("y", "200")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "464"), attr("y", "86"), attr("width", "380"), attr("height", "158"), attr("rx", "6"), attr("fill", "#e8f0f7"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Partition 1", style="core-svg-heading", attributes=[attr("x", "484"), attr("y", "120")]),
+                    node(NodeKind.SvgText, content="(\"books\", 15)", style="core-svg-code", attributes=[attr("x", "484"), attr("y", "164")]),
+                    node(NodeKind.SvgText, content="(\"music\", 10)", style="core-svg-code", attributes=[attr("x", "484"), attr("y", "200")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "888"), attr("y", "86"), attr("width", "380"), attr("height", "158"), attr("rx", "6"), attr("fill", "#e8f0f7"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Partition 2", style="core-svg-heading", attributes=[attr("x", "908"), attr("y", "120")]),
+                    node(NodeKind.SvgText, content="(\"games\", 30)", style="core-svg-code", attributes=[attr("x", "908"), attr("y", "164")]),
+                    node(NodeKind.SvgText, content="(\"music\", 20)", style="core-svg-code", attributes=[attr("x", "908"), attr("y", "200")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "Partitions can be processed in parallel")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Resilient: recover a lost partition by recomputing its lineage.", style="core-svg-note", attributes=[attr("x", "40"), attr("y", "292")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Lost partitions can be recomputed from lineage")]),
+            ], attributes=[attr("viewBox", "0 0 1308 350"), attr("role", "img"), attr("aria-labelledby", "rdd-partitions-title rdd-partitions-desc")]),
+            group([
+                paragraph([
+                    strong("RDDs and partitions"),
+                    span("A collection is split into partitions; tasks can process different partitions in parallel."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Dataset"),
+                    span("A collection of elements — here, Python tuples."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Distributed"),
+                    span("Different tasks can work on different partitions in parallel."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Resilient"),
+                    span("Spark tracks how partitions were derived, so lost data can be recomputed."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "RDDs and partitions. Use previous and next point to step through the explanation.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("36"),
+        ]),
+        ],
+        notes="Ask what the two tuple positions mean. We know category and amount, but this RDD has no SQL schema declaring those names. The displayed placement is conceptual, not a permanent partition-to-machine assignment. RDDs are immutable; lineage supports recovery, provided the required inputs remain available. In Python elements can be Python objects; do not describe all RDD elements as JVM objects. Do not repeat the old statement that RDDs require users to specify a schema. The spark.mllib maintenance statement was about the old ML library, not all RDDs.  Original workshop slides 15–21. Updated against https://spark.apache.org/docs/latest/rdd-programming-guide.html and https://spark.apache.org/docs/latest/sql-programming-guide.html . ",
+    )

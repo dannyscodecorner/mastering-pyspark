@@ -1,0 +1,33 @@
+"""Cover slide."""
+
+from surface import Frame, NodeKind, Slide, emphasis, group, image, line_break, node, prose, rich_heading, span, text
+
+pub def slide_section_5() -> Slide:
+    return Slide(
+        slug="section-5",
+        title="From Query to Execution",
+        frame=Frame.Composed,
+        styles="slide execution-intro-art",
+        content=[
+            image("assets/execution-cover.png", "An illuminated amber plan branches into parallel paths and data tiles against a dark background.", style="execution-intro-image"),
+            group([], style="execution-intro-shade"),
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            group([
+            span("YOU DESCRIBE THE RESULT.", style="execution-intro-kicker"),
+            rich_heading([
+                text("From Query"),
+                line_break(),
+                text("to "),
+                emphasis("Execution"),
+            ], level=1),
+            prose("Plan. Distribute. Adapt."),
+        ], style="execution-intro-copy"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("47"),
+        ]),
+        ],
+        notes="Return to the open question at the end of section 04: Spark is lazy, so what happens when we finally ask for a result? Let the cover land, then say: We describe what we want. Spark plans how to do it, distributes the work and can adapt using what it learns during execution. Follow the same sales query through an action, Catalyst, tasks and stages, shuffle, AQE and explain(). The artwork is a visual metaphor, not an exact execution plan. Joins will form their own next chapter.",
+    )

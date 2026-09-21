@@ -1,0 +1,28 @@
+"""Cover slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_section_6() -> Slide:
+    return Slide(
+        slug="section-6",
+        title="Batch vs. Streaming",
+        frame=Frame.Composed,
+        styles="slide dark",
+        content=[
+            group([
+            text("06 / BATCH VS. STREAMING"),
+        ], style="eyebrow"),
+            group([
+            span("06", style="chapter-number"),
+            group([
+                heading("Batch vs. Streaming", level=1),
+                prose("Spark Structured Streaming"),
+            ]),
+        ], style="divider"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("48"),
+        ]),
+        ],
+        notes="",
+    )

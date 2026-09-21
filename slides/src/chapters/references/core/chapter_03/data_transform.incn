@@ -1,0 +1,106 @@
+"""Data transform slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, span, strong, text
+
+pub def slide_data_transform() -> Slide:
+    return Slide(
+        slug="data-transform",
+        title="Transforming a DataFrame",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Transforming a DataFrame", level=1),
+            paragraph([
+            code("amounts = sales.select(\"amount\")"),
+        ], style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Describe a new result", attributes=[attr("id", "data-transform-title")]),
+                node(NodeKind.SvgDescription, content="A transformation creates a new DataFrame description. An action will request execution.", attributes=[attr("id", "data-transform-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "data-transform-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "14"), attr("width", "492"), attr("height", "348"), attr("rx", "12"), attr("fill", "#e8f2f9"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="sales", style="trial-title", attributes=[attr("x", "32"), attr("y", "57")]),
+                    node(NodeKind.SvgText, content="Original DataFrame", style="trial-note", attributes=[attr("x", "32"), attr("y", "92")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "122"), attr("width", "444"), attr("height", "42"), attr("fill", "#d7e8f6")]),
+                    node(NodeKind.SvgText, content="category", style="trial-code", attributes=[attr("x", "48"), attr("y", "151")]),
+                    node(NodeKind.SvgText, content="amount", style="trial-code", attributes=[attr("x", "376"), attr("y", "151")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "164"), attr("width", "444"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "48"), attr("y", "193")]),
+                    node(NodeKind.SvgText, content="25", style="trial-code", attributes=[attr("x", "394"), attr("y", "193")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "206"), attr("width", "444"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="games", style="trial-code", attributes=[attr("x", "48"), attr("y", "235")]),
+                    node(NodeKind.SvgText, content="40", style="trial-code", attributes=[attr("x", "394"), attr("y", "235")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "248"), attr("width", "444"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "48"), attr("y", "277")]),
+                    node(NodeKind.SvgText, content="15", style="trial-code", attributes=[attr("x", "394"), attr("y", "277")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "290"), attr("width", "444"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="music", style="trial-code", attributes=[attr("x", "48"), attr("y", "319")]),
+                    node(NodeKind.SvgText, content="10", style="trial-code", attributes=[attr("x", "394"), attr("y", "319")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "sales refers to the original DataFrame description")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M500 177H770"), attr("stroke", "#286faf"), attr("stroke-width", "3"), attr("marker-end", "url(#data-transform-arrow)")]),
+                    node(NodeKind.SvgText, content="select(\"amount\")", style="trial-code", attributes=[attr("x", "533"), attr("y", "146")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "784"), attr("y", "14"), attr("width", "516"), attr("height", "348"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="amounts", style="trial-title", attributes=[attr("x", "808"), attr("y", "57")]),
+                    node(NodeKind.SvgText, content="New DataFrame description", style="trial-note", attributes=[attr("x", "808"), attr("y", "92")]),
+                    node(NodeKind.SvgText, content="Project the amount column", style="trial-title", attributes=[attr("x", "808"), attr("y", "156")]),
+                    node(NodeKind.SvgText, content="from the sales input plan", style="trial-note", attributes=[attr("x", "808"), attr("y", "205")]),
+                    node(NodeKind.SvgText, content="No rows processed by select", style="trial-note", attributes=[attr("x", "808"), attr("y", "292")]),
+                    node(NodeKind.SvgText, content="Original unchanged", style="trial-note", attributes=[attr("x", "32"), attr("y", "348")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "select describes a new result")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "514"), attr("y", "238"), attr("width", "254"), attr("height", "122"), attr("rx", "12"), attr("fill", "#f7f0e5"), attr("stroke", "#b79662"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Same name?", style="trial-title", attributes=[attr("x", "536"), attr("y", "272")]),
+                    node(NodeKind.SvgText, content="Rebind sales to", style="trial-note", attributes=[attr("x", "536"), attr("y", "306")]),
+                    node(NodeKind.SvgText, content="the new result", style="trial-note", attributes=[attr("x", "536"), attr("y", "337")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Assignment changes a name, not the original DataFrame")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "data-transform-title data-transform-desc")]),
+            group([
+                paragraph([
+                    strong("Describe a new result"),
+                    span("A transformation creates a new DataFrame description. An action will request execution."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Keep the original in view"),
+                    span("sales refers to the original DataFrame, with category and amount."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Create a new description"),
+                    span("amounts describes a projection of sales. The original stays unchanged; no full copy is implied."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · What if we reuse the name?"),
+                    span("sales = sales.select(\"amount\") rebinds sales to the new DataFrame. It does not edit the old one."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Describe a new result. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("34"),
+        ]),
+        ],
+        notes="""TRIAL NARRATIVE, 3 of 3. Read amounts = sales.select("amount") from right to left. “Take this description of sales. Describe a result with just amount. Give that new DataFrame the Python name amounts.” Pause and ask: “Have we processed those rows yet?” Answer: select itself is a transformation, not an action. The right-hand box deliberately shows a plan description rather than a completed output table. The left-hand rows illustrate the input, not data stored in the DataFrame object.
+The third step is optional discussion: show the complete one-line form verbally, sales = sales.select("amount"). The callout describes rebinding in words. Assignment changes a Python binding, not the original DataFrame. The new plan still depends on the old input description. Immutability does not promise a snapshot of changing external source files. Finish with: “What causes Spark to actually do the work? That is where transformations and actions come in.” The original detailed slides follow during this trial so Danny can compare; the intended eventual transition is Lazy Pandas.
+Source: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.select.html""",
+    )

@@ -1,0 +1,85 @@
+"""Streaming arrival comparison slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_streaming_arrival_comparison() -> Slide:
+    return Slide(
+        slug="streaming-arrival-comparison",
+        title="Micro-batch and Real-time processing",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-arrival-compare-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Micro-batch and Real-time processing", level=1),
+            prose("Follow record C, arriving after processing has started.", style="ss-arrival-lead"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="When a new record can enter the running query", attributes=[attr("id", "ss-ac-title")]),
+                node(NodeKind.SvgDescription, content="Record C arrives at the same point in both timelines: micro-batch holds it for Batch 2 because Batch 1 has fixed input, while Real-time tasks can process C during their ongoing run.", attributes=[attr("id", "ss-ac-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#67747b")]),
+                    ], attributes=[attr("id", "ss-ac-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#a66714")]),
+                    ], attributes=[attr("id", "ss-ac-arrow-wait"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#4b7c35")]),
+                    ], attributes=[attr("id", "ss-ac-arrow-run"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgText, content="Earlier", style="ss-ac-small", attributes=[attr("x", "280"), attr("y", "22")]),
+                node(NodeKind.SvgText, content="Same arrivals · no latency scale", style="ss-ac-caption", attributes=[attr("x", "824"), attr("y", "22"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Later →", style="ss-ac-small", attributes=[attr("x", "1284"), attr("y", "22"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgLine, style="ss-ac-rule", attributes=[attr("x1", "280"), attr("y1", "36"), attr("x2", "1284"), attr("y2", "36")]),
+                node(NodeKind.SvgLine, style="ss-ac-rule", attributes=[attr("x1", "616"), attr("y1", "30"), attr("x2", "616"), attr("y2", "42")]),
+                node(NodeKind.SvgPath, style="ss-ac-wait-arrow", attributes=[attr("d", "M672 86H956Q964 86 964 94V142")]),
+                node(NodeKind.SvgPath, style="ss-ac-arrow", attributes=[attr("d", "M876 184H946")]),
+                node(NodeKind.SvgPath, style="ss-ac-run-arrow", attributes=[attr("d", "M616 296V330")]),
+                node(NodeKind.SvgText, content="Micro-batch", style="ss-ac-mode", attributes=[attr("x", "0"), attr("y", "178")]),
+                node(NodeKind.SvgText, content="New tasks per batch", style="ss-ac-small", attributes=[attr("x", "0"), attr("y", "210")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-record", attributes=[attr("x", "560"), attr("y", "64"), attr("width", "112"), attr("height", "44"), attr("rx", "4")]),
+                node(NodeKind.SvgText, content="Record C", style="ss-ac-record-text", attributes=[attr("x", "616"), attr("y", "93"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, attributes=[attr("x", "748"), attr("y", "51"), attr("width", "244"), attr("height", "28"), attr("fill", "#fafaf8")]),
+                node(NodeKind.SvgText, content="Waits for Batch 2", style="ss-ac-wait-label", attributes=[attr("x", "870"), attr("y", "72"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-batch", attributes=[attr("x", "280"), attr("y", "144"), attr("width", "596"), attr("height", "80"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Batch 1", style="ss-ac-batch-title", attributes=[attr("x", "578"), attr("y", "178"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Processes A and B", style="ss-ac-detail", attributes=[attr("x", "578"), attr("y", "208"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-batch", attributes=[attr("x", "948"), attr("y", "144"), attr("width", "336"), attr("height", "80"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Batch 2", style="ss-ac-batch-title", attributes=[attr("x", "1116"), attr("y", "178"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Processes C", style="ss-ac-detail", attributes=[attr("x", "1116"), attr("y", "208"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Real-time", style="ss-ac-mode", attributes=[attr("x", "0"), attr("y", "358")]),
+                node(NodeKind.SvgText, content="Tasks keep running", style="ss-ac-small", attributes=[attr("x", "0"), attr("y", "390")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-record", attributes=[attr("x", "560"), attr("y", "252"), attr("width", "112"), attr("height", "44"), attr("rx", "4")]),
+                node(NodeKind.SvgText, content="Record C", style="ss-ac-record-text", attributes=[attr("x", "616"), attr("y", "281"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Enters the running tasks", style="ss-ac-run-label", attributes=[attr("x", "704"), attr("y", "281")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-running", attributes=[attr("x", "280"), attr("y", "332"), attr("width", "1004"), attr("height", "64"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="A, B…", style="ss-ac-detail", attributes=[attr("x", "360"), attr("y", "372")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-processing", attributes=[attr("x", "616"), attr("y", "344"), attr("width", "176"), attr("height", "40"), attr("rx", "4")]),
+                node(NodeKind.SvgText, content="Process C", style="ss-ac-process-text", attributes=[attr("x", "704"), attr("y", "372"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="…keep accepting records", style="ss-ac-detail", attributes=[attr("x", "816"), attr("y", "372")]),
+            ], attributes=[attr("viewBox", "0 0 1308 416"), attr("role", "img"), attr("aria-labelledby", "ss-ac-title ss-ac-desc")]),
+        ], style="ss-arrival-compare"),
+            paragraph([
+            text("A micro-batch fixes its input before it runs."),
+            line_break(),
+            span("Real-time tasks keep accepting new records during the run."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("86"),
+        ]),
+        ],
+        notes="""Use the same compatible stateless Kafka query from the preceding Real-time slide. A, B and C label records, not partitions or tasks. Both lanes show the same arrival history. The horizontal positions explain ordering, not benchmark timings.
+
+Start at Batch 1. Spark has chosen a bounded slice containing A and B. C reaches Kafka after that input boundary was fixed, while Batch 1 is still running. C cannot join Batch 1; it waits at the source until a later batch includes it. In this small example that is Batch 2. Admission limits or a backlog can defer it further. The default trigger already starts the next batch as soon as the previous batch finishes; the wait drawn here is not an optional five-second timer.
+
+Now follow the same C on the lower lane. The Real-time tasks are already running and can read the newly available record through the same stateless pipeline. They do not need a new micro-batch and a fresh task set to admit C. Processing, source polling and sink delivery still take time; spare capacity is assumed. Real-time also checkpoints progress periodically, as explained on 72. It does not eliminate every boundary or guarantee zero latency.
+
+The distinction is input admission and task lifetime. Do not say micro-batch writes always wait until the batch ends: some sinks emit while tasks process the bounded slice. This figure also does not claim the original word-count query is supported in every Real-time runtime. Operator and connector support remains version-dependent.
+
+Transition: we have compared how the work runs. Return to the micro-batch word count to explain which result rows the output mode sends to the sink.
+
+Sources checked 20 September 2026: https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers ; https://apache.github.io/spark/streaming/real-time-mode.html#how-real-time-mode-works (in-progress architecture documentation, not a pinned 4.2 support matrix) ; https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts""",
+    )

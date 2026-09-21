@@ -1,0 +1,19 @@
+"""Teaching order for core reference 07."""
+
+from surface import Chapter
+from chapters.references.core.chapter_07.cover import slide_section_7
+from chapters.references.core.chapter_07.data_work import slide_data_work
+from chapters.references.core.chapter_07.spark_connect import slide_spark_connect
+from chapters.references.core.chapter_07.production import slide_production
+from chapters.references.core.chapter_07.glue import slide_glue
+from chapters.references.core.chapter_07.closing import slide_closing
+
+pub def core_reference_07_chapter() -> Chapter:
+    return Chapter(number="7", title="07 / WORKING WITH PYSPARK", first_page=1, slides=[
+        slide_section_7(),
+        slide_data_work(),
+        slide_spark_connect(),
+        slide_production(),
+        slide_glue(),
+        slide_closing(),
+    ])

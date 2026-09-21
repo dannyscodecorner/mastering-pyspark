@@ -1,0 +1,28 @@
+"""Cover slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_section_4() -> Slide:
+    return Slide(
+        slug="section-4",
+        title="Lazy Pandas …",
+        frame=Frame.Composed,
+        styles="slide dark",
+        content=[
+            group([
+            text("04 / LAZY PANDAS"),
+        ], style="eyebrow"),
+            group([
+            span("04", style="chapter-number"),
+            group([
+                heading("Lazy Pandas …", level=1),
+                prose("Pandas? … Lazy? …"),
+            ]),
+        ], style="divider"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("42"),
+        ]),
+        ],
+        notes="",
+    )

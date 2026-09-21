@@ -1,0 +1,97 @@
+"""Join all sales slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, image, node, span, text
+from components import step_rail, step_cues
+
+pub def slide_join_all_sales() -> Slide:
+    steps = [
+        TeachingStep(label="Five sales",
+            heading="Now bring all five sales to the same lookup.",
+            explanation="The lookup has unique product IDs. Four sales can find a product; M1 cannot.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Match product_id",
+            heading="The matching condition is product_id equality.",
+            explanation="B1 gets books and G1 gets games. M1 has no matching product row.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Run INNER",
+            heading="INNER keeps only matching pairs.",
+            explanation="Four rows remain. Their amounts sum to 90.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Rewind · run LEFT",
+            heading="LEFT keeps every sale in this example.",
+            explanation="All five rows remain, totalling 100. M1 has a NULL category.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-all-sales",
+        title="Same inputs. Different rules.",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide boat-lesson-slide",
+        content=[
+            group([
+            text("06 / JOINS"),
+        ], style="eyebrow"),
+            heading("Same inputs. Different rules.", level=1),
+            group([
+            step_rail(steps),
+            group([
+                image("assets/join-station-scene.png", "A canal passing through a central matching station.", style="boat-scenery"),
+                group([
+                    text("Sales · 5 rows · total 100"),
+                ], style="station-input"),
+                group([
+                    text("Match on "),
+                    code("product_id"),
+                    node(NodeKind.Small, content="B1 → books · G1 → games · X1 → accessories"),
+                ], style="station-name"),
+                group([
+                    text("Joined result"),
+                ], style="station-output"),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s1 · B1 · 25", style="barge-cargo"),
+                    span("category = books", style="barge-category"),
+                ], style="record-barge barge-B1", attributes=[attr("data-sale", "s1"), attr("data-category", "books"), attr("style", "--row:0")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s2 · G1 · 40", style="barge-cargo"),
+                    span("category = games", style="barge-category"),
+                ], style="record-barge barge-G1", attributes=[attr("data-sale", "s2"), attr("data-category", "games"), attr("style", "--row:1")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s3 · B1 · 15", style="barge-cargo"),
+                    span("category = books", style="barge-category"),
+                ], style="record-barge barge-B1", attributes=[attr("data-sale", "s3"), attr("data-category", "books"), attr("style", "--row:2")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s4 · M1 · 10", style="barge-cargo"),
+                    span("category = NULL", style="barge-category"),
+                ], style="record-barge barge-M1", attributes=[attr("data-sale", "s4"), attr("data-category", ""), attr("style", "--row:3")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s5 · B1 · 10", style="barge-cargo"),
+                    span("category = books", style="barge-category"),
+                ], style="record-barge barge-B1", attributes=[attr("data-sale", "s5"), attr("data-category", "books"), attr("style", "--row:4")]),
+                group([
+                    text("M1 has no match"),
+                ], style="station-missing"),
+            ], style="boat-scene station-scene"),
+            group([
+                span("Same five sales. One unique product lookup.", style="whole-rule"),
+                node(NodeKind.Strong, style="whole-count", attributes=[attr("aria-live", "polite")]),
+            ], style="boat-outcome whole-outcome"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson boat-lesson boat-whole", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("2"),
+        ]),
+        ],
+        notes="Carry the same s4/M1/10 boat from the close-up. One canal, two alternative runs: do not imply the output splits simultaneously into inner and left. Next runs INNER; next rewinds the same inputs and runs LEFT. Join choice changes the population of your dataset: totals 90 versus 100 are analytically consequential. This left join preserves five rows because right keys are unique; duplicate matches are explored later. Ordering and sequential boat movement are illustrative, not actual Spark execution. Input data is never deleted.",
+    )

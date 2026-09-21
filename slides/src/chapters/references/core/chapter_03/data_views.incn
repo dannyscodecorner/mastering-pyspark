@@ -1,0 +1,109 @@
+"""Data views slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_data_views() -> Slide:
+    return Slide(
+        slug="data-views",
+        title="Three ways to represent data",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Three ways to represent data", level=1),
+            prose("The same four sales records, through three different APIs.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Same records, different interfaces", attributes=[attr("id", "data-views-title")]),
+                node(NodeKind.SvgDescription, content="Watch what changes when we add structure to the same data.", attributes=[attr("id", "data-views-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "data-views-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "8"), attr("width", "410"), attr("height", "366"), attr("rx", "12"), attr("fill", "#f2edf5"), attr("stroke", "#b398bd"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="RDD", style="trial-title", attributes=[attr("x", "32"), attr("y", "51")]),
+                    node(NodeKind.SvgText, content="Python tuples", style="trial-note", attributes=[attr("x", "32"), attr("y", "83")]),
+                    node(NodeKind.SvgText, content="(\"books\", 25)", style="trial-code", attributes=[attr("x", "32"), attr("y", "143")]),
+                    node(NodeKind.SvgText, content="(\"games\", 40)", style="trial-code", attributes=[attr("x", "32"), attr("y", "188")]),
+                    node(NodeKind.SvgText, content="(\"books\", 15)", style="trial-code", attributes=[attr("x", "32"), attr("y", "233")]),
+                    node(NodeKind.SvgText, content="(\"music\", 10)", style="trial-code", attributes=[attr("x", "32"), attr("y", "278")]),
+                    node(NodeKind.SvgText, content="Elements + your functions", style="trial-note", attributes=[attr("x", "32"), attr("y", "346")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "RDD: tuples and functions")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "448"), attr("y", "8"), attr("width", "412"), attr("height", "366"), attr("rx", "12"), attr("fill", "#e8f2f9"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="DataFrame", style="trial-title", attributes=[attr("x", "472"), attr("y", "51")]),
+                    node(NodeKind.SvgText, content="Named columns + types", style="trial-note", attributes=[attr("x", "472"), attr("y", "83")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "472"), attr("y", "110"), attr("width", "364"), attr("height", "42"), attr("fill", "#d7e8f6")]),
+                    node(NodeKind.SvgText, content="category", style="trial-code", attributes=[attr("x", "488"), attr("y", "139")]),
+                    node(NodeKind.SvgText, content="amount", style="trial-code", attributes=[attr("x", "736"), attr("y", "139")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "472"), attr("y", "152"), attr("width", "364"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "488"), attr("y", "181")]),
+                    node(NodeKind.SvgText, content="25", style="trial-code", attributes=[attr("x", "754"), attr("y", "181")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "472"), attr("y", "194"), attr("width", "364"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="games", style="trial-code", attributes=[attr("x", "488"), attr("y", "223")]),
+                    node(NodeKind.SvgText, content="40", style="trial-code", attributes=[attr("x", "754"), attr("y", "223")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "472"), attr("y", "236"), attr("width", "364"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "488"), attr("y", "265")]),
+                    node(NodeKind.SvgText, content="15", style="trial-code", attributes=[attr("x", "754"), attr("y", "265")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "472"), attr("y", "278"), attr("width", "364"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="music", style="trial-code", attributes=[attr("x", "488"), attr("y", "307")]),
+                    node(NodeKind.SvgText, content="10", style="trial-code", attributes=[attr("x", "754"), attr("y", "307")]),
+                    node(NodeKind.SvgText, content="Spark understands the columns", style="trial-note", attributes=[attr("x", "472"), attr("y", "346")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "DataFrame: rows with a schema")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "890"), attr("y", "8"), attr("width", "410"), attr("height", "366"), attr("rx", "12"), attr("fill", "#f7f0e5"), attr("stroke", "#b79662"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Dataset[Sale]", style="trial-title", attributes=[attr("x", "914"), attr("y", "51")]),
+                    node(NodeKind.SvgText, content="Typed objects · Scala example", style="trial-note", attributes=[attr("x", "914"), attr("y", "83")]),
+                    node(NodeKind.SvgText, content="Sale(\"books\", 25)", style="trial-code", attributes=[attr("x", "914"), attr("y", "143")]),
+                    node(NodeKind.SvgText, content="Sale(\"games\", 40)", style="trial-code", attributes=[attr("x", "914"), attr("y", "188")]),
+                    node(NodeKind.SvgText, content="Sale(\"books\", 15)", style="trial-code", attributes=[attr("x", "914"), attr("y", "233")]),
+                    node(NodeKind.SvgText, content="Sale(\"music\", 10)", style="trial-code", attributes=[attr("x", "914"), attr("y", "278")]),
+                    node(NodeKind.SvgText, content="Scala / Java, not a Python API", style="trial-note", attributes=[attr("x", "914"), attr("y", "346")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Dataset: typed objects in Scala or Java")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "data-views-title data-views-desc")]),
+            group([
+                paragraph([
+                    strong("Same records, different interfaces"),
+                    span("Watch what changes when we add structure to the same data."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Start with ordinary elements"),
+                    span("An RDD can hold Python tuples. Your functions work with those elements."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Give the columns names and types"),
+                    span("A DataFrame exposes a schema and expressions that Spark can analyse and optimise."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Typed objects with Dataset"),
+                    span("A Dataset represents records as typed objects through the Scala and Java APIs."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Same records, different interfaces. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("32"),
+        ]),
+        ],
+        notes="""TRIAL NARRATIVE, 1 of 3. The original slides remain immediately after this sequence.
+Start with the RDD: “These are four sales. If you know Python, you can read these tuples.” Ask what the two values mean before revealing the DataFrame. “Now we tell Spark: this is category, this is amount. The names and types belong to a schema; we can express operations on columns.” Reveal Dataset last: “In Scala and Java, we can also express each sale as a typed object. You may see this in Spark documentation; it is not an additional Python API to learn.” Return attention to the centre: “For this course we will mainly use DataFrames.”
+These are representations of the same illustrative records, not conversions that must occur in sequence. RDDs can contain many kinds of elements, not just tuples; Spark knows RDD dependencies, partitions and operations, but does not infer a SQL schema from arbitrary Python functions. Dataset objects can combine typed operations with Spark SQL; they are not inherently more optimisable than DataFrames. In Scala a DataFrame is Dataset[Row]. Dataset code assumes case class Sale(category: String, amount: Long). Deeper material remains in the following original RDD and Dataset slides.
+Sources: https://spark.apache.org/docs/latest/rdd-programming-guide.html ; https://spark.apache.org/docs/latest/sql-programming-guide.html""",
+    )

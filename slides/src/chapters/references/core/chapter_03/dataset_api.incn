@@ -1,0 +1,56 @@
+"""Dataset api slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_dataset_api() -> Slide:
+    return Slide(
+        slug="dataset-api",
+        title="Dataset API",
+        frame=Frame.Composed,
+        styles="slide core-slide migrated",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Dataset API", level=1),
+            prose("Typed objects with Spark SQL’s execution engine", style="subtitle"),
+            group([
+            group([
+                span("SCALA EXAMPLE", style="concept-label"),
+                node(NodeKind.Preformatted, children=[
+                    code("""case class Sale(category: String,
+                amount: Long)
+
+val sales: Dataset[Sale]"""),
+                ]),
+                paragraph([
+                    text("Each element is exposed as a "),
+                    code("Sale"),
+                    text("."),
+                ]),
+            ], style="type-example"),
+            group([
+                heading("Objects at the API boundary", level=2),
+                prose("Encoders map typed objects to Spark SQL’s internal representation."),
+                heading("Types checked by the compiler", level=2),
+                paragraph([
+                    text("Available in Scala and Java."),
+                    line_break(),
+                    text("Python uses the DataFrame API."),
+                ]),
+            ], style="dataset-explanation"),
+        ], style="dataset-layout"),
+            paragraph([
+            text("In Scala, "),
+            code("DataFrame"),
+            text(" is an alias for "),
+            code("Dataset[Row]"),
+            text("."),
+        ], style="takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("37"),
+        ]),
+        ],
+        notes="Keep this short as in the original workshop. The Scala snippet is a type illustration, not a complete runnable application. Typed operations offer compile-time checking; string-based column expressions can still fail at analysis/runtime, so avoid claiming every Dataset operation is compile-time safe. In Java the corresponding DataFrame representation is Dataset<Row>. There is no typed Dataset[T] API in PySpark. Bridge: what if our elements are rows and the structure is described by a schema?  Original workshop slides 15–21. Updated against https://spark.apache.org/docs/latest/rdd-programming-guide.html and https://spark.apache.org/docs/latest/sql-programming-guide.html . ",
+    )

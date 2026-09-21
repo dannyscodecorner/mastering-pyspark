@@ -1,0 +1,48 @@
+"""Immutability slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, emphasis, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_immutability() -> Slide:
+    return Slide(
+        slug="immutability",
+        title="Immutability",
+        frame=Frame.Composed,
+        styles="slide core-slide migrated",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Immutability", level=1),
+            group([
+            span("THE ORIGINAL DATAFRAME DOES NOT CHANGE", style="concept-label"),
+            paragraph([
+                text("A transformation describes"),
+                line_break(),
+                text("a "),
+                emphasis("new"),
+                text(" DataFrame."),
+            ]),
+        ], style="immutability-definition"),
+            group([
+            code_block("""sales = spark.read.parquet("data/sales/")
+
+amounts = sales.select("amount")"""),
+            group([
+                paragraph([
+                    code("sales"),
+                    text(" still describes both columns."),
+                ]),
+                paragraph([
+                    code("amounts"),
+                    text(" describes the selected column."),
+                ]),
+            ]),
+        ], style="immutable-example"),
+            prose("A new DataFrame does not mean Spark has copied all the data.", style="takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("40"),
+        ]),
+        ],
+        notes="Preserve the original definition and transformation story, but make it concrete. Two names make it easy to see that the input remains usable. Immutable transformations support reasoning about branches and recomputation. Do not claim that source files are immutable snapshots, that every setting on the Python object is immutable, or that a transformation eagerly copies rows. Next: use the exact reassignment pattern from the original slide to explain why a single variable name can obscure this.  Original workshop slides 15–21. Updated against https://spark.apache.org/docs/latest/rdd-programming-guide.html and https://spark.apache.org/docs/latest/sql-programming-guide.html . ",
+    )

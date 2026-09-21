@@ -1,0 +1,71 @@
+"""Pyspark types slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code_block, group, heading, node, paragraph, span, strong, text
+
+pub def slide_pyspark_types() -> Slide:
+    return Slide(
+        slug="pyspark-types",
+        title="Exercise 3 · Validate the sales",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 3 · Validate the sales", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Parse amounts as decimals and timestamps as UTC."),
+                    node(NodeKind.ListItem, content="Keep the raw values and record a rejection reason for invalid or missing values."),
+                    node(NodeKind.ListItem, content="Separate accepted and rejected rows; reconcile them with the input."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Expected rejected sales", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="Rejected sale", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Reason", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s6"),
+                            node(NodeKind.Cell, content="Invalid amount"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s7"),
+                            node(NodeKind.Cell, content="Missing amount"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s8"),
+                            node(NodeKind.Cell, content="Invalid timestamp"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                paragraph([
+                    strong("8"),
+                    text(" = "),
+                    strong("5"),
+                    text(" accepted + "),
+                    strong("3"),
+                    text(" rejected"),
+                ], style="ho-reconciliation"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""amount = F.expr("try_cast(amount_raw AS DECIMAL(12, 2))")
+sold_at = F.try_to_timestamp("sold_at_raw", F.lit("yyyy-MM-dd HH:mm:ss"))"""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("109"),
+        ]),
+        ],
+        notes="The exercise clean_sales function normalizes keys, parses the two fields and records the first rejection reason. It also checks missing/empty product keys. Invalid amount conversion should produce null, not zero. Preserve raw fields for inspection. M1 is a well-formed key with no lookup match and remains accepted; it is not one of the rejected records. Use the lab functions and checks to review the result. https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.functions.try_to_timestamp.html",
+    )

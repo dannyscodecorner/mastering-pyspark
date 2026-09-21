@@ -1,0 +1,80 @@
+"""Roadmap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_roadmap() -> Slide:
+    return Slide(
+        slug="roadmap",
+        title="Agenda",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("DCC / SPARK TRAINING"),
+        ], style="eyebrow"),
+            heading("Agenda", level=1),
+            group([
+            node(NodeKind.Link, children=[
+                span("01"),
+                group([
+                    heading("Spark vs. Python", level=2),
+                    prose("How Python and Spark work together"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-1"), attr("style", "--item-accent:var(--s1)")]),
+            node(NodeKind.Link, children=[
+                span("02"),
+                group([
+                    heading("Introducing Spark", level=2),
+                    prose("A brief history of Spark"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#history-intro"), attr("style", "--item-accent:var(--s2)")]),
+            node(NodeKind.Link, children=[
+                span("03"),
+                group([
+                    heading("Spark’s Core Abstractions", level=2),
+                    prose("Putting data into perspective"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-3"), attr("style", "--item-accent:var(--s3)")]),
+            node(NodeKind.Link, children=[
+                span("04"),
+                group([
+                    heading("Lazy Pandas …", level=2),
+                    prose("Transformations and actions"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-4"), attr("style", "--item-accent:var(--s4)")]),
+            node(NodeKind.Link, children=[
+                span("05"),
+                group([
+                    heading("Spark Execution Model", level=2),
+                    prose("Query planning and distributed execution"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-5"), attr("style", "--item-accent:var(--s5)")]),
+            node(NodeKind.Link, children=[
+                span("06"),
+                group([
+                    heading("Batch vs. Streaming", level=2),
+                    prose("What changes when data keeps arriving"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-6"), attr("style", "--item-accent:var(--s6)")]),
+            node(NodeKind.Link, children=[
+                span("07"),
+                group([
+                    heading("Working with PySpark", level=2),
+                    prose("Data preparation, Spark Connect and deployment"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-7"), attr("style", "--item-accent:var(--s7)")]),
+        ], style="roadmap"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("03"),
+        ]),
+        ],
+        notes="",
+    )

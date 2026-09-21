@@ -1,0 +1,46 @@
+"""Query evidence slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_query_evidence() -> Slide:
+    return Slide(
+        slug="query-evidence",
+        title="Spark UI in AWS Glue",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("09 / SPARK IN AWS GLUE"),
+        ], style="eyebrow"),
+            heading("Spark UI in AWS Glue", level=1),
+            prose("A dedicated Glue monitoring walkthrough — to build later", style="subtitle"),
+            node(NodeKind.OrderedList, children=[
+            node(NodeKind.ListItem, children=[
+                span("01"),
+                text("Enable event logging and find a Glue job run"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("02"),
+                text("Open the serverless Spark UI from the Glue console"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("03"),
+                text("Connect SQL plans to stages, tasks and shuffle metrics"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("04"),
+                text("Investigate skew, retries and repeated work"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("05"),
+                text("Decide what to change from the evidence"),
+            ]),
+        ], style="topic-list"),
+            span("CONTENT SKELETON", style="draft-label"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("121"),
+        ]),
+        ],
+        notes="Deferred from former slide39. Dedicated monitoring subsection after Spark in AWS Glue. Use the same query when we build this: inspect runtime version and logging setup, find the run, read execution evidence, compare AQE plans and investigate skew/retries. Not part of section05. Glue3+ standard event logs support console UI; permissions and runtime-specific limits must be checked when implementing. Source: https://docs.aws.amazon.com/glue/latest/dg/monitor-spark-ui.html",
+    )

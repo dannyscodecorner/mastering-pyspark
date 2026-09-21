@@ -1,0 +1,68 @@
+"""Streaming checkpointing slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, span, text
+
+pub def slide_streaming_checkpointing() -> Slide:
+    return Slide(
+        slug="streaming-checkpointing",
+        title="Checkpointing a streaming query",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-checkpoint-overview",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Checkpointing a streaming query", level=1),
+            node(NodeKind.Preformatted, children=[
+            code(".option(\"checkpointLocation\", \"checkpoints/word-counts\")"),
+        ], style="language-python ss-checkpoint-option"),
+            paragraph([
+            text("Set this on "),
+            code("writeStream"),
+            text(" before "),
+            code("start()"),
+            text(". Local demonstration path shown."),
+        ], style="ss-checkpoint-code-note"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The information Spark retains for recovery", style="sr-only"),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="What Spark saves", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Why it matters after a restart", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Source progress", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Recover the input range that needs processing."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Completed batches", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Know which work is already committed."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Operator state", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Restore the counts or other state the query needs next."),
+                ]),
+            ]),
+        ], style="ss-checkpoint-contents"),
+            paragraph([
+            text("Use durable storage, with one checkpoint location per query."),
+            line_break(),
+            span("Restart with that same location and a compatible query."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("100"),
+        ]),
+        ],
+        notes="""Connect the explicit checkpointLocation on the previous writer example to the word-count state the audience already knows. A checkpoint directory contains input progress logs, completed-batch records, operator state for stateful queries, and query metadata such as query identity. Those pieces work together for recovery. It is not a copy of every source record or a backup of the destination, nor a serialized Python process. Stateless queries still need progress tracking. This is Structured Streaming query checkpointing, distinct from DataFrame.checkpoint() for truncating a batch execution plan and from cache/persist.
+
+Use durable, supported shared storage in a cluster. The relative path is only for the local classroom example. Keep it stable across restarts and exclusive to one logical query; never run two active queries against it. A new or deleted checkpoint means a fresh query, which can replay input according to the source's starting rules while old sink output remains. Do not teach checkpoint deletion as a routine fix. Keep required source data available for recovery.
+
+Reusing a checkpoint requires a compatible query. Changing grouping keys, aggregates, state schemas, sources or sinks can require a migration or a new checkpoint; supported changes depend on the release and connector. The checkpoint does not deploy or restart the application for you. Relaunch the application and reconstruct the compatible query with the same location. Real-time mode also checkpoints progress periodically; the next example specifically follows micro-batch recovery.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#recovering-from-failures-with-checkpointing
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#recovery-semantics-after-changes-in-a-streaming-query
+https://docs.databricks.com/aws/en/structured-streaming/checkpoints""",
+    )

@@ -1,0 +1,49 @@
+"""Streaming operation slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, node, paragraph, prose, span, text
+
+pub def slide_streaming_operation() -> Slide:
+    return Slide(
+        slug="streaming-operation",
+        title="Managing a streaming query",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Managing a streaming query", level=1),
+            group([
+            group([
+                code("lines.isStreaming"),
+                prose("Is this an unbounded DataFrame?"),
+            ]),
+            group([
+                code("query.isActive"),
+                prose("Is the query still running?"),
+            ]),
+            group([
+                code("query.lastProgress"),
+                prose("What happened in the most recent trigger?"),
+            ]),
+            group([
+                code("query.stop()"),
+                prose("Stop this running query."),
+            ]),
+            group([
+                code("query.awaitTermination()"),
+                prose("Keep the application waiting while it runs."),
+            ]),
+        ], style="ss-management"),
+            paragraph([
+            text("Keep the query handle returned by "),
+            code("start()"),
+            text("."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("102"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.3 Managing and Converting Streams, recording around11:00. In PySpark, isStreaming, isActive and lastProgress are properties; stop and awaitTermination are methods. lastProgress can be None before a progress report is available. These are independent controls, not a script to execute sequentially: awaitTermination is normally used instead of immediately stopping. Stop ends this run; it does not mean the stream has a natural end. A compatible restart uses the same checkpoint location, as just shown. Application deployment and production supervision remain later operational topics. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html API reference: https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/query_management.html",
+    )

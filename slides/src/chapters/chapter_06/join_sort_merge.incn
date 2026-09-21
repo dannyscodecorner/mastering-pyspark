@@ -1,0 +1,196 @@
+"""Join sort merge slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, prose, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_sort_merge() -> Slide:
+    steps = [
+        TeachingStep(label="After the shuffle",
+            heading="The shuffle has brought the relevant inputs together.",
+            explanation="We now look inside one task, keeping the same sales and product records.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Sort the inputs",
+            heading="Sort each input within its join partition.",
+            explanation="This orders local keys; it does not globally sort the DataFrame.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Match G1",
+            heading="Equal keys produce a joined row.",
+            explanation="The task advances through the sorted inputs instead of testing every possible pair.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Keep unmatched M1",
+            heading="The join type still controls unmatched rows.",
+            explanation="Sorting costs CPU and may use disk when the working data exceeds memory.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-sort-merge",
+        title="Sort-merge joins",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-mechanics ",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Sort-merge joins", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("sales.join(products, on=\"product_id\", how=\"left\")"),
+                ], style="language-python"),
+                span("The same five sales and three products"),
+            ], style="jm-query"),
+            group([
+                node(NodeKind.Aside, children=[
+                    heading("After the shuffle", level=2),
+                    group([
+                        node(NodeKind.Strong, children=[
+                            text("Worker A "),
+                            node(NodeKind.Small, content="partition 0"),
+                        ]),
+                        paragraph([
+                            text("Sales "),
+                            node(NodeKind.Bold, content="B1"),
+                            text(" / 25, 15, 10"),
+                        ]),
+                        paragraph([
+                            text("Products "),
+                            node(NodeKind.Bold, content="B1"),
+                            text(" / books"),
+                        ]),
+                    ], style="jm-mini-worker"),
+                    group([
+                        node(NodeKind.Strong, children=[
+                            text("Worker B "),
+                            node(NodeKind.Small, content="partition 1"),
+                        ]),
+                        paragraph([
+                            text("Sales "),
+                            node(NodeKind.Bold, content="G1"),
+                            text(" / 40, "),
+                            node(NodeKind.Bold, content="M1"),
+                            text(" / 10"),
+                        ]),
+                        paragraph([
+                            text("Products "),
+                            node(NodeKind.Bold, content="G1"),
+                            text(" / games"),
+                        ]),
+                        span("Follow this join task", style="jm-task-focus"),
+                    ], style="jm-mini-worker jm-selected"),
+                    group([
+                        node(NodeKind.Strong, children=[
+                            text("Worker C "),
+                            node(NodeKind.Small, content="partition 2"),
+                        ]),
+                        prose("No sales"),
+                        paragraph([
+                            text("Products "),
+                            node(NodeKind.Bold, content="X1"),
+                            text(" / accessories"),
+                        ]),
+                    ], style="jm-mini-worker"),
+                ], style="jm-cluster", attributes=[attr("aria-label", "The same shuffled join partitions")]),
+                group([
+                    group([
+                        heading("Inside Worker B’s join task", level=2),
+                        span("Local work on partition 1"),
+                    ], style="jm-task-heading"),
+                    group([
+                        group([
+                            heading("Sales partition", level=3),
+                            group([
+                                span("product_id"),
+                                span("amount"),
+                            ], style="jm-table-label"),
+                            group([
+                                group([
+                                    span("G1"),
+                                    span("40"),
+                                ], style="jm-record jm-games jm-sort-g1"),
+                                group([
+                                    span("M1"),
+                                    span("10"),
+                                ], style="jm-record jm-missing jm-sort-m1"),
+                            ], style="jm-sort-rows"),
+                            prose("Arrival order is arbitrary.", style="jm-sort-before jm-only jm-p0"),
+                            paragraph([
+                                text("Ordered by "),
+                                code("product_id"),
+                            ], style="jm-sort-after jm-after-1"),
+                        ], style="jm-input-sales"),
+                        group([
+                            heading("Products partition", level=3),
+                            group([
+                                span("product_id"),
+                                span("category"),
+                            ], style="jm-table-label"),
+                            group([
+                                span("G1"),
+                                span("games"),
+                            ], style="jm-record jm-games jm-sort-product"),
+                            prose("One product row is already ordered.", style="jm-after-1"),
+                        ], style="jm-input-products"),
+                        group([
+                            heading("Joined rows", level=3),
+                            group([
+                                text("What happens after"),
+                                line_break(),
+                                text("the records arrive?"),
+                            ], style="jm-output-placeholder jm-until-2"),
+                            group([
+                                group([
+                                    span("G1"),
+                                    span("40"),
+                                    span("games"),
+                                ], style="jm-record jm-games jm-sort-result-g1 jm-after-2"),
+                                group([
+                                    span("M1"),
+                                    span("10"),
+                                    span("NULL"),
+                                ], style="jm-record jm-missing jm-sort-result-m1 jm-after-3"),
+                            ], style="jm-result-rows"),
+                        ], style="jm-local-output"),
+                    ], style="jm-local-columns"),
+                    group([
+                        prose("Both inputs are local. Their keys still need to be put in order.", style="jm-only jm-p0"),
+                        prose("The task can now advance through the two ordered inputs.", style="jm-only jm-p1"),
+                        paragraph([
+                            node(NodeKind.Bold, content="G1 = G1", style="jm-key"),
+                            node(NodeKind.Span, children=[
+                                text("Emit the sale with "),
+                                strong("games"),
+                                text(", then advance the sales input."),
+                            ]),
+                        ], style="jm-only jm-p2"),
+                        paragraph([
+                            node(NodeKind.Bold, content="M1 has no match", style="jm-key jm-missing"),
+                            node(NodeKind.Span, children=[
+                                text("The products input is exhausted. The left join retains the sale with "),
+                                strong("NULL"),
+                                text("."),
+                            ]),
+                        ], style="jm-only jm-p3 jm-last"),
+                    ], style="jm-match-explanation"),
+                ], style="jm-local-task"),
+            ], style="jm-workbench"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson jm-lesson jm-sort", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("65"),
+        ]),
+        ],
+        notes="""Continue the same equality left join and the exact partition allocation from the approved shuffle story. Partition 0 on A has three B1 sales and B1/books; partition 1 on B has G1/40 and M1/10 with G1/games; partition 2 on C contains only X1/accessories. The detail follows B because it contains two different sales keys. Show M1 before G1 as one possible arrival order; arrival order was never guaranteed by the earlier diagram.
+
+First put both inputs into key order. The single product row is trivially ordered, so only the sales input visibly reorders in this tiny example. Do not invent extra product records just to make the animation bigger. Then G1 matches G1: output G1/40/games. Advance the sales stream to M1; the product stream is exhausted. Because the user's logical join is left outer, output M1/10/NULL. Worker A separately emits the three B1/books sales, and C emits none. Duplicate matching keys require handling the matching groups and may produce multiple output rows; they are not silently deduplicated. The full join still emits five rows totaling 100. Our presentation order is explanatory, not a statement about global task scheduling.
+
+SortMergeJoin requires ordered keys and compatible child distributions; planning can insert local Sort and Exchange operators when required, or reuse suitable existing ordering/distribution. A local sort is not a global DataFrame orderBy. Sort operations can spill and incur CPU/disk work. Do not call this always Spark's default or promise that it is always slower than hashing. The plan and placement are illustrative, not runtime captures.
+Sources: https://spark.apache.org/docs/latest/sql-performance-tuning.html ; https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/joins/SortMergeJoinExec.scala""",
+    )

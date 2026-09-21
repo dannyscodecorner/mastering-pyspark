@@ -1,0 +1,59 @@
+"""Streaming conversion slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, paragraph, prose, span, text
+
+pub def slide_streaming_conversion() -> Slide:
+    return Slide(
+        slug="streaming-conversion",
+        title="From a batch DataFrame to a streaming DataFrame",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-code-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("From a batch DataFrame to a streaming DataFrame", level=1),
+            group([
+            group([
+                heading("Batch", level=2),
+                code_block("static_lines = spark.read.text(\"data/words\")", style="language-python"),
+            ]),
+            group([
+                heading("Streaming", level=2),
+                code_block("lines = spark.readStream.text(\"data/words\")", style="language-python"),
+            ]),
+        ], style="ss-readers"),
+            group([
+            code_block("""from pyspark.sql import functions as F
+
+counts = (
+    lines
+    .select(
+        F.explode(F.split("value", " "))
+        .alias("word")
+    )
+    .groupBy("word")
+    .count()
+)""", style="language-python"),
+            group([
+                heading("The same word-count query", level=2),
+                paragraph([
+                    text("Each text line is a row in the "),
+                    code("value"),
+                    text(" column."),
+                ]),
+                prose("Split the line into words, then group and count them."),
+                paragraph([
+                    text("For the batch version, use "),
+                    code("static_lines"),
+                    text(" in the same pipeline."),
+                ], style="ss-small"),
+            ]),
+        ], style="ss-conversion-body"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("78"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.3 Managing and Converting Streams, slides2–4 and recording around03:00. Preserve the static/read versus streaming/readStream comparison and shared transformations. SparkSession spark is assumed from the earlier course setup. data/words contains prepared plain text files, each with the exact lines from the preceding word-count example. Text input has the fixed value string column, so no schema inference example is needed. Add each new file atomically and leave earlier files unchanged. For this controlled example words are separated by single spaces; this is not a general text tokenizer. Use static_lines for a bounded run and lines for a streaming run. Not every batch transformation has an equivalent supported streaming combination. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html API reference: https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamReader.text.html Prepared input files and replay instructions: data/streaming-example.md.",
+    )

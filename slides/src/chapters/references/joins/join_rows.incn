@@ -1,0 +1,157 @@
+"""Join rows slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, node, paragraph, rich_heading, span, text
+from components import step_rail, step_cues
+
+pub def slide_join_rows() -> Slide:
+    steps = [
+        TeachingStep(label="Two datasets",
+            heading="We want to enrich sales with product categories.",
+            explanation="For example, B1 links a sale to books. The lookup has one row per product_id.",
+            cue_key="", numbered=false),
+        TeachingStep(label="One missing match",
+            heading="Sale s4 exists, but its product M1 is missing from the lookup.",
+            explanation="Pause: should we omit the sale, or keep it without a category?",
+            cue_key="", numbered=false),
+        TeachingStep(label="INNER",
+            heading="INNER keeps only sales with a matching product.",
+            explanation="s4 is absent from the result. The source sales data is unchanged.",
+            cue_key="", numbered=false),
+        TeachingStep(label="LEFT",
+            heading="LEFT keeps every sale, including s4.",
+            explanation="Only the missing product category becomes NULL. Next, watch these same five sales pass through both rules.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-rows",
+        title="Add a category to each sale",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide boat-lesson-slide",
+        content=[
+            group([
+            text("06 / JOINS"),
+        ], style="eyebrow"),
+            heading("Add a category to each sale", level=1),
+            group([
+            step_rail(steps),
+            group([
+                paragraph([
+                    text("Our sales have a "),
+                    code("product_id"),
+                    text(". The product lookup tells us its "),
+                    code("category"),
+                    text("."),
+                ], style="context-goal"),
+                group([
+                    group([
+                        rich_heading([
+                            text("Sales "),
+                            node(NodeKind.Small, content="one row per sale"),
+                        ], level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="sale_id"),
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s1"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="25"),
+                                ], attributes=[attr("class", "")]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s2"),
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="40"),
+                                ], attributes=[attr("class", "")]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s3"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="15"),
+                                ], attributes=[attr("class", "")]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s4"),
+                                    node(NodeKind.Cell, content="M1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="context-missing"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s5"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], attributes=[attr("class", "")]),
+                            ]),
+                        ]),
+                    ], style="context-sales"),
+                    group([
+                        span("Match on"),
+                        code("product_id"),
+                        span("→", style="context-arrow"),
+                        paragraph([
+                            node(NodeKind.Bold, content="M1"),
+                            text(" has no match"),
+                        ], style="context-no-match"),
+                    ], style="context-key"),
+                    group([
+                        rich_heading([
+                            text("Products "),
+                            node(NodeKind.Small, content="one row per product"),
+                        ], level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="books"),
+                                ]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="games"),
+                                ]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="X1"),
+                                    node(NodeKind.Cell, content="accessories"),
+                                ]),
+                            ]),
+                        ]),
+                        paragraph([
+                            text("What should happen to sale "),
+                            node(NodeKind.Bold, content="s4"),
+                            text("?"),
+                        ], style="context-question"),
+                    ], style="context-products"),
+                ], style="context-inputs"),
+                group([
+                    group([
+                        node(NodeKind.Bold, content="INNER"),
+                        span("Omit s4 from the result."),
+                    ], style="context-inner"),
+                    group([
+                        node(NodeKind.Bold, content="LEFT"),
+                        span("Keep s4; its category is NULL."),
+                        code("s4 | M1 | 10 | NULL"),
+                    ], style="context-left"),
+                ], style="context-answer"),
+            ], style="context-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson boat-lesson join-context", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("1"),
+        ]),
+        ],
+        notes="Establish the business task before the metaphor: sales records need categories from a product lookup. Read the three sales fields and the two product fields. Each product ID is unique in this lookup. B1 maps to books; G1 maps to games. Reveal the unmatched M1 sale and ask the audience what should happen to it. INNER omits it from output; LEFT retains all its original values and supplies NULL for category. These exact records become boats on the next slide; the boats represent rows, not Spark's physical execution.",
+    )

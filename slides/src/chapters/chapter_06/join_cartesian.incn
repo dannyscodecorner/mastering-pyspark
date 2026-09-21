@@ -1,0 +1,211 @@
+"""Join cartesian slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, prose, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_cartesian() -> Slide:
+    steps = [
+        TeachingStep(label="Input partitions",
+            heading="A CartesianProduct plan works on pairs of input partitions.",
+            explanation="Here the original sales and products each have three input partitions.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Partition pairs",
+            heading="Three sales partitions × three products partitions gives nine tasks.",
+            explanation="The tasks evaluate different partition pairs; the same input can be read by several tasks.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Inside one task",
+            heading="This task emits every pair from its two input partitions.",
+            explanation="These are the requested cross-join results, including unequal product IDs.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Complete result",
+            heading="The complete result contains 5 × 3 = 15 rows.",
+            explanation="For larger inputs, the candidate work and cross-join output grow as N × M.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-cartesian",
+        title="Cartesian product joins",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-mechanics ",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Cartesian product joins", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("sales.crossJoin(products)"),
+                ], style="language-python"),
+                span("This example requests every sale–product pair"),
+            ], style="jm-query"),
+            group([
+                group([
+                    heading("Every sales partition meets every products partition", level=2),
+                    node(NodeKind.Table, children=[
+                        node(NodeKind.TableHead, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell),
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Products P0"),
+                                    node(NodeKind.Small, content="G1 / games"),
+                                ]),
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Products P1"),
+                                    node(NodeKind.Small, content="X1 / accessories"),
+                                ]),
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Products P2"),
+                                    node(NodeKind.Small, content="B1 / books"),
+                                ]),
+                            ]),
+                        ]),
+                        node(NodeKind.TableBody, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Sales P0"),
+                                    node(NodeKind.Small, children=[
+                                        text("B1 / 25"),
+                                        line_break(),
+                                        text("G1 / 40"),
+                                    ]),
+                                ]),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 0"),
+                                        span("2 × 1"),
+                                        node(NodeKind.Strong, content="2 output rows", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell jm-pair-focus"),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 1"),
+                                        span("2 × 1"),
+                                        node(NodeKind.Strong, content="2 output rows", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 2"),
+                                        span("2 × 1"),
+                                        node(NodeKind.Strong, content="2 output rows", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                            ]),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Sales P1"),
+                                    node(NodeKind.Small, children=[
+                                        text("B1 / 15"),
+                                        line_break(),
+                                        text("M1 / 10"),
+                                    ]),
+                                ]),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 3"),
+                                        span("2 × 1"),
+                                        node(NodeKind.Strong, content="2 output rows", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 4"),
+                                        span("2 × 1"),
+                                        node(NodeKind.Strong, content="2 output rows", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 5"),
+                                        span("2 × 1"),
+                                        node(NodeKind.Strong, content="2 output rows", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                            ]),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Sales P2"),
+                                    node(NodeKind.Small, content="B1 / 10"),
+                                ]),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 6"),
+                                        span("1 × 1"),
+                                        node(NodeKind.Strong, content="1 output row", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 7"),
+                                        span("1 × 1"),
+                                        node(NodeKind.Strong, content="1 output row", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                                node(NodeKind.Cell, children=[
+                                    group([
+                                        node(NodeKind.Bold, content="Task 8"),
+                                        span("1 × 1"),
+                                        node(NodeKind.Strong, content="1 output row", style="jm-after-3"),
+                                    ], style="jm-after-1"),
+                                ], style="jm-pair-cell "),
+                            ]),
+                        ]),
+                    ], style="jm-partition-grid"),
+                ], style="jm-cart-grid-area"),
+                node(NodeKind.Aside, children=[
+                    group([
+                        heading("Inputs still have partitions.", level=2),
+                        prose("There is no join key here to send matching records to one destination."),
+                    ], style="jm-only jm-p0"),
+                    group([
+                        heading("Nine partition-pair tasks", level=2),
+                        prose("Each task reads one sales partition and one products partition."),
+                        prose("The same input partition participates in several tasks."),
+                    ], style="jm-only jm-p1"),
+                    group([
+                        heading("Inside Task 0", level=2),
+                        paragraph([
+                            text("Both sales combine with"),
+                            line_break(),
+                            strong("G1 / games"),
+                            text("."),
+                        ]),
+                        group([
+                            group([
+                                span("B1 / 25"),
+                                span("G1 / games"),
+                            ], style="jm-record  "),
+                            group([
+                                span("G1 / 40"),
+                                span("G1 / games"),
+                            ], style="jm-record  "),
+                        ], style="jm-cart-result"),
+                        prose("A cross join does not require the product IDs to match.", style="jm-detail-note"),
+                    ], style="jm-only jm-p2"),
+                    group([
+                        heading("5 sales × 3 products", level=2),
+                        node(NodeKind.Strong, content="15 rows", style="jm-big-count"),
+                        prose("More partitions divide the work. They do not reduce the number of requested pairs."),
+                    ], style="jm-only jm-p3 jm-last"),
+                ], style="jm-cart-detail"),
+            ], style="jm-cart-layout"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson jm-lesson jm-cartesian", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("69"),
+        ]),
+        ],
+        notes="""Explicitly change the logical request to sales.crossJoin(products). Retain the original 3 sales partitions and 3 product partitions: sales P0 B1/25,G1/40; P1 B1/15,M1/10; P2 B1/10. Products P0 G1/games; P1 X1/accessories; P2 B1/books. This is an illustrative plan using CartesianProduct, also called shuffle-and-replicate nested loop in Spark join-strategy vocabulary. It pairs each left input partition with each right input partition, producing 9 partition-pair tasks. Spark can execute those tasks on available executors; the diagram does not tie one task to one permanent machine. Rows are read or buffered across repeated partition-pair work; this is not the earlier equality-key hash shuffle.
+
+Task 0 takes 2 sales and 1 product, so emits 2 rows. Six task pairs emit 2 rows each and three emit 1, for 15 total. All unequal-key combinations are legitimate because the requested cross join has no equality predicate. This is not the earlier five-row enrichment and its amount total is not a useful sales total. CartesianProduct can also evaluate a condition for an inner-like join, in which case candidate count and emitted count differ. A crossJoin call does not guarantee this physical operator: Spark can choose a broadcast nested-loop plan when appropriate. Do not claim every range join is a Cartesian product or every cross join shuffles by a key. This slide illustrates the operator when selected. The 9 tasks and 15 rows are explicit toy arithmetic, not a timing result.
+Sources: https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/SparkStrategies.scala ; https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/joins/CartesianProductExec.scala""",
+    )

@@ -1,0 +1,288 @@
+"""Aggregation partials slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, emphasis, group, heading, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_aggregation_partials() -> Slide:
+    steps = [
+        TeachingStep(label="Six joined sales",
+            heading="The same six sales still need three category totals.",
+            explanation="First ask what each worker can calculate without fetching anything.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Local partial totals",
+            heading="Worker A combines 25 + 15 + 10 into a partial sum of 50.",
+            explanation="Worker B contributes books 20, games 40 and NULL 10. Worker C has no sales.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Shuffle by category",
+            heading="The shuffle brings partial totals for the same category together.",
+            explanation="The two books partials, 50 and 20, reach the same aggregation task.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Final totals",
+            heading="The final aggregation combines the partials: books 70, games 40, NULL 10.",
+            explanation="Local aggregation can reduce shuffle bytes. It still has to read and process the input rows.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="aggregation-partials",
+        title="Local totals reduce what moves",
+        frame=Frame.Composed,
+        styles="slide lesson-slide aggregation-slide",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Local totals reduce what moves", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("enriched.groupBy(\"category\").agg(F.sum(\"amount\").alias(\"total\"))"),
+                ], style="language-python"),
+                paragraph([
+                    text("Continuing with "),
+                    node(NodeKind.Bold, content="six sales"),
+                    text(","),
+                    line_break(),
+                    text("including B2 / books / 20."),
+                ]),
+            ], style="ag-query"),
+            group([
+                span("Joined sales", style="ag-column ag-column-input"),
+                span("Local partial sums", style="ag-column ag-column-local"),
+                span("Category partitions", style="ag-column ag-column-target"),
+                group([
+                    heading("Worker A", level=2),
+                    group([
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ], style="sr-only"),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="25"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="15"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="10"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books"),
+                            ]),
+                        ], style="ag-data", attributes=[attr("aria-label", "Joined sales on Worker A")]),
+                    ], style="ag-input"),
+                    span("→", style="ag-local-arrow", attributes=[attr("aria-hidden", "true")]),
+                    group([
+                        group([
+                            span("books"),
+                            strong("50"),
+                        ], style="ag-partial-row ag-books"),
+                    ], style="ag-local"),
+                    group([
+                        group([
+                            text("games"),
+                            node(NodeKind.Small, content="partition 0"),
+                        ], style="ag-dest-title"),
+                        group([
+                            node(NodeKind.Span, children=[
+                                node(NodeKind.Small, content="from B"),
+                                node(NodeKind.Bold, content="40"),
+                            ], style="ag-contribution ag-games", attributes=[attr("style", "--arrive:2.5s")]),
+                        ], style="ag-incoming"),
+                        group([
+                            span("games"),
+                            strong("40"),
+                        ], style="ag-final ag-games"),
+                    ], style="ag-destination"),
+                ], style="ag-lane", attributes=[attr("style", "--lane:0")]),
+                group([
+                    heading("Worker B", level=2),
+                    group([
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ], style="sr-only"),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="40"),
+                                    node(NodeKind.Cell, content="games"),
+                                ], style="ag-games"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="M1"),
+                                    node(NodeKind.Cell, content="10"),
+                                    node(NodeKind.Cell, content="NULL"),
+                                ], style="ag-null"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B2"),
+                                    node(NodeKind.Cell, content="20"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books"),
+                            ]),
+                        ], style="ag-data", attributes=[attr("aria-label", "Joined sales on Worker B")]),
+                    ], style="ag-input"),
+                    span("→", style="ag-local-arrow", attributes=[attr("aria-hidden", "true")]),
+                    group([
+                        group([
+                            span("games"),
+                            strong("40"),
+                        ], style="ag-partial-row ag-games"),
+                        group([
+                            span("NULL"),
+                            strong("10"),
+                        ], style="ag-partial-row ag-null"),
+                        group([
+                            span("books"),
+                            strong("20"),
+                        ], style="ag-partial-row ag-books"),
+                    ], style="ag-local"),
+                    group([
+                        group([
+                            text("NULL"),
+                            node(NodeKind.Small, content="partition 1"),
+                        ], style="ag-dest-title"),
+                        group([
+                            node(NodeKind.Span, children=[
+                                node(NodeKind.Small, content="from B"),
+                                node(NodeKind.Bold, content="10"),
+                            ], style="ag-contribution ag-null", attributes=[attr("style", "--arrive:3.45s")]),
+                        ], style="ag-incoming"),
+                        group([
+                            span("NULL"),
+                            strong("10"),
+                        ], style="ag-final ag-null"),
+                    ], style="ag-destination"),
+                ], style="ag-lane", attributes=[attr("style", "--lane:1")]),
+                group([
+                    heading("Worker C", level=2),
+                    group([
+                        prose("No joined sales", style="ag-empty"),
+                    ], style="ag-input"),
+                    span("→", style="ag-local-arrow", attributes=[attr("aria-hidden", "true")]),
+                    group([
+                        prose("No partials", style="ag-empty"),
+                    ], style="ag-local"),
+                    group([
+                        group([
+                            text("books"),
+                            node(NodeKind.Small, content="partition 2"),
+                        ], style="ag-dest-title"),
+                        group([
+                            node(NodeKind.Span, children=[
+                                node(NodeKind.Small, content="from A"),
+                                node(NodeKind.Bold, content="50"),
+                            ], style="ag-contribution ag-books", attributes=[attr("style", "--arrive:0.9s")]),
+                            node(NodeKind.Span, children=[
+                                node(NodeKind.Small, content="from B"),
+                                node(NodeKind.Bold, content="20"),
+                            ], style="ag-contribution ag-books", attributes=[attr("style", "--arrive:1.7s")]),
+                        ], style="ag-incoming"),
+                        group([
+                            span("books"),
+                            emphasis("50 + 20 ="),
+                            strong("70"),
+                        ], style="ag-final ag-books"),
+                    ], style="ag-destination"),
+                ], style="ag-lane", attributes=[attr("style", "--lane:2")]),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgTitle, content="Shuffle four category partials", attributes=[attr("id", "ag-shuffle-title")]),
+                    node(NodeKind.SvgDescription, content="Books partials of 50 and 20 cross workers to combine on C. Games40 moves from B to A. NULL10 remains local on B. Chosen partition placement is illustrative.", attributes=[attr("id", "ag-shuffle-desc")]),
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 1 L9 5 L0 9 Z")]),
+                        ], attributes=[attr("id", "ag-shuffle-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "7"), attr("markerHeight", "7"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgPath, style="ag-wire-mask", attributes=[attr("d", "M764 82 H806 Q814 82 814 90 V284 Q814 292 822 292 H972")]),
+                    node(NodeKind.SvgPath, style="ag-wire ag-wire-books", attributes=[attr("d", "M764 82 H806 Q814 82 814 90 V284 Q814 292 822 292 H972"), attr("marker-end", "url(#ag-shuffle-arrow)")]),
+                    node(NodeKind.SvgPath, style="ag-wire-mask", attributes=[attr("d", "M764 214 H912 Q920 214 920 222 V306 Q920 314 928 314 H972")]),
+                    node(NodeKind.SvgPath, style="ag-wire ag-wire-books", attributes=[attr("d", "M764 214 H912 Q920 214 920 222 V306 Q920 314 928 314 H972"), attr("marker-end", "url(#ag-shuffle-arrow)")]),
+                    node(NodeKind.SvgPath, style="ag-wire-mask", attributes=[attr("d", "M764 162 H848 Q856 162 856 154 V102 Q856 94 864 94 H972")]),
+                    node(NodeKind.SvgPath, style="ag-wire ag-wire-games", attributes=[attr("d", "M764 162 H848 Q856 162 856 154 V102 Q856 94 864 94 H972"), attr("marker-end", "url(#ag-shuffle-arrow)")]),
+                    node(NodeKind.SvgPath, style="ag-wire-mask", attributes=[attr("d", "M764 188 H972")]),
+                    node(NodeKind.SvgPath, style="ag-wire ag-wire-null", attributes=[attr("d", "M764 188 H972"), attr("marker-end", "url(#ag-shuffle-arrow)")]),
+                ], style="ag-routes", attributes=[attr("viewBox", "0 0 1308 342"), attr("role", "img"), attr("aria-labelledby", "ag-shuffle-title ag-shuffle-desc")]),
+                span("50", style="ag-packet ag-books", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M764 82 H806 Q814 82 814 90 V284 Q814 292 822 292 H972');--delay:0s")]),
+                span("20", style="ag-packet ag-books", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M764 214 H912 Q920 214 920 222 V306 Q920 314 928 314 H972');--delay:0.8s")]),
+                span("40", style="ag-packet ag-games", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M764 162 H848 Q856 162 856 154 V102 Q856 94 864 94 H972');--delay:1.6s")]),
+                span("10", style="ag-packet ag-null", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M764 188 H972');--delay:2.55s")]),
+                group([
+                    rich_heading([
+                        text("How much needs to cross"),
+                        line_break(),
+                        text("the next shuffle?"),
+                    ], level=2),
+                    paragraph([
+                        text("Worker A already has three books sales."),
+                        line_break(),
+                        text("It can add those amounts before sending them."),
+                    ]),
+                ], style="ag-partial-pause ag-partial-pause-first"),
+                group([
+                    rich_heading([
+                        text("Six sales become"),
+                        line_break(),
+                        text("four partials."),
+                    ], level=2),
+                    paragraph([
+                        text("Worker A sends "),
+                        strong("books / 50"),
+                        line_break(),
+                        text("instead of three full sales rows."),
+                    ]),
+                ], style="ag-partial-pause ag-prepare-pause"),
+            ], style="ag-partial-scene", attributes=[attr("role", "group"), attr("aria-label", "Workers calculate four local category partials from six joined sales. The books partials of 50 and 20 meet on Worker C and combine to 70. Games totals 40 and NULL totals 10.")]),
+            group([
+                node(NodeKind.Span, children=[
+                    strong("6"),
+                    text(" joined rows"),
+                ]),
+                node(NodeKind.Span, children=[
+                    strong("4"),
+                    text(" partial totals to shuffle"),
+                ]),
+                node(NodeKind.Span, children=[
+                    strong("3"),
+                    text(" final groups"),
+                ], style="ag-final-count"),
+                node(NodeKind.Span, children=[
+                    text("Local repetition determines the reduction."),
+                    line_break(),
+                    text("Dashed route: local. Solid routes: remote."),
+                ], style="ag-volume-note"),
+            ], style="ag-volume"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson aggregation-lesson ag-partials", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("72"),
+        ]),
+        ],
+        notes="""Continue the extended six-sale example without changing the worker lanes or input placement. The requested result remains SUM(amount) by category. B1 amounts25,15,10 on Worker A produce books50; Worker B has G1/games40, M1/NULL10 and the explicitly introduced B2/books20; Worker C has no joined sales.
+
+Point 1 is an audience pause about the next shuffle. Point 2 shows partial aggregation: A combines three sales into one SUM state. B has one sale in each of three categories, so it emits three states without a row-count reduction. Empty C emits no keyed aggregate. Six joined rows become four category partials. These are row/state counts, not a measured byte or speed improvement. Partial state widths differ from raw rows, and real gain depends on local repetition and the aggregate function.
+
+Point 3 sends books50 from A and books20 from B to the same final task on C. Games40 moves B to A. NULL10 is local to B. Routing and task placement are illustrative, not Spark's actual hash mapping. The destination reads blocks; the visible values represent contributions, not individual network packets or a separate file/request per row. The earlier prepare/write/fetch/decode costs still apply but are not redrawn. Transfers are a finite explanatory sequence rather than measured scheduling. Their order does not imply a cluster-wide barrier.
+
+Point 4 combines books50 + books20 =70. Games has only one partial, so40 remains40; the NULL group similarly remains10. Final totals sum to120, matching the six inputs. SUM and COUNT have mergeable partial states; AVG can use sum/count state, not a naive average of averages. Not every aggregate shrinks its state the same way: collecting all values can remain large. Do not imply every groupBy moves every original row, or that a hot key in SUM has the same cost as a hot join key. Local combination can greatly reduce hot-key SUM traffic; distinct-heavy or value-collecting aggregation has different costs. Catalyst plans partial aggregation where supported: the user ordinarily writes the natural groupBy/agg rather than manually materialising this sequence. Link back to section05's partial/final aggregate operators, now explaining the benefit.
+
+The presentation uses semantic HTML and illustrative routing. Source: https://spark.apache.org/docs/latest/sql-ref-syntax-qry-explain.html .""",
+    )

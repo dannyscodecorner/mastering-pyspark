@@ -1,0 +1,46 @@
+"""Query evidence slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_query_evidence() -> Slide:
+    return Slide(
+        slug="query-evidence",
+        title="The Spark UI",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("05 / SPARK EXECUTION MODEL"),
+        ], style="eyebrow"),
+            heading("The Spark UI", level=1),
+            prose("Query plans, stages and tasks", style="subtitle"),
+            node(NodeKind.OrderedList, children=[
+            node(NodeKind.ListItem, children=[
+                span("01"),
+                text("Read the initial plan for the recurring example"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("02"),
+                text("Follow its tasks and shuffle boundaries"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("03"),
+                text("Compare initial and executed plans with AQE"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("04"),
+                text("Investigate skew, retries and repeated work"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("05"),
+                text("Decide what to change from the evidence"),
+            ]),
+        ], style="topic-list"),
+            span("CONTENT SKELETON", style="draft-label"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("47"),
+        ]),
+        ],
+        notes="",
+    )

@@ -1,0 +1,90 @@
+"""Group join recap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, strong, text
+
+pub def slide_group_join_recap() -> Slide:
+    return Slide(
+        slug="group-join-recap",
+        title="What changes when we use Spark?",
+        frame=Frame.Composed,
+        styles="slide aggregation-slide jc-exit",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("What changes when we use Spark?", level=1),
+            prose("Compared with a typical relational database running on one server.", style="jc-exit-scope"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="For this query", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="One database server", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="A Spark cluster", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Parallel work", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="The query can use several CPU cores within the same server."),
+                    node(NodeKind.Cell, children=[
+                        strong("Tasks process partitions"),
+                        text(" across multiple worker nodes."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Bringing rows together", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Joins and grouping use the server’s memory and storage."),
+                    node(NodeKind.Cell, children=[
+                        strong("Shuffle can move data between workers."),
+                        text(" Broadcast joins copy a small input."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Where time goes", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Reading, matching, sorting and spilling all consume resources."),
+                    node(NodeKind.Cell, children=[
+                        text("Those costs remain, plus data transfer. "),
+                        strong("One heavy partition can hold up a stage."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="More capacity", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="More CPU, memory or faster storage can help the local workload."),
+                    node(NodeKind.Cell, children=[
+                        text("More workers help when work can spread. "),
+                        strong("A hot key can still be a bottleneck."),
+                    ]),
+                ]),
+            ]),
+        ], style="jc-comparison", attributes=[attr("aria-label", "Single-server database and Spark cluster comparison")]),
+            group([
+            prose("In Spark, also ask how much data must move and which task has the most work."),
+            node(NodeKind.Small, content="Join rules and duplicate matches still matter in both. Distributed databases share these distribution challenges."),
+        ], style="jc-exit-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("75"),
+        ]),
+        ],
+        notes="""Close chapter 06 after the corrected six-sale report. The familiar join/group/aggregate expressions have not acquired different relational meanings simply because they run in Spark. Correct keys, the intended product version, matching multiplicity and NULL semantics still matter in either system. What this chapter added is the distributed execution cost model.
+
+The comparison is explicitly between a typical relational database on one server and Spark running on a cluster. It is not a claim that all databases are single-node, that database queries are serial, or that optimisers and hash/merge joins are unique to Spark. PostgreSQL, for example, can use parallel workers for joins and aggregation. Distributed SQL databases and warehouses also have exchanges, skew and distributed resource tradeoffs.
+
+Narrate the table top to bottom: a single server can already work in parallel; Spark distributes tasks across workers. Inputs are not necessarily partitioned by the key this query needs, so bringing matching rows or groups together may require an exchange. Shuffle preparation adds serialization and intermediate writes, and remote fetches add network traffic. A broadcast can avoid the large input’s join-key shuffle when eligible, but the complete build input still has to be prepared and copied and fit within the relevant memory constraints. Compatible existing partitioning can also avoid an exchange. Do not imply every join or grouping always shuffles, every fetched block is remote, or all rows must cross an aggregation shuffle: partial SUMs were just demonstrated.
+
+Skew can leave one task processing much more work while others are done. More workers increase the capacity to run independent tasks, but do not by themselves change a hot key’s assignment or reduce the number of requested matching pairs. Eligible AQE skew handling or a query/layout change can redistribute some of that work. The scale-out benefit is real when data and work can be divided effectively; no universal speed comparison is intended.
+
+Suggested closing narration: “The joins and totals are familiar. Spark gives us more machines to do the work, but now we also need to understand where that work lands and what has to travel between those machines.”
+
+Sources checked 2026-09-20:
+https://www.postgresql.org/docs/current/parallel-query.html
+https://spark.apache.org/docs/latest/cluster-overview.html
+https://spark.apache.org/docs/latest/rdd-programming-guide.html#shuffle-operations
+https://spark.apache.org/docs/latest/sql-performance-tuning.html
+""",
+    )

@@ -1,0 +1,100 @@
+"""Dataframe why slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_dataframe_why() -> Slide:
+    return Slide(
+        slug="dataframe-why",
+        title="Why use DataFrames?",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Why use DataFrames?", level=1),
+            prose("Spark can use the meaning of your query to avoid unnecessary work.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Why use DataFrames?", attributes=[attr("id", "dataframe-why-title")]),
+                node(NodeKind.SvgDescription, content="Spark can use the meaning of your query to avoid unnecessary work.", attributes=[attr("id", "dataframe-why-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "dataframe-why-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "20"), attr("width", "410"), attr("height", "338"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Our request", style="trial-title", attributes=[attr("x", "30"), attr("y", "60")]),
+                    node(NodeKind.SvgText, content="(sales.select(\"amount\")", style="trial-note", attributes=[attr("x", "30"), attr("y", "102")]),
+                    node(NodeKind.SvgText, content=" .filter(col(\"amount\") > 20))", style="trial-note", attributes=[attr("x", "30"), attr("y", "136")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "30"), attr("y", "170")]),
+                    node(NodeKind.SvgText, content="Only amount is required.", style="trial-note", attributes=[attr("x", "30"), attr("y", "204")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "Only amount is needed for this query")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "448"), attr("y", "20"), attr("width", "410"), attr("height", "338"), attr("rx", "12"), attr("fill", "#e8f2f9"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Read less", style="trial-title", attributes=[attr("x", "470"), attr("y", "60")]),
+                    node(NodeKind.SvgText, content="Parquet columns", style="trial-note", attributes=[attr("x", "470"), attr("y", "99")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "470"), attr("y", "122"), attr("width", "160"), attr("height", "216"), attr("rx", "12"), attr("fill", "#e4e4e3"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="category", style="trial-code", attributes=[attr("x", "485"), attr("y", "153")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "490"), attr("y", "192")]),
+                    node(NodeKind.SvgText, content="games", style="trial-code", attributes=[attr("x", "490"), attr("y", "230")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "490"), attr("y", "268")]),
+                    node(NodeKind.SvgText, content="music", style="trial-code", attributes=[attr("x", "490"), attr("y", "306")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "674"), attr("y", "122"), attr("width", "160"), attr("height", "216"), attr("rx", "12"), attr("fill", "#d3ecdf"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="amount", style="trial-code", attributes=[attr("x", "689"), attr("y", "153")]),
+                    node(NodeKind.SvgText, content="25", style="trial-code", attributes=[attr("x", "694"), attr("y", "192")]),
+                    node(NodeKind.SvgText, content="40", style="trial-code", attributes=[attr("x", "694"), attr("y", "230")]),
+                    node(NodeKind.SvgText, content="15", style="trial-code", attributes=[attr("x", "694"), attr("y", "268")]),
+                    node(NodeKind.SvgText, content="10", style="trial-code", attributes=[attr("x", "694"), attr("y", "306")]),
+                    node(NodeKind.SvgText, content="skip", style="trial-note", attributes=[attr("x", "510"), attr("y", "374")]),
+                    node(NodeKind.SvgText, content="read", style="trial-note", attributes=[attr("x", "716"), attr("y", "374")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "A supporting columnar source can read only required columns")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "888"), attr("y", "20"), attr("width", "410"), attr("height", "338"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Filter earlier", style="trial-title", attributes=[attr("x", "910"), attr("y", "60")]),
+                    node(NodeKind.SvgText, content="amount > 20", style="trial-note", attributes=[attr("x", "910"), attr("y", "102")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "910"), attr("y", "136")]),
+                    node(NodeKind.SvgText, content="Push toward the reader", style="trial-note", attributes=[attr("x", "910"), attr("y", "170")]),
+                    node(NodeKind.SvgText, content="when supported.", style="trial-note", attributes=[attr("x", "910"), attr("y", "204")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Supported filters can move closer to the source")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "dataframe-why-title dataframe-why-desc")]),
+            group([
+                paragraph([
+                    strong("Why use DataFrames?"),
+                    span("Spark can use the meaning of your query to avoid unnecessary work."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Tell Spark what you need"),
+                    span("This query only needs the amount column and values above 20."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Avoid unnecessary columns"),
+                    span("With a suitable source such as Parquet, Spark can prune unused columns."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Apply supported filters near the source"),
+                    span("Pushdown may reduce data read or passed onward. Its effect depends on the source."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Why use DataFrames?. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("30"),
+        ]),
+        ],
+        notes="Use this as a concrete payoff, not a comprehensive optimiser lesson. The displayed chain is an expression illustration; use parentheses around a multiline chain when running Python. No execution happens merely by constructing it. Parquet column pruning avoids unused column data. Predicate pushdown and statistics may skip row groups, but cannot promise to avoid reading every nonmatching row; Spark may retain a residual filter. Do not imply guaranteed speedup or that arbitrary Python UDFs get the same optimisation. Later inspect an actual plan and explain logical/physical stages in the execution-model section. Source: https://spark.apache.org/docs/latest/sql-performance-tuning ; https://spark.apache.org/docs/latest/sql-data-sources-parquet.html",
+    )

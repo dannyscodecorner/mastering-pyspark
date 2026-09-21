@@ -1,0 +1,94 @@
+"""Streaming execution modes slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, line_break, node, paragraph, span, strong, text
+
+pub def slide_streaming_execution_modes() -> Slide:
+    return Slide(
+        slug="streaming-execution-modes",
+        title="Streaming execution modes",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-execution-overview",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming execution modes", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Three execution modes for a Structured Streaming query", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-execution-name"),
+                node(NodeKind.Column, style="ss-execution-behaviour"),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Mode", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="How input is processed", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="What to keep in mind", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Micro-batch"),
+                        span("The default"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("Successive portions of new input."),
+                        span("Each batch finishes before the next starts."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        text("Runs as soon as possible by default."),
+                        span("A fixed interval is optional."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Real-time mode"),
+                        span("Records processed as they arrive"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("Long-running tasks pass records through the query."),
+                        span("Progress is checkpointed periodically."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        text("For low-latency workloads."),
+                        span("Supported queries and connectors depend on the Spark version and runtime."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Continuous Processing"),
+                        span("Older · experimental"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("Processes records continuously."),
+                        span("A separate engine from Real-time mode."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        text("Restricted operations and connectors."),
+                        span("No aggregations; at-least-once processing."),
+                    ]),
+                ], style="ss-execution-legacy"),
+            ]),
+        ], style="ss-execution-table"),
+            paragraph([
+            strong("Execution mode"),
+            text(" controls how the query runs."),
+            line_break(),
+            strong("Output mode"),
+            text(" controls which result rows are sent to the sink."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("82"),
+        ]),
+        ],
+        notes="""We have a streaming DataFrame. Once we start a query against it, how does Spark process the arriving data? These are alternative execution modes, not consecutive stages. Micro-batch is the default and is what we will use for the word-count example next. Without an explicit trigger interval, Spark starts the next batch as soon as the previous one finishes. A fixed processing-time interval is optional; it is not a completion deadline.
+
+Real-time mode processes records as they arrive within long-running execution, with periodic progress checkpoints. A configured realTime duration is not a wait before each record can be processed. Do not promise microsecond end-to-end latency: per-record processing describes the execution approach, and observed latency also depends on the query, resources, source and sink. PySpark 4.2 exposes the realTime trigger. Query support varies by Spark version and vendor runtime; do not imply that the following stateful word count can run unchanged in every mode. The Databricks source describes that runtime's architecture and is not a universal connector/operator compatibility matrix.
+
+Continuous Processing is the separate, older experimental mode introduced in Spark 2.3. It supports a restricted set of operations such as projections and filters, excludes aggregations and provides at-least-once processing. Keep this brief so older documentation does not confuse it with Real-time mode. AvailableNow is a micro-batch trigger for processing available data and stopping, rather than a fourth execution engine. Execution and output modes are different choices, with compatibility constraints; Append, Update and Complete are output modes.
+
+Sources (checked 20 September 2026): https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers ; https://spark.apache.org/releases/spark-release-4-2-0.html ; https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html ; https://spark.apache.org/docs/4.2.0/streaming/performance-tips.html#continuous-processing ; https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts""",
+    )

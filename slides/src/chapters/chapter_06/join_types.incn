@@ -1,0 +1,62 @@
+"""Join types slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, span, strong, text
+
+pub def slide_join_types() -> Slide:
+    return Slide(
+        slug="join-types",
+        title="Choose which rows to keep",
+        frame=Frame.Composed,
+        styles="slide join-slide join-how",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Choose which rows to keep", level=1),
+            code_block("""enriched = sales.join(
+    products, on="product_id", how="left"
+)"""),
+            group([
+            group([
+                span("how"),
+                span("What the result contains"),
+            ], style="jh-header"),
+            group([
+                code("\"inner\""),
+                span("Matching pairs only"),
+            ]),
+            group([
+                code("\"left\""),
+                span("All sales; missing product values become NULL"),
+            ]),
+            group([
+                code("\"right\""),
+                span("All products; missing sale values become NULL"),
+            ]),
+            group([
+                code("\"full\""),
+                span("Matches and unmatched rows from both inputs"),
+            ]),
+            group([
+                code("\"left_semi\""),
+                span("Sales with a match; sales columns only"),
+            ]),
+            group([
+                code("\"left_anti\""),
+                span("Sales without a match; sales columns only"),
+            ]),
+        ], style="join-how-table"),
+            group([
+            node(NodeKind.Code, content="sales.crossJoin(products)", style="language-python"),
+            node(NodeKind.Span, children=[
+                strong("Cross:"),
+                text(" every sales–product pair, without a matching condition."),
+            ]),
+        ], style="join-how-cross"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("58"),
+        ]),
+        ],
+        notes="Adapted from the user's original corpus: Sections/Section 3 - Preparing Data using Spark SQL/3.4 - Grouping, Joining, and Aggregating - part 1.pptx, slide 4, Spark’s Join Types in a nutshell, and slides 5–11. Spend about 30–60 seconds here; assume familiarity and do not reopen the full join-semantics lesson. A is the left DataFrame, B the right. Inner is the default. Full/outer/full_outer are aliases, as are left/left_outer and right/right_outer. Semi returns qualifying left rows without right columns or multiplication by multiple right matches; anti returns nonmatching left rows. Cross is the Cartesian product. Cross is also supported as how=\"cross\"; omit the on condition for a Cartesian product, or use crossJoin as shown. The displayed how choices govern semantics, not physical join strategy. Outer joins fill missing-side values with NULL. Transition: we know which rows we want; now how do matching records on different workers meet?  Source verification: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.join.html",
+    )

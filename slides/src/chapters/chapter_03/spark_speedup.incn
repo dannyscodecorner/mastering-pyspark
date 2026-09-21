@@ -1,0 +1,54 @@
+"""Spark speedup slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, image, line_break, node, paragraph, prose, span, strong, text
+
+pub def slide_spark_speedup() -> Slide:
+    return Slide(
+        slug="spark-speedup",
+        title="How much faster?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide speed-evidence",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("How much faster?", level=1),
+            prose("A historical example: logistic regression in Hadoop and Spark.", style="subtitle"),
+            group([
+            node(NodeKind.Figure, children=[
+                group([
+                    heading("Hadoop", level=2),
+                    group([
+                        span("", attributes=[attr("style", "width:100%")]),
+                    ], style="speed-track"),
+                    node(NodeKind.Bold, content="110 s"),
+                ], style="speed-row"),
+                group([
+                    heading("Spark", level=2),
+                    group([
+                        span("", attributes=[attr("style", "width:0.8181818%")]),
+                    ], style="speed-track"),
+                    node(NodeKind.Bold, content="0.9 s"),
+                ], style="speed-row spark-speed"),
+                node(NodeKind.FigureCaption, content="Running time · seconds · lower is better"),
+            ], style="speed-bars", attributes=[attr("aria-label", "Reported running time: Hadoop 110 seconds, Spark 0.9 seconds. Bars use the same linear scale.")]),
+            group([
+                strong("≈122×"),
+                prose("faster in this example"),
+                span("110 ÷ 0.9"),
+            ], style="speed-ratio"),
+        ], style="speed-layout"),
+            prose("Repeated work is where reusing data can make a dramatic difference.", style="speed-bridge"),
+            paragraph([
+            text("Source: "),
+            node(NodeKind.Link, content="Apache Spark · MLlib performance example", attributes=[attr("href", "https://spark.apache.org/mllib/"), attr("target", "_blank"), attr("rel", "noopener")]),
+            line_break(),
+            text("Historical result, not a general speed guarantee. Loading costs and test setup are not specified on the source page."),
+        ], style="speed-source"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("29"),
+        ]),
+        ],
+        notes="Use after the in-memory explanation. Ask: How big a difference can this make? Apache Spark’s own MLlib page shows Hadoop 110 seconds and Spark 0.9 seconds for logistic regression. The ratio calculated from those labels is approximately 122.2. This recovers the figures from the original course, using a primary source instead of the rejected July 2013 PySpark talk. Explain that iterative algorithms reuse a working set, so the previous slide explains an important reason such gains are possible. Do not claim this graphic isolates persistence, measures only warm iterations, includes or excludes initial loading, or benchmarks the Python API specifically: the page and image do not specify those details, versions, hardware or dataset size. No benchmark date is asserted. This is a historical illustration, not a current benchmark or a promise for every workload. If asked for a production estimate, explain that reuse, memory capacity, I/O, shuffle and workload all matter. End with: But, how does Spark do this? Pause, then advance to the RDD-only slide. Do not expand the acronym yet. Sources: https://spark.apache.org/mllib/ and https://spark.apache.org/images/logistic-regression.png . Source image retained in assets/history/spark-logistic-regression-source.png.",
+    )

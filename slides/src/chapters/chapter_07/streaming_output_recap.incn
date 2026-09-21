@@ -1,0 +1,44 @@
+"""Streaming output recap slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_streaming_output_recap() -> Slide:
+    return Slide(
+        slug="streaming-output-recap",
+        title="Output modes: recap",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-recap",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Output modes: recap", level=1),
+            group([
+            group([
+                span("01"),
+                heading("Complete", level=2),
+                prose("The whole current result, including unchanged rows."),
+            ]),
+            group([
+                span("02"),
+                heading("Append", level=2),
+                prose("Only new, final rows. This is the default."),
+            ]),
+            group([
+                span("03"),
+                heading("Update", level=2),
+                prose("Only new or updated result rows, carrying their new values."),
+            ]),
+        ], style="ss-recap"),
+            prose("The output mode selects rows. The sink decides how they are stored.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("96"),
+        ]),
+        ],
+        notes="""Close the output-mode explanation before introducing sources and sinks. Complete repeats the current result; Append adds final rows; Update emits the rows the query updated, with their new values. Update is not a delta and does not automatically merge a destination table. Complete is not a universal instruction to overwrite a destination.
+
+The mode must be supported by the query, execution mode and chosen sink. The examples here used micro-batch execution; Real-time currently requires Update. Ask which rows would be sent after the third word-count batch, then move on to where input comes from and where output goes.
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )

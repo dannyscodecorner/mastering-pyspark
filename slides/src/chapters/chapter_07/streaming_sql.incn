@@ -1,0 +1,99 @@
+"""Streaming sql slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, prose, span, text
+
+pub def slide_streaming_sql() -> Slide:
+    return Slide(
+        slug="streaming-sql",
+        title="Structured Streaming is part of Spark SQL",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Structured Streaming is part of Spark SQL", level=1),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Batch and Structured Streaming share Spark SQL", attributes=[attr("id", "ss-engine-title")]),
+                node(NodeKind.SvgDescription, content="Within the Spark SQL engine, a bounded batch input and ongoing streaming input use the DataFrame API and Catalyst query planning. A physical plan is executed as tasks on Spark executors. These are alternative query models, not two sources being joined together.", attributes=[attr("id", "ss-engine-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("fill", "#557c98")]),
+                    ], attributes=[attr("id", "ss-engine-blue-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "7"), attr("markerHeight", "7"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("fill", "#557e3f")]),
+                    ], attributes=[attr("id", "ss-engine-green-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "7"), attr("markerHeight", "7"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("fill", "#66757b")]),
+                    ], attributes=[attr("id", "ss-engine-ink-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "7"), attr("markerHeight", "7"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgRectangle, style="sse-engine-region", attributes=[attr("x", "2"), attr("y", "24"), attr("width", "928"), attr("height", "446"), attr("rx", "8")]),
+                node(NodeKind.SvgRectangle, style="sse-execution-region", attributes=[attr("x", "1024"), attr("y", "90"), attr("width", "282"), attr("height", "378"), attr("rx", "8")]),
+                node(NodeKind.SvgText, content="Spark SQL", style="sse-engine-name", attributes=[attr("x", "892"), attr("y", "67"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgPath, style="sse-batch-link", attributes=[attr("d", "M250 157 H407"), attr("marker-end", "url(#ss-engine-blue-arrow)")]),
+                node(NodeKind.SvgPath, style="sse-stream-link", attributes=[attr("d", "M298 387 H332 Q356 387 356 363 V270 Q356 246 380 246 H407"), attr("marker-end", "url(#ss-engine-green-arrow)")]),
+                node(NodeKind.SvgPath, style="sse-plan-link", attributes=[attr("d", "M656 277 V320"), attr("marker-end", "url(#ss-engine-ink-arrow)")]),
+                node(NodeKind.SvgPath, style="sse-plan-link sse-physical-plan-link", attributes=[attr("d", "M892 382 H936 Q950 382 950 368 V326 Q950 312 964 312 H1014"), attr("marker-end", "url(#ss-engine-ink-arrow)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Batch", style="sse-mode-name", attributes=[attr("x", "32"), attr("y", "117")]),
+                    node(NodeKind.SvgText, content="A bounded input", style="sse-mode-description", attributes=[attr("x", "32"), attr("y", "146")]),
+                    node(NodeKind.SvgRectangle, style="sse-batch-table", attributes=[attr("x", "32"), attr("y", "169"), attr("width", "214"), attr("height", "76"), attr("rx", "4")]),
+                    node(NodeKind.SvgPath, style="sse-table-grid", attributes=[attr("d", "M32 195 H246 M32 220 H246 M101 169 V245 M175 169 V245")]),
+                    node(NodeKind.SvgPath, style="sse-batch-rows", attributes=[attr("d", "M46 181 H82 M116 181 H157 M190 181 H230 M46 207 H82 M116 207 H157 M190 207 H230 M46 232 H82 M116 232 H157 M190 232 H230")]),
+                    node(NodeKind.SvgText, content="spark.read", style="sse-input-code", attributes=[attr("x", "32"), attr("y", "274")]),
+                ], style="sse-batch", attributes=[attr("transform", "translate(0 -50)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Structured Streaming", style="sse-mode-name", attributes=[attr("x", "32"), attr("y", "328")]),
+                    node(NodeKind.SvgText, content="New rows keep arriving", style="sse-mode-description", attributes=[attr("x", "32"), attr("y", "358")]),
+                    node(NodeKind.SvgPath, style="sse-stream-track", attributes=[attr("d", "M34 407 H281")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "41"), attr("cy", "407"), attr("r", "2.5"), attr("fill", "#557e3f")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "51"), attr("cy", "407"), attr("r", "2.5"), attr("fill", "#557e3f")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "61"), attr("cy", "407"), attr("r", "2.5"), attr("fill", "#557e3f")]),
+                    node(NodeKind.SvgRectangle, style="sse-arrival sse-arrival-1", attributes=[attr("x", "77"), attr("y", "385"), attr("width", "58"), attr("height", "44"), attr("rx", "4")]),
+                    node(NodeKind.SvgRectangle, style="sse-arrival sse-arrival-2", attributes=[attr("x", "151"), attr("y", "385"), attr("width", "58"), attr("height", "44"), attr("rx", "4")]),
+                    node(NodeKind.SvgRectangle, style="sse-arrival", attributes=[attr("x", "225"), attr("y", "385"), attr("width", "58"), attr("height", "44"), attr("rx", "4")]),
+                    node(NodeKind.SvgPath, style="sse-stream-rows", attributes=[attr("d", "M87 400 H125 M87 413 H125 M161 400 H199 M161 413 H199 M235 400 H273 M235 413 H273")]),
+                    node(NodeKind.SvgText, content="spark.readStream", style="sse-input-code", attributes=[attr("x", "32"), attr("y", "455")]),
+                ], style="sse-stream", attributes=[attr("transform", "translate(0 -20)")]),
+                node(NodeKind.SvgRectangle, style="sse-api", attributes=[attr("x", "420"), attr("y", "145"), attr("width", "472"), attr("height", "132"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="DataFrame API", style="sse-api-title", attributes=[attr("x", "656"), attr("y", "190"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="select · filter · join", style="sse-operations", attributes=[attr("x", "656"), attr("y", "230"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="groupBy · agg", style="sse-operations", attributes=[attr("x", "656"), attr("y", "257"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="sse-catalyst", attributes=[attr("x", "420"), attr("y", "332"), attr("width", "472"), attr("height", "100"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Catalyst", style="sse-catalyst-title", attributes=[attr("x", "656"), attr("y", "375"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Query planning & optimisation", style="sse-catalyst-note", attributes=[attr("x", "656"), attr("y", "410"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Physical", style="sse-plan-label", attributes=[attr("x", "971"), attr("y", "267"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="plan", style="sse-plan-label", attributes=[attr("x", "971"), attr("y", "293"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Spark execution", style="sse-execution-title", attributes=[attr("x", "1040"), attr("y", "132")]),
+                node(NodeKind.SvgText, content="Stages and tasks", style="sse-mode-description", attributes=[attr("x", "1040"), attr("y", "161")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "1052"), attr("y", "192"), attr("width", "250"), attr("height", "103"), attr("rx", "6")]),
+                    node(NodeKind.SvgText, content="Executor 1", style="sse-executor-name", attributes=[attr("x", "1068"), attr("y", "223")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1068"), attr("y", "241"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1101"), attr("y", "265"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1144"), attr("y", "241"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1177"), attr("y", "265"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1220"), attr("y", "241"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1253"), attr("y", "265"), attr("text-anchor", "middle")]),
+                ], style="sse-executor", attributes=[attr("transform", "translate(-12 0)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "1052"), attr("y", "329"), attr("width", "250"), attr("height", "103"), attr("rx", "6")]),
+                    node(NodeKind.SvgText, content="Executor 2", style="sse-executor-name", attributes=[attr("x", "1068"), attr("y", "360")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1068"), attr("y", "378"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1101"), attr("y", "402"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1144"), attr("y", "378"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1177"), attr("y", "402"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1220"), attr("y", "378"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1253"), attr("y", "402"), attr("text-anchor", "middle")]),
+                ], style="sse-executor", attributes=[attr("transform", "translate(-12 0)")]),
+            ], attributes=[attr("viewBox", "0 0 1308 500"), attr("role", "img"), attr("aria-labelledby", "ss-engine-title ss-engine-desc")]),
+        ], style="ss-engine-diagram"),
+            prose("Familiar DataFrame operations, planned by Catalyst, now applied as data arrives.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("79"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 5–6. Connect back to DataFrames, Catalyst and the execution chapter. Structured Streaming is built on the Spark SQL engine; this is a simplified relationship diagram, not an exhaustive Spark component architecture. The left side contrasts bounded input with continuing arrivals. Both query models are contained in the Spark SQL region and use the shared DataFrame API and Catalyst. The connectors represent query construction and planning, not data records passing through the optimiser. Batch and streaming are alternative models here, not two inputs being joined. The executor boxes recall the execution chapter; counts of executors and tasks are illustrative. Explain incremental execution on the following model slides. The same API vocabulary is available, but not every batch operation or combination is supported in streaming. Default execution uses micro-batches. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )

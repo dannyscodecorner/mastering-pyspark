@@ -1,0 +1,198 @@
+"""Classic pyspark slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_classic_pyspark() -> Slide:
+    return Slide(
+        slug="classic-pyspark",
+        title="How Python Interacts with Spark",
+        frame=Frame.Composed,
+        styles="slide migrated",
+        content=[
+            group([
+            text("01 / SPARK VS. PYTHON"),
+        ], style="eyebrow"),
+            heading("How Python Interacts with Spark", level=1),
+            prose("Classic PySpark · application, driver and cluster", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="How Python interacts with Spark", attributes=[attr("id", "classic-title")]),
+                node(NodeKind.SvgDescription, content="A PySpark application calls the driver JVM through Py4J. The driver distributes tasks to executor JVMs on cluster worker nodes and receives task results and status. Executors use Python workers when Python execution is required. The driver returns requested results to the application.", attributes=[attr("id", "classic-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L10 5L0 10"), attr("fill", "#4b6973")]),
+                    ], attributes=[attr("id", "classic-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto-start-reverse")]),
+                ]),
+                node(NodeKind.SvgRectangle, style="application-region", attributes=[attr("x", "8"), attr("y", "8"), attr("width", "428"), attr("height", "430"), attr("rx", "8")]),
+                node(NodeKind.SvgText, content="Your Python application", style="region-title", attributes=[attr("x", "28"), attr("y", "46")]),
+                node(NodeKind.SvgRectangle, style="driver-region", attributes=[attr("x", "566"), attr("y", "8"), attr("width", "324"), attr("height", "430"), attr("rx", "8")]),
+                node(NodeKind.SvgText, content="Spark driver", style="region-title", attributes=[attr("x", "590"), attr("y", "46")]),
+                node(NodeKind.SvgRectangle, style="cluster-boundary", attributes=[attr("x", "1010"), attr("y", "8"), attr("width", "420"), attr("height", "430"), attr("rx", "8")]),
+                node(NodeKind.SvgText, content="Spark cluster", style="region-title", attributes=[attr("x", "1030"), attr("y", "46")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="story-line", attributes=[attr("d", "M436 188 H560")]),
+                    node(NodeKind.SvgText, content="Py4J", style="connection-label", attributes=[attr("x", "500"), attr("y", "156"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgText, content="Python calls", style="connection-label", attributes=[attr("x", "500"), attr("y", "178"), attr("text-anchor", "middle")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Python calls the driver JVM through Py4J")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="story-line", attributes=[attr("d", "M566 298 H444")]),
+                    node(NodeKind.SvgText, content="Requested", style="connection-label", attributes=[attr("x", "502"), attr("y", "326"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgText, content="results", style="connection-label", attributes=[attr("x", "502"), attr("y", "348"), attr("text-anchor", "middle")]),
+                ], style="return-path", attributes=[attr("data-motion-item", flag=true), attr("data-step", "8"), attr("aria-label", "The driver returns the requested result to Python")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="story-line fan-trunk", attributes=[attr("d", "M868 244 H950"), attr("style", "marker-end:none")]),
+                    node(NodeKind.SvgPath, style="story-line", attributes=[attr("d", "M950 244 V140 Q950 132 958 132 H1026")]),
+                    node(NodeKind.SvgPath, style="story-line", attributes=[attr("d", "M950 244 H1026")]),
+                    node(NodeKind.SvgPath, style="story-line", attributes=[attr("d", "M950 244 V348 Q950 356 958 356 H1026")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "950"), attr("cy", "244"), attr("r", "4"), attr("fill", "#257f86")]),
+                    node(NodeKind.SvgText, content="Tasks", style="connection-label", attributes=[attr("x", "942"), attr("y", "102"), attr("text-anchor", "middle")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "4"), attr("aria-label", "Tasks fan out from the driver to all three executors")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="story-line status-return", attributes=[attr("d", "M1010 414 H898")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "7"), attr("aria-label", "Executors report results and status to the driver")]),
+                node(NodeKind.SvgText, content="Results", style="connection-label", attributes=[attr("x", "946"), attr("y", "382"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="and status", style="connection-label", attributes=[attr("x", "946"), attr("y", "402"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "28"), attr("y", "68"), attr("width", "388"), attr("height", "280"), attr("rx", "6"), attr("fill", "#292d30")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M176 115 H240 L268 143 V275 H176 Z M240 115 V143 H268"), attr("fill", "none"), attr("stroke", "#69bec3"), attr("stroke-width", "3")]),
+                    node(NodeKind.SvgText, content=".py", attributes=[attr("x", "222"), attr("y", "207"), attr("text-anchor", "middle"), attr("style", "fill:#fafaf8;font-size:34px;font-family:monospace")]),
+                    node(NodeKind.SvgText, content="PySpark code", attributes=[attr("x", "222"), attr("y", "317"), attr("text-anchor", "middle"), attr("style", "fill:#fafaf8;font-size:28px;font-weight:700")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "Start with the Python application")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="launch-box", attributes=[attr("x", "28"), attr("y", "362"), attr("width", "388"), attr("height", "54"), attr("rx", "5")]),
+                    node(NodeKind.SvgText, content="spark-submit application.py", style="submit-label", attributes=[attr("x", "48"), attr("y", "396")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "Launch with spark-submit")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="jvm-box driver-process", attributes=[attr("x", "588"), attr("y", "68"), attr("width", "280"), attr("height", "338"), attr("rx", "6")]),
+                    node(NodeKind.SvgText, content="Driver JVM", style="process-title", attributes=[attr("x", "608"), attr("y", "108")]),
+                    node(NodeKind.SvgText, content="SparkSession", style="process-body", attributes=[attr("x", "608"), attr("y", "155")]),
+                    node(NodeKind.SvgText, content="SparkContext", style="process-body", attributes=[attr("x", "608"), attr("y", "187")]),
+                    node(NodeKind.SvgPath, style="inner-rule", attributes=[attr("d", "M608 216 H848")]),
+                    node(NodeKind.SvgText, content="Plans the query", style="process-body", attributes=[attr("x", "608"), attr("y", "256")]),
+                    node(NodeKind.SvgText, content="Schedules tasks", style="process-body", attributes=[attr("x", "608"), attr("y", "291")]),
+                    node(NodeKind.SvgText, content="Handles task results", style="process-body", attributes=[attr("x", "608"), attr("y", "326")]),
+                    node(NodeKind.SvgText, content="Java Virtual Machine", style="process-body", attributes=[attr("x", "608"), attr("y", "377")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "The driver JVM coordinates the application")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "1028"), attr("y", "68"), attr("width", "382"), attr("height", "102"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Worker node A", style="worker-label", attributes=[attr("x", "1044"), attr("y", "91")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "1028"), attr("y", "180"), attr("width", "382"), attr("height", "102"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Worker node B", style="worker-label", attributes=[attr("x", "1044"), attr("y", "203")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "1028"), attr("y", "292"), attr("width", "382"), attr("height", "102"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Worker node C", style="worker-label", attributes=[attr("x", "1044"), attr("y", "315")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="jvm-box", attributes=[attr("x", "1044"), attr("y", "104"), attr("width", "164"), attr("height", "54"), attr("rx", "4")]),
+                    node(NodeKind.SvgText, content="Executor", style="process-title", attributes=[attr("x", "1060"), attr("y", "126")]),
+                    node(NodeKind.SvgText, content="JVM · tasks", style="process-body", attributes=[attr("x", "1060"), attr("y", "149")]),
+                    node(NodeKind.SvgRectangle, style="jvm-box", attributes=[attr("x", "1044"), attr("y", "216"), attr("width", "164"), attr("height", "54"), attr("rx", "4")]),
+                    node(NodeKind.SvgText, content="Executor", style="process-title", attributes=[attr("x", "1060"), attr("y", "238")]),
+                    node(NodeKind.SvgText, content="JVM · tasks", style="process-body", attributes=[attr("x", "1060"), attr("y", "261")]),
+                    node(NodeKind.SvgRectangle, style="jvm-box", attributes=[attr("x", "1044"), attr("y", "328"), attr("width", "164"), attr("height", "54"), attr("rx", "4")]),
+                    node(NodeKind.SvgText, content="Executor", style="process-title", attributes=[attr("x", "1060"), attr("y", "350")]),
+                    node(NodeKind.SvgText, content="JVM · tasks", style="process-body", attributes=[attr("x", "1060"), attr("y", "373")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "4"), attr("aria-label", "Each executor runs inside its own JVM")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="python-box", attributes=[attr("x", "1250"), attr("y", "104"), attr("width", "144"), attr("height", "54"), attr("rx", "4")]),
+                    node(NodeKind.SvgText, content="Python", style="process-title", attributes=[attr("x", "1264"), attr("y", "126")]),
+                    node(NodeKind.SvgText, content="worker", style="process-body", attributes=[attr("x", "1264"), attr("y", "149")]),
+                    node(NodeKind.SvgRectangle, style="python-box", attributes=[attr("x", "1250"), attr("y", "216"), attr("width", "144"), attr("height", "54"), attr("rx", "4")]),
+                    node(NodeKind.SvgText, content="Python", style="process-title", attributes=[attr("x", "1264"), attr("y", "238")]),
+                    node(NodeKind.SvgText, content="worker", style="process-body", attributes=[attr("x", "1264"), attr("y", "261")]),
+                    node(NodeKind.SvgRectangle, style="python-box", attributes=[attr("x", "1250"), attr("y", "328"), attr("width", "144"), attr("height", "54"), attr("rx", "4")]),
+                    node(NodeKind.SvgText, content="Python", style="process-title", attributes=[attr("x", "1264"), attr("y", "350")]),
+                    node(NodeKind.SvgText, content="worker", style="process-body", attributes=[attr("x", "1264"), attr("y", "373")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "5"), attr("aria-label", "Python workers run Python functions when needed")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="story-line data-exchange", attributes=[attr("d", "M1210 133 H1244"), attr("marker-start", "url(#classic-arrow)")]),
+                    node(NodeKind.SvgPath, style="story-line data-exchange", attributes=[attr("d", "M1210 245 H1244"), attr("marker-start", "url(#classic-arrow)")]),
+                    node(NodeKind.SvgPath, style="story-line data-exchange", attributes=[attr("d", "M1210 357 H1244"), attr("marker-start", "url(#classic-arrow)")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "6"), attr("aria-label", "Data is exchanged between executor JVMs and Python workers")]),
+                node(NodeKind.SvgText, content="Python workers: when required", style="process-footnote", attributes=[attr("x", "1044"), attr("y", "422")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgCircle, style="travel-token token-step-4 fan-token-trunk", attributes=[attr("r", "6"), attr("style", "offset-path:path('M868 244 H950')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-4 fan-token-branch", attributes=[attr("r", "6"), attr("style", "offset-path:path('M950 244 V140 Q950 132 958 132 H1026')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-4 fan-token-branch", attributes=[attr("r", "6"), attr("style", "offset-path:path('M950 244 H1026')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-4 fan-token-branch", attributes=[attr("r", "6"), attr("style", "offset-path:path('M950 244 V348 Q950 356 958 356 H1026')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-3", attributes=[attr("r", "6"), attr("style", "offset-path:path('M436 188 H560')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-6", attributes=[attr("r", "6"), attr("style", "offset-path:path('M1210 133 H1244')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-6", attributes=[attr("r", "6"), attr("style", "offset-path:path('M1244 147 H1210')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-7", attributes=[attr("r", "6"), attr("style", "offset-path:path('M1010 414 H898')")]),
+                    node(NodeKind.SvgCircle, style="travel-token token-step-8", attributes=[attr("r", "6"), attr("style", "offset-path:path('M566 298 H444')")]),
+                ], style="journey-tokens", attributes=[attr("aria-hidden", "true"), attr("focusable", "false"), attr("data-motion-decorative", flag=true)]),
+            ], attributes=[attr("viewBox", "0 0 1440 450"), attr("role", "img"), attr("aria-labelledby", "classic-title classic-desc")]),
+            group([
+                paragraph([
+                    strong("The complete picture"),
+                    span("A classic PySpark application, its driver-side processes, and the cluster workers."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Your application"),
+                    span("Start with a Python application that uses the PySpark API."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Launch"),
+                    span("spark-submit launches the application; your code creates or obtains a SparkSession."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Python and the JVM"),
+                    span("Py4J bridges separate Python and JVM processes. SparkSession is an entry point into Spark."),
+                ], style="narration-cue cue-3"),
+                paragraph([
+                    strong("4 · Work on the cluster"),
+                    span("The driver schedules tasks on executors. Built-in Spark SQL operations run in the Spark engine."),
+                ], style="narration-cue cue-4"),
+                paragraph([
+                    strong("5 · Python on the workers"),
+                    span("When a task requires Python execution, a Python worker runs that code."),
+                ], style="narration-cue cue-5"),
+                paragraph([
+                    strong("6 · The cost of crossing processes"),
+                    span("Python workers use CPU and memory; data exchange involves serialization and conversion."),
+                ], style="narration-cue cue-6"),
+                paragraph([
+                    strong("7 · Results back to the driver"),
+                    span("Executors report results and status. The driver handles task completion and the requested result."),
+                ], style="narration-cue cue-7"),
+                paragraph([
+                    strong("8 · Back in Python"),
+                    span("For this count(), Python receives a number. print() runs in your Python process."),
+                ], style="narration-cue cue-8"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("data-motion-action", "play"), attr("aria-pressed", "false")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("data-motion-action", "pause"), attr("aria-pressed", "true")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("8", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 8"),
+                ], attributes=[attr("data-motion-status-visible", flag=true), attr("aria-hidden", "true")]),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("role", "group"), attr("aria-label", "Diagram steps")]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="classic-diagram unified-diagram jvm-walkthrough architecture-story reference-architecture", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "8"), attr("data-step-current", "8"), attr("data-frame", "static"), attr("data-static-frame", "complete"), attr("tabindex", "0")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("7"),
+        ]),
+        ],
+        notes="""The final two steps follow the return journey: executors report task results/status; the driver handles completion and requested results; Python receives the result. In the count() example, the distributed query computes the count and returns a scalar to Python. Do not imply every input row returns to the driver, or that all aggregation happens there. The exact result depends on the action (count, collect, write, etc.). Autoplay pauses six seconds per point; manual Next point is preferred during narration.
+
+Diagram controls follow the original numbered narration: application, spark-submit, Python/Py4J/JVM, cluster work, Python workers, and process-crossing costs. Driver-side and cluster groups are logical views, not a claim that the driver is always outside the cluster. Resource management and storage are omitted; result-return paths are shown. One executor and one Python worker per illustrated node are examples, not fixed counts. Each amber JVM box is a separate process.
+
+In this picture, I show a simplified flow of operations between Spark and Python. The actual underlying operations are more complicated, but this should help us understand where some of the limitations of using Python with Spark might lie. We’ll go into Spark’s internal operations in more detail later.
+
+1. Imagine you have a PySpark application in a .py file. You can use spark-submit to launch it. The application creates or obtains a SparkSession, which is our entry point for working with Spark.
+
+2. In classic PySpark, Python uses Py4J to call objects in the Java Virtual Machine. Py4J provides that communication bridge; it does not compile the Python program into Java.
+
+3. On the Spark side, the driver coordinates the application and schedules tasks on the executors. Those executors carry out the distributed work. Built-in Spark SQL operations use Spark’s own implementations.
+
+4. Some tasks also need to execute Python—for example, a Python user-defined function. Executors use Python worker processes for that. These processes need resources, and data must be exchanged between the JVM and Python. This exchange and conversion can add overhead. Arrow can make that exchange more efficient.
+
+That is why the way we express an operation matters. When a built-in Spark function does what we need, it is usually the first thing to consider. When we need Python-specific logic, we can use it, but we need to understand the execution costs. We’ll come back to that in more detail.
+
+For now, that is the simplified picture of how Python and Spark work together. Let’s take a look at how Spark got here.
+
+References: https://www.py4j.org/ ; https://spark.apache.org/docs/4.2.0/cluster-overview.html ; https://spark.apache.org/docs/4.2.0/api/python/user_guide/udfandudtf.html .""",
+    )

@@ -1,0 +1,200 @@
+"""Join shuffled hash slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, prose, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_shuffled_hash() -> Slide:
+    steps = [
+        TeachingStep(label="Same partitions",
+            heading="The records reach the same join partitions as before.",
+            explanation="Changing the matching algorithm does not by itself remove the required shuffle.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Build the lookup",
+            heading="Build a hash table from one side of this partition.",
+            explanation="For this left join, the products partition is the build side.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Probe M1",
+            heading="Probe the lookup with the first sales key.",
+            explanation="M1 has no entry, so the left join retains its sale with a NULL category.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Probe G1",
+            heading="Probe the next key and emit its match.",
+            explanation="G1 finds games without first sorting the two inputs.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Memory cost",
+            heading="The trade-off is memory for the local lookup.",
+            explanation="An oversized or skewed build partition can put that task under memory pressure.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-shuffled-hash",
+        title="Shuffled hash joins",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-mechanics ",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Shuffled hash joins", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("sales.join(products, on=\"product_id\", how=\"left\")"),
+                ], style="language-python"),
+                span("The same five sales and three products"),
+            ], style="jm-query"),
+            group([
+                node(NodeKind.Aside, children=[
+                    heading("After the shuffle", level=2),
+                    group([
+                        node(NodeKind.Strong, children=[
+                            text("Worker A "),
+                            node(NodeKind.Small, content="partition 0"),
+                        ]),
+                        paragraph([
+                            text("Sales "),
+                            node(NodeKind.Bold, content="B1"),
+                            text(" / 25, 15, 10"),
+                        ]),
+                        paragraph([
+                            text("Products "),
+                            node(NodeKind.Bold, content="B1"),
+                            text(" / books"),
+                        ]),
+                    ], style="jm-mini-worker"),
+                    group([
+                        node(NodeKind.Strong, children=[
+                            text("Worker B "),
+                            node(NodeKind.Small, content="partition 1"),
+                        ]),
+                        paragraph([
+                            text("Sales "),
+                            node(NodeKind.Bold, content="G1"),
+                            text(" / 40, "),
+                            node(NodeKind.Bold, content="M1"),
+                            text(" / 10"),
+                        ]),
+                        paragraph([
+                            text("Products "),
+                            node(NodeKind.Bold, content="G1"),
+                            text(" / games"),
+                        ]),
+                        span("Follow this join task", style="jm-task-focus"),
+                    ], style="jm-mini-worker jm-selected"),
+                    group([
+                        node(NodeKind.Strong, children=[
+                            text("Worker C "),
+                            node(NodeKind.Small, content="partition 2"),
+                        ]),
+                        prose("No sales"),
+                        paragraph([
+                            text("Products "),
+                            node(NodeKind.Bold, content="X1"),
+                            text(" / accessories"),
+                        ]),
+                    ], style="jm-mini-worker"),
+                ], style="jm-cluster", attributes=[attr("aria-label", "The same shuffled join partitions")]),
+                group([
+                    group([
+                        heading("Inside the same join task", level=2),
+                        span("Local work on partition 1"),
+                    ], style="jm-task-heading"),
+                    group([
+                        group([
+                            heading("Sales partition", level=3),
+                            group([
+                                span("product_id"),
+                                span("amount"),
+                            ], style="jm-table-label"),
+                            group([
+                                span("M1"),
+                                span("10"),
+                            ], style="jm-record jm-missing jm-probe-m1"),
+                            group([
+                                span("G1"),
+                                span("40"),
+                            ], style="jm-record jm-games jm-probe-g1"),
+                        ], style="jm-input-sales"),
+                        group([
+                            heading("Products partition", level=3),
+                            group([
+                                span("G1"),
+                                span("games"),
+                            ], style="jm-record jm-games "),
+                            group([
+                                group([
+                                    text("Build hash lookup "),
+                                    span("↓", attributes=[attr("aria-hidden", "true")]),
+                                ], style="jm-build-link"),
+                                group([
+                                    span("PARTITION LOOKUP IN MEMORY", style="jm-memory-label"),
+                                    group([
+                                        node(NodeKind.Bold, content="G1"),
+                                        span("→", attributes=[attr("aria-hidden", "true")]),
+                                        strong("games"),
+                                    ], style="jm-hash-slot"),
+                                ], style="jm-hash-map"),
+                            ], style="jm-hash-build jm-after-1"),
+                        ], style="jm-input-products"),
+                        group([
+                            heading("Joined rows", level=3),
+                            group([
+                                text("The task first needs"),
+                                line_break(),
+                                text("a lookup to probe."),
+                            ], style="jm-output-placeholder jm-until-2"),
+                            group([
+                                group([
+                                    span("M1"),
+                                    span("10"),
+                                    span("NULL"),
+                                ], style="jm-record jm-missing jm-after-2"),
+                                group([
+                                    span("G1"),
+                                    span("40"),
+                                    span("games"),
+                                ], style="jm-record jm-games jm-after-3"),
+                            ], style="jm-result-rows"),
+                        ], style="jm-local-output"),
+                    ], style="jm-local-columns"),
+                    group([
+                        prose("Matching inputs have already reached this partition.", style="jm-only jm-p0"),
+                        prose("The task builds a hash lookup from its products partition.", style="jm-only jm-p1"),
+                        paragraph([
+                            node(NodeKind.Bold, content="Probe M1", style="jm-key jm-missing"),
+                            node(NodeKind.Span, children=[
+                                text("No lookup entry. The left join emits the sale with "),
+                                strong("NULL"),
+                                text("."),
+                            ]),
+                        ], style="jm-only jm-p2"),
+                        paragraph([
+                            node(NodeKind.Bold, content="Probe G1", style="jm-key"),
+                            node(NodeKind.Span, children=[
+                                text("The lookup returns "),
+                                strong("games"),
+                                text(". Emit the joined sale."),
+                            ]),
+                        ], style="jm-only jm-p3 jm-p4 jm-last"),
+                    ], style="jm-match-explanation"),
+                ], style="jm-local-task"),
+            ], style="jm-workbench"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson jm-lesson jm-hash", attributes=[attr("data-lesson", flag=true), attr("data-point", "4")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("66"),
+        ]),
+        ],
+        notes="""Use exactly the same post-shuffle partition allocation and the same close-up of Worker B as the sort-merge slide. Do not show a new exchange or a different dataset. The visible change is the local matching operator. B reads its G1/games products partition and builds a key-to-row hash lookup in task memory. In the toy data the map has one entry. It probes the unsorted sales input M1/10 then G1/40, yielding NULL and games respectively. A builds its own B1 lookup, and C has the X1 lookup but no sales. All three maps are partition-local; none is the complete products table. Duplicates in the build side can map a key to several matching rows.
+
+This example builds the right side for the left outer equi-join. Build-side eligibility varies with join type and actual selection depends on statistics, settings, hints and possibly AQE. A physical ShuffledHashJoin does not require sorted child keys, but it still requires compatible join-key distributions. A compatible pre-existing layout may avoid exchanges. Building the local hash relation needs memory and large/skewed build partitions can fail. Do not claim hashing guarantees faster execution or fixes a hot key. The tiny one-entry map teaches the distinction without pretending to be a benchmark.
+Sources: https://spark.apache.org/docs/latest/sql-performance-tuning.html ; https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/joins/ShuffledHashJoinExec.scala""",
+    )

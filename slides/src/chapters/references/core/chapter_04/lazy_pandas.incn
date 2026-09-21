@@ -1,0 +1,46 @@
+"""Lazy pandas slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_lazy_pandas() -> Slide:
+    return Slide(
+        slug="lazy-pandas",
+        title="Spark is Lazy",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("04 / LAZY PANDAS"),
+        ], style="eyebrow"),
+            heading("Spark is Lazy", level=1),
+            prose("Pandas vs. Spark DataFrames", style="subtitle"),
+            node(NodeKind.OrderedList, children=[
+            node(NodeKind.ListItem, children=[
+                span("01"),
+                text("Pandas and Spark operations side by side"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("02"),
+                text("Eager versus lazy computation"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("03"),
+                text("Transformations describe work; actions request results"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("04"),
+                text("Immutable branches and repeated requests"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("05"),
+                text("When errors appear—and when work is repeated"),
+            ]),
+        ], style="topic-list"),
+            span("CONTENT SKELETON", style="draft-label"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("43"),
+        ]),
+        ],
+        notes="Workshop slides 22–28. Preserve the Lazy Pandas comparison. Detailed planning comes next, after these semantics are established.",
+    )

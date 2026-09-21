@@ -1,0 +1,73 @@
+"""Pyspark report slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, code_block, group, heading, node, prose, span, text
+
+pub def slide_pyspark_report() -> Slide:
+    return Slide(
+        slug="pyspark-report",
+        title="Exercise 4 · Join and aggregate",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 4 · Join and aggregate", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Check that the cleaned product lookup has one row per key."),
+                    node(NodeKind.ListItem, children=[
+                        text("Left join accepted sales to products. Label a missing category "),
+                        code("unmapped"),
+                        text("."),
+                    ]),
+                    node(NodeKind.ListItem, content="Group by category; count sales and sum their amounts."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Expected category report", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="category", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="sales", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="total", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="50.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="40.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="unmapped"),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="10.00"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                prose("Try INNER, then restore LEFT.", style="ho-note"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""enriched = accepted.join(products, on="product_id", how="left")
+report = enriched.groupBy("category").agg(
+    F.count("*").alias("sales"), F.sum("amount").alias("total"))"""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("110"),
+        ]),
+        ],
+        notes="The short code seed omits the category replacement so participants add it: F.coalesce(\"category\", F.lit(\"unmapped\")). coalesce here is a column expression, not DataFrame.coalesce for partitions. Validate normalized lookup-key uniqueness before joining. An inner join removes M1/10.00, leaving four sales and total90.00. The full reference and pipeline.py include the left join, unmapped label and selected output columns.",
+    )

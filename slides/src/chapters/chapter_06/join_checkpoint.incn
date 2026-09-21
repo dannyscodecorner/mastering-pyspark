@@ -1,0 +1,160 @@
+"""Join checkpoint slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_checkpoint() -> Slide:
+    steps = [
+        TeachingStep(label="Choose the product version",
+            heading="This report needs the current product record.",
+            explanation="Filter the products input using that rule, then keep the same left join.",
+            cue_key="", numbered=false),
+        TeachingStep(label="One B1 match",
+            heading="The old B1 version is excluded before it can create extra matches.",
+            explanation="B1, B2 and G1 each match once; M1 is still retained with a NULL category.",
+            cue_key="", numbered=false),
+        TeachingStep(label="The report is correct again",
+            heading="The books total is back to 70, and the report adds up to 120.",
+            explanation="We changed the product-version rule. The six sales and the requested aggregation stayed the same.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-checkpoint",
+        title="Which product record do we want?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide aggregation-slide join-closing",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Which product record do we want?", level=1),
+            group([
+            step_rail(steps),
+            paragraph([
+                text("For this report, use each product’s "),
+                strong("current category"),
+                text("."),
+            ], style="jc-rule"),
+            group([
+                group([
+                    heading("Choose the product rows before joining", level=2),
+                    node(NodeKind.Preformatted, children=[
+                        code("""current_products = (
+    products
+    .filter(F.col("is_current"))
+)
+
+enriched = sales.join(
+    current_products,
+    on="product_id",
+    how="left",
+)"""),
+                    ], style="language-python"),
+                ], style="jc-fix-code"),
+                group([
+                    group([
+                        heading("The same products input", level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                    node(NodeKind.HeaderCell, content="is_current"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="books"),
+                                    node(NodeKind.Cell, content="true"),
+                                ], style="jc-books jc-b1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="books"),
+                                    node(NodeKind.Cell, content="false"),
+                                ], style="jc-books jc-b1 jc-old"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B2"),
+                                    node(NodeKind.Cell, content="books"),
+                                    node(NodeKind.Cell, content="true"),
+                                ], style="jc-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="games"),
+                                    node(NodeKind.Cell, content="true"),
+                                ], style="jc-games"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="X1"),
+                                    node(NodeKind.Cell, content="accessories"),
+                                    node(NodeKind.Cell, content="true"),
+                                ], style="jc-extra"),
+                            ]),
+                        ], style="jc-table jc-products"),
+                        paragraph([
+                            text("The older B1 row has "),
+                            code("is_current = false"),
+                            text("."),
+                        ], style="jc-output-note jc-state jc-p0"),
+                        paragraph([
+                            strong("B1 now has one match."),
+                            line_break(),
+                            text("This example has one current row per product ID."),
+                        ], style="jc-output-note jc-state jc-p1"),
+                    ], style="jc-state jc-p0 jc-p1"),
+                    group([
+                        heading("Run the same aggregation", level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="category"),
+                                    node(NodeKind.HeaderCell, content="total"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="books"),
+                                    node(NodeKind.Cell, content="70"),
+                                ], style="jc-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="games"),
+                                    node(NodeKind.Cell, content="40"),
+                                ], style="jc-games"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="NULL"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="jc-null"),
+                            ]),
+                        ], style="jc-table jc-totals"),
+                        paragraph([
+                            strong("6 sales → 6 joined rows"),
+                            line_break(),
+                            text("Books: 50 + 20 = 70."),
+                            line_break(),
+                            text("Report total: "),
+                            strong("120"),
+                            text("."),
+                        ], style="jc-output-note"),
+                    ], style="jc-state jc-p2 jc-final"),
+                ], style="jc-fix-evidence"),
+            ], style="jc-fix-layout"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson aggregation-lesson jc-lesson jc-fix", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("74"),
+        ]),
+        ],
+        notes="""Resolve the exact product-history problem on62. State the business rule before the filter: this illustrative report uses the current product category for every sale. A historical/as-of report could instead need effective-date matching; current-only filtering is not a universal solution. The Boolean is_current flag was introduced on62, and this fixture has exactly one current record per product_id. If the source violates that condition, this filter alone will not guarantee uniqueness. Do not teach arbitrary dropDuplicates as a business rule.
+
+The six-sale DataFrame and versioned products DataFrame are already the inputs from62; F is the functions alias introduced earlier. Current products retain B1/books, B2/books, G1/games and X1/accessories. Filter the products input before the left join, preserving all six sales, including unmatched M1. This removes only the old B1 match in this example. Re-run the same groupBy(category).agg(sum(amount)) from61: books50+20=70, games40 and NULL10, totaling120.
+
+Conclude the chapter through the completed example instead of a new optimisation quiz. We have followed familiar join and aggregation syntax through data movement, skew, physical matching strategies and partial totals; now the report also has the intended matching relationship. The user supplies the relationship and product-version rule. Catalyst/AQE choose eligible execution mechanics, but they do not infer that business rule. The extra-match work is avoided by expressing the intended inputs. No measured speedup is claimed, and partial aggregation may already reduce downstream shuffle traffic.
+
+Sources: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.filter.html ; https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-join.html""",
+    )

@@ -1,0 +1,50 @@
+"""Immutability slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_immutability() -> Slide:
+    return Slide(
+        slug="immutability",
+        title="Why Spark uses immutability",
+        frame=Frame.Composed,
+        styles="slide core-slide immutability-why",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Why Spark uses immutability", level=1),
+            prose("A transformation does not modify its input.", style="im-lead"),
+            node(NodeKind.DefinitionList, children=[
+            group([
+                node(NodeKind.Term, content="Share an input"),
+                node(NodeKind.Definition, content="Independent computations can use the same input without one transformation changing it for the others."),
+            ]),
+            group([
+                node(NodeKind.Term, content="Reuse results"),
+                node(NodeKind.Definition, content="When you persist a result, Spark can reuse its partitions from memory or disk."),
+            ]),
+            group([
+                node(NodeKind.Term, content="Recover lost work"),
+                node(NodeKind.Definition, content="With lineage and available inputs, Spark can recompute missing partitions."),
+            ]),
+        ], style="im-reasons"),
+            paragraph([
+            text("How can Spark transform data"),
+            line_break(),
+            text("if the input cannot change?"),
+        ], style="im-question"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("34"),
+        ]),
+        ],
+        notes="""Original corpus: Section 2, 2.4 Spark Dataframes, slide 9 and its speaker notes. The teaching purpose is to explain why Spark's immutable transformation model is useful before demonstrating it in Python. We have just seen how Spark describes work over distributed partitions. Those partitions may be used by different computations: an operation produces a derived dataset instead of editing the shared input in place. This removes the need to coordinate such in-place edits to the input. It does not mean Spark has no coordination, mutable internal buffers, or external side effects.
+
+Reuse: explicitly request persistence when computed partitions should be retained. The storage level determines memory and/or disk use; eviction and failure can still require recomputation. Reusing a DataFrame variable by itself does not guarantee reuse of computed rows. Immutability supports this model but does not automatically cache anything.
+
+Recovery: connect to the earlier RDD explanation. Lineage describes how a partition was derived. Spark can recompute a missing partition when its required inputs are accessible. Reproducing the same values also requires stable inputs and deterministic computation; immutability is not a snapshot guarantee for external files or a promise that all user functions are deterministic. Avoid the original notes' claim that immutability alone makes data reproducible at any time, and avoid implying that every transformation copies all rows.
+
+Finish with the audience question: "How can Spark transform data if the input cannot change?" Pause here. The next slide demonstrates the answer: select returns a new DataFrame, and assigning that result to df changes the Python binding. Keep that reveal on the following slide rather than repeating its code here.
+
+Sources: https://spark.apache.org/docs/latest/rdd-programming-guide.html#rdd-operations ; https://spark.apache.org/docs/latest/rdd-programming-guide.html#rdd-persistence ; https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.select.html""",
+    )

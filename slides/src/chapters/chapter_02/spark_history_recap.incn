@@ -1,0 +1,54 @@
+"""Spark history recap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_spark_history_recap() -> Slide:
+    return Slide(
+        slug="spark-history-recap",
+        title="Introducing Spark: recap",
+        frame=Frame.Composed,
+        styles="slide chapter-recap",
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            heading("Introducing Spark: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Introducing Spark: recap: key takeaways", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Data reuse", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Spark grew from the need to reuse working data across iterative and interactive computations."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Structured queries", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="DataFrames add schemas and expressions that Spark SQL can analyse and optimise."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Shared engine", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="SQL, Structured Streaming and machine learning use the same distributed foundation."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Newer capabilities", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="AQE adapts plans using runtime information. Spark Connect lets a remote client submit query plans."),
+                ]),
+            ]),
+        ], style="chapter-recap-table"),
+            prose("DataFrames and Spark SQL are the main interfaces we will use.", style="chapter-recap-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("25"),
+        ]),
+        ],
+        notes="""Close the history on the reasons behind the evolution, rather than asking the audience to memorise release dates. Spark adds reusable working data, structured query optimisation and broader ways to use the engine. Persistence is optional; this is not a claim that every computation stays in memory.
+
+https://spark.apache.org/history
+https://www.usenix.org/conference/hotcloud-10/spark-cluster-computing-working-sets
+https://spark.apache.org/docs/4.2.0/sql-programming-guide.html
+https://spark.apache.org/docs/4.2.0/sql-performance-tuning.html
+https://spark.apache.org/docs/4.2.0/spark-connect-overview.html""",
+    )

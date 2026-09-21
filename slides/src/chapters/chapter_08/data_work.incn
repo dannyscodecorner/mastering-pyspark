@@ -1,0 +1,95 @@
+"""Data work slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_data_work() -> Slide:
+    return Slide(
+        slug="data-work",
+        title="What we’ll cover",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-agenda-slide",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("What we’ll cover", level=1),
+            group([
+            group([
+                heading("The exercises", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, children=[
+                        span("1–3"),
+                        group([
+                            strong("Read and clean the inputs"),
+                            prose("Inspect Parquet, use functions and handle bad values."),
+                        ]),
+                    ]),
+                    node(NodeKind.ListItem, children=[
+                        span("4–5"),
+                        group([
+                            strong("Build and save the report"),
+                            prose("Join, aggregate, check and write the results."),
+                        ]),
+                    ]),
+                    node(NodeKind.ListItem, children=[
+                        span("6–8"),
+                        group([
+                            strong("Run the pipeline as a stream"),
+                            prose("Add files, restart the query and store the sales."),
+                        ]),
+                    ]),
+                    node(NodeKind.ListItem, children=[
+                        span("9"),
+                        group([
+                            strong("Extend it yourself"),
+                            prose("Add a daily breakdown to the report."),
+                        ]),
+                    ]),
+                ], style="ho-agenda"),
+            ]),
+            group([
+                heading("Our final category report", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Expected category report", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="category", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="sales", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="total", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="50.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="40.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="unmapped"),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="10.00"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                prose("Five accepted sales · total 100.00", style="ho-note"),
+            ]),
+        ], style="ho-workgrid"),
+            paragraph([
+            node(NodeKind.Link, content="Open the guided lab", attributes=[attr("href", "labs/chapter08/hands-on.html"), attr("target", "_blank")]),
+            text(" · "),
+            node(NodeKind.Link, content="Download the lab", attributes=[attr("href", "labs/chapter08-lab.zip"), attr("download", flag=true)]),
+            text(" · "),
+            node(NodeKind.Link, content="Course on GitHub", attributes=[attr("href", "https://github.com/dannyscodecorner/mastering-pyspark"), attr("target", "_blank"), attr("rel", "noopener")]),
+        ], style="ho-resource"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("105"),
+        ]),
+        ],
+        notes="Use one sales pipeline throughout the exercises. Point out the intended result, then outline the route: inspect, clean, join, validate and write; reuse those transformations as files arrive; finish with a daily report. The exercise numbers match hands_on.py and the optional notebook. Give participants a moment to read each exercise before working through its cells together. Original corpus 3.2/3.3 contributes the functions and cleaning progression; original 8.3 contributes the static-to-streaming progression.",
+    )

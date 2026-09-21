@@ -1,0 +1,103 @@
+"""Immutability reference slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, span, strong, text
+
+pub def slide_immutability_reference() -> Slide:
+    return Slide(
+        slug="immutability-reference",
+        title="df = df.select(…)",
+        frame=Frame.Composed,
+        styles="slide core-slide lesson-slide",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("df = df.select(…)", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                node(NodeKind.Code, children=[
+                    span("df", style="rb-code-part rb-lhs"),
+                    text(" "),
+                    span("=", style="token operator"),
+                    text(" "),
+                    node(NodeKind.Span, children=[
+                        text("df."),
+                        span("select", style="token function"),
+                        text("("),
+                        span("\"amount\"", style="token string"),
+                        text(")"),
+                    ], style="rb-code-part rb-rhs"),
+                ]),
+            ], style="rb-code"),
+            node(NodeKind.OrderedList, children=[
+                node(NodeKind.ListItem, content="Before the statement"),
+                node(NodeKind.ListItem, content="Evaluate the right-hand side"),
+                node(NodeKind.ListItem, content="Assign the result"),
+            ], style="lesson-rail", attributes=[attr("aria-label", "Assignment steps")]),
+            node(NodeKind.Figure, children=[
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgTitle, content="A new DataFrame, followed by a new binding for df", attributes=[attr("id", "rb-title")]),
+                    node(NodeKind.SvgDescription, content="Initially the Python name df refers to DataFrame A, with category and amount columns. Evaluating df.select(\"amount\") creates DataFrame B, describing the amount column from A. Assignment then moves the df binding from A to B. Both DataFrame descriptions stay in place; A is unchanged. These are descriptions of data, not copies of its rows.", attributes=[attr("id", "rb-desc")]),
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, style="rb-arrowhead", attributes=[attr("d", "M0 0L8 4L0 8Z")]),
+                        ], attributes=[attr("id", "rb-arrow"), attr("markerWidth", "8"), attr("markerHeight", "8"), attr("refX", "7"), attr("refY", "4"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, style="rb-connector", attributes=[attr("d", "M520 222H776"), attr("marker-end", "url(#rb-arrow)")]),
+                        node(NodeKind.SvgText, content="select", style="rb-mono", attributes=[attr("x", "654"), attr("y", "200"), attr("text-anchor", "middle")]),
+                    ], style="rb-created"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, style="rb-card", attributes=[attr("x", "80"), attr("y", "92"), attr("width", "440"), attr("height", "224"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="DataFrame A", style="rb-heading", attributes=[attr("x", "108"), attr("y", "136")]),
+                        node(NodeKind.SvgText, content="Columns", style="rb-column-label", attributes=[attr("x", "108"), attr("y", "174")]),
+                        node(NodeKind.SvgRectangle, style="rb-column", attributes=[attr("x", "108"), attr("y", "188"), attr("width", "180"), attr("height", "48"), attr("rx", "3")]),
+                        node(NodeKind.SvgRectangle, style="rb-column", attributes=[attr("x", "300"), attr("y", "188"), attr("width", "180"), attr("height", "48"), attr("rx", "3")]),
+                        node(NodeKind.SvgText, content="category", style="rb-mono", attributes=[attr("x", "126"), attr("y", "220")]),
+                        node(NodeKind.SvgText, content="amount", style="rb-mono", attributes=[attr("x", "318"), attr("y", "220")]),
+                        node(NodeKind.SvgText, content="Original DataFrame", style="rb-detail", attributes=[attr("x", "108"), attr("y", "284")]),
+                    ], style="rb-original"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, style="rb-card rb-card-b", attributes=[attr("x", "788"), attr("y", "92"), attr("width", "440"), attr("height", "224"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="DataFrame B", style="rb-heading", attributes=[attr("x", "816"), attr("y", "136")]),
+                        node(NodeKind.SvgText, content="Columns", style="rb-column-label", attributes=[attr("x", "816"), attr("y", "174")]),
+                        node(NodeKind.SvgRectangle, style="rb-column", attributes=[attr("x", "816"), attr("y", "188"), attr("width", "180"), attr("height", "48"), attr("rx", "3")]),
+                        node(NodeKind.SvgText, content="amount", style="rb-mono", attributes=[attr("x", "834"), attr("y", "220")]),
+                        node(NodeKind.SvgText, content="Select amount from A", style="rb-detail", attributes=[attr("x", "816"), attr("y", "284")]),
+                    ], style="rb-created"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, style="rb-connector", attributes=[attr("d", "M300 60V84"), attr("marker-end", "url(#rb-arrow)")]),
+                        node(NodeKind.SvgRectangle, style="rb-binding-box", attributes=[attr("x", "216"), attr("y", "0"), attr("width", "168"), attr("height", "60"), attr("rx", "5")]),
+                        node(NodeKind.SvgText, content="Python name", style="rb-binding-label", attributes=[attr("x", "300"), attr("y", "23")]),
+                        node(NodeKind.SvgText, content="df", style="rb-binding-name", attributes=[attr("x", "300"), attr("y", "49")]),
+                    ], style="rb-binding"),
+                ], style="rb-diagram", attributes=[attr("viewBox", "0 0 1308 320"), attr("role", "img"), attr("aria-labelledby", "rb-title rb-desc")]),
+            ], style="rb-figure"),
+            group([
+                node(NodeKind.Paragraph, children=[
+                    strong("df refers to DataFrame A."),
+                    span("Its columns are category and amount."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("select returns a new DataFrame."),
+                    span("B describes the amount column from A. The name df still refers to A."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("The name df now refers to B."),
+                    span("select created B from A; the assignment leaves A unchanged. No data copy is implied."),
+                ], attributes=[attr("data-cue", flag=true)]),
+            ], style="lesson-cues", attributes=[attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-lesson-reset", flag=true)]),
+                span("3 / 3", style="lesson-position"),
+            ], style="lesson-controls", attributes=[attr("role", "group"), attr("aria-label", "Assignment walkthrough")]),
+        ], style="lesson rb-lesson", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("35"),
+        ]),
+        ],
+        notes="Original corpus: Section 2, 2.4 Spark Dataframes, slide 10. Rebuilt as a three-step assignment walkthrough. First establish that df refers to A. Then highlight and evaluate the right-hand expression: select returns B, while df still refers to A. Finally highlight the left-hand name and move the single df marker to B. Only one current binding is ever shown. A and B stay fixed so the audience can see that A's columns never change. The boxes depict DataFrame descriptions and schemas, not materialised rows or a complete physical execution plan. A and B are teaching labels, not Spark IDs. Do not use df.rdd.id() to establish DataFrame identity; it identifies an RDD and is unavailable in Spark Connect. The snippet keeps no separate Python name for A after assignment; B retains a plan derived from its input. Keeping A in this illustration explains the derivation, not a guarantee about object lifetime. Ask: have we actually processed the rows yet? Carry that question through the API overview and recap into Lazy Pandas. Manual Next/Previous/Replay controls let the instructor pause between evaluation and assignment. Static, print and reduced-motion views show the final binding and the complete explanation. Reference: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.select.html",
+    )

@@ -1,0 +1,35 @@
+"""Cover slide."""
+
+from surface import Frame, NodeKind, Slide, code, emphasis, group, image, line_break, node, prose, rich_heading, span, text
+
+pub def slide_section_1() -> Slide:
+    return Slide(
+        slug="section-1",
+        title="Spark vs. Python",
+        frame=Frame.Composed,
+        styles="slide dark python-spark-intro",
+        content=[
+            image("assets/python-spark-bridge.png", "", style="bridge-backdrop"),
+            group([
+            text("01 / SPARK VS. PYTHON"),
+        ], style="eyebrow"),
+            group([
+            image("assets/history/spark-reverse.svg", "Apache Spark"),
+            prose("The distributed engine"),
+        ], style="intro-technology spark-technology"),
+            group([
+            image("assets/python-logo.svg", "Python"),
+            prose("The language you write"),
+        ], style="intro-technology python-technology"),
+            rich_heading([
+            text("How do Python and Spark"),
+            line_break(),
+            emphasis("work together?"),
+        ], level=1),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("4"),
+        ]),
+        ],
+        notes="Open the section with the distinction between the language and the distributed engine. Python and Spark are not competing tools: PySpark connects them. Ask how Python code becomes work on a cluster, then advance to Cluster Computing. The central connection is a visual metaphor, not a technical process diagram.",
+    )

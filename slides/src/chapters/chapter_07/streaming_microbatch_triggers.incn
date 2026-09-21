@@ -1,0 +1,89 @@
+"""Streaming microbatch triggers slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, prose, span, strong, text
+
+pub def slide_streaming_microbatch_triggers() -> Slide:
+    return Slide(
+        slug="streaming-microbatch-triggers",
+        title="Micro-batch triggers",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-trigger-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Micro-batch triggers", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Ways to schedule micro-batches, configured on a streaming writer before starting the query", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-trigger-name"),
+                node(NodeKind.Column, style="ss-trigger-setting"),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Trigger", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, children=[
+                        text("Setting on "),
+                        code("writeStream"),
+                    ], attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Behaviour", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Default", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Span, children=[
+                            text("No "),
+                            code(".trigger(...)"),
+                            text(" setting"),
+                        ], style="ss-trigger-default"),
+                    ]),
+                    node(NodeKind.Cell, content="Start the next batch as soon as the previous one finishes."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Processing time", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".trigger(processingTime=\"5 seconds\")"),
+                        ], style="language-python"),
+                    ]),
+                    node(NodeKind.Cell, content="Every 5 seconds, or as soon as an overrunning batch finishes."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="AvailableNow", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".trigger(availableNow=True)"),
+                        ], style="language-python"),
+                    ]),
+                    node(NodeKind.Cell, content="Process the data available at the start, then stop. May use several batches."),
+                ]),
+            ]),
+        ], style="ss-trigger-table"),
+            group([
+            strong("Once · deprecated"),
+            code(".trigger(once=True)"),
+            node(NodeKind.Span, children=[
+                text("One batch, then stop."),
+                line_break(),
+                text("Use AvailableNow for new work."),
+            ]),
+        ], style="ss-trigger-legacy"),
+            prose("The trigger controls the schedule. It does not set a batch’s size or completion deadline.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("84"),
+        ]),
+        ],
+        notes="""We have seen what happens inside successive micro-batches. Now we choose how the next one starts. These are trigger settings within micro-batch execution, not new execution engines. Apply a trigger on the configured writeStream builder before calling start; the source, sink and checkpoint configuration are omitted here so the settings remain easy to compare.
+
+Default: leave the trigger unspecified. The next batch starts as soon as the previous batch completes. Processing time: request a fixed cadence, here five seconds. If the batch finishes early, Spark waits for the next scheduled start. If it overruns, the next batch starts as soon as it finishes; Spark does not launch overlapping batches to catch up. Five seconds is not a guarantee that the work finishes in five seconds.
+
+AvailableNow: process the records available when this run begins, potentially across several batches, and stop. Source admission controls such as maxFilesPerTrigger can limit each batch. With a compatible retained checkpoint, a later run can resume progress, making this useful for scheduled catch-up workloads. Check source support; the documented fallback for unsupported sources is one-time execution. New arrivals after the run's initial target belong to a later run.
+
+Once is included for older code only. It runs one batch and is deprecated in favour of AvailableNow. The trigger alone is not a row-count or byte-size setting: the source and its admission controls determine the work in a batch. Before discussing which results get written, we will look at the other current execution approach: Real-time mode.
+
+Sources (checked 20 September 2026): https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers ; https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html""",
+    )

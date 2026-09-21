@@ -1,0 +1,46 @@
+"""Recap slide."""
+
+from surface import Frame, Slide, code, line_break, prose, text
+from components import Takeaway, recap_table
+
+pub def recap() -> Slide:
+    return Slide(
+        slug="lazy-evaluation-recap",
+        title="Lazy evaluation: recap",
+        frame=Frame.Recap,
+        content=[
+            recap_table([
+                Takeaway(label="Transformations", explanation=[
+                    text("Return a new DataFrame describing work, such as "),
+                    code("filter()"),
+                    text(" or "),
+                    code("select()"),
+                    text("."),
+                ]),
+                Takeaway(label="Actions", explanation=[
+                    text("Request a result: "),
+                    code("show()"),
+                    text(" displays rows, "),
+                    code("count()"),
+                    text(" returns a number, and a batch write saves output."),
+                ]),
+                Takeaway(label="The two counts", explanation=[
+                    code("sales.groupBy(\"category\").count()"),
+                    text(" builds an aggregate DataFrame."),
+                    line_break(),
+                    code("sales.count()"),
+                    text(" requests a number."),
+                ]),
+                Takeaway(label="Required work", explanation=[
+                    text("An action computes its own dependencies. Unrelated branches are not all executed."),
+                ]),
+            ], caption="Lazy evaluation: recap: key takeaways"),
+            prose("Lazy evaluation gives Spark room to optimise. It does not mean the result is cached.", style="chapter-recap-takeaway"),
+        ],
+        notes="""Original corpus: Section 2, 2.5 Spark Data Operations, slides 6–7 and 10. The current chapter already has the explicit Transformations and Actions lesson and its count-versus-grouped-count comparison. Avoid the original wording that actions execute all transformations collected so far: only the required dependency path is computed. Transformations do not mutate the existing DataFrame. Query analysis or metadata work can occur before an action; laziness refers to computing result rows.
+
+https://spark.apache.org/docs/4.2.0/rdd-programming-guide.html#rdd-operations
+https://spark.apache.org/docs/latest/spark-connect-gotchas.html
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.GroupedData.count.html
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.count.html""",
+    )

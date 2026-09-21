@@ -1,0 +1,143 @@
+"""Join skew slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, group, heading, node, prose, span, text
+from components import step_rail, step_cues
+
+pub def slide_join_skew() -> Slide:
+    steps = [
+        TeachingStep(label="Spot the long tail",
+            heading="One overloaded channel holds up the stage.",
+            explanation="That task handles more data and may spill to disk while other tasks have already finished.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Explain the imbalance",
+            heading="More partitions do not automatically spread a hot key.",
+            explanation="Also check duplicate keys: a many-to-many join can create a large output even from modest inputs.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Adapt when eligible",
+            heading="AQE can mitigate skew in supported shuffle joins.",
+            explanation="Filter or reduce unnecessary input first; treat salting as a targeted technique, not a default fix.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-skew",
+        title="One hot key can hold up the stage",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("One hot key can hold up the stage", level=1),
+            group([
+            step_rail(steps),
+            group([
+                group([
+                    group([
+                        prose("Same sales model, now at production scale", style="join-label"),
+                        heading("Four channels. Uneven traffic.", level=2),
+                        node(NodeKind.Svg, children=[
+                            node(NodeKind.SvgText, content="P0", attributes=[attr("x", "5"), attr("y", "55")]),
+                            node(NodeKind.SvgPath, style="canal-bank", attributes=[attr("d", "M88 48 C250 30 400 64 620 48")]),
+                            node(NodeKind.SvgPath, style="canal-water", attributes=[attr("d", "M88 48 C250 30 400 64 620 48")]),
+                            node(NodeKind.SvgPath, style="water-flow", attributes=[attr("d", "M88 48 C250 30 400 64 620 48")]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "110"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "118"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "163"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "171"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "216"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "224"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "269"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "277"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "322"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "330"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "375"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "383"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "428"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "436"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "481"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "489"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "534"), attr("y", "35"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="B1", attributes=[attr("x", "542"), attr("y", "53")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgText, content="P1", attributes=[attr("x", "5"), attr("y", "122")]),
+                            node(NodeKind.SvgPath, style="canal-bank", attributes=[attr("d", "M88 115 C250 97 400 131 620 115")]),
+                            node(NodeKind.SvgPath, style="canal-water", attributes=[attr("d", "M88 115 C250 97 400 131 620 115")]),
+                            node(NodeKind.SvgPath, style="water-flow", attributes=[attr("d", "M88 115 C250 97 400 131 620 115")]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "160"), attr("y", "102"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="G1", attributes=[attr("x", "168"), attr("y", "120")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "390"), attr("y", "102"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="G1", attributes=[attr("x", "398"), attr("y", "120")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgText, content="P2", attributes=[attr("x", "5"), attr("y", "189")]),
+                            node(NodeKind.SvgPath, style="canal-bank", attributes=[attr("d", "M88 182 C250 164 400 198 620 182")]),
+                            node(NodeKind.SvgPath, style="canal-water", attributes=[attr("d", "M88 182 C250 164 400 198 620 182")]),
+                            node(NodeKind.SvgPath, style="water-flow", attributes=[attr("d", "M88 182 C250 164 400 198 620 182")]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "280"), attr("y", "169"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="M1", attributes=[attr("x", "288"), attr("y", "187")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgText, content="P3", attributes=[attr("x", "5"), attr("y", "256")]),
+                            node(NodeKind.SvgPath, style="canal-bank", attributes=[attr("d", "M88 249 C250 231 400 265 620 249")]),
+                            node(NodeKind.SvgPath, style="canal-water", attributes=[attr("d", "M88 249 C250 231 400 265 620 249")]),
+                            node(NodeKind.SvgPath, style="water-flow", attributes=[attr("d", "M88 249 C250 231 400 265 620 249")]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, attributes=[attr("x", "280"), attr("y", "236"), attr("width", "42"), attr("height", "26"), attr("rx", "5")]),
+                                node(NodeKind.SvgText, content="X1", attributes=[attr("x", "288"), attr("y", "254")]),
+                            ], style="cargo"),
+                            node(NodeKind.SvgText, content="Same key → same channel → one long-running task", style="water-key", attributes=[attr("x", "90"), attr("y", "300")]),
+                        ], style="waterways", attributes=[attr("viewBox", "0 0 700 310"), attr("role", "img"), attr("aria-label", "Four partition canals. Partition zero is crowded with B1 records; the other three carry few records.")]),
+                        node(NodeKind.Small, content="Illustrative distribution, not a benchmark"),
+                    ]),
+                    group([
+                        group([
+                            heading("Which task finishes last?", level=2),
+                            prose("The cluster can be mostly idle while one task is still working.", style="join-question"),
+                        ], style="join-state j0"),
+                        group([
+                            heading("One key dominates.", level=2),
+                            prose("Adding hash partitions still sends the same key to the same partition."),
+                            prose("First check the key distribution and the number of matches it creates."),
+                        ], style="join-state j1"),
+                        group([
+                            heading("AQE may split eligible skewed work.", level=2),
+                            prose("It can split a large shuffle partition and replicate matching input where needed."),
+                            prose("Less imbalance may cost extra work. It cannot correct a wrong join."),
+                        ], style="join-state j2"),
+                    ], style="join-skew-story"),
+                ], style="join-skew-layout"),
+            ], style="joins-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson joins-lesson join-skew", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("63"),
+        ]),
+        ],
+        notes="Waterways are an analogy: each channel represents a partition and each labelled boat a record. Channel width is not executor capacity; the unequal record counts illustrate skew, not measured traffic or timing. AQE may split eligible physical work even though ordinary hash partitioning routes equal keys together. AQE skew join optimization uses shuffle statistics and configured criteria, and is not guaranteed for every join type/plan. Supported skewed sort-merge work can be split with replication. Increasing partition count alone does not divide one hash key. Broadcast of a genuinely small lookup can avoid a join-key shuffle of the large side; it does not guarantee that pre-existing input skew disappears. Manual salting requires distributing hot-key rows and matching replication with careful correctness checks; keep implementation for advanced reference. Source: https://spark.apache.org/docs/latest/sql-performance-tuning.html",
+    )

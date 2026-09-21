@@ -1,0 +1,60 @@
+"""Pyspark streaming files slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, line_break, node, span, text
+
+pub def slide_pyspark_streaming_files() -> Slide:
+    return Slide(
+        slug="pyspark-streaming-files",
+        title="Exercise 8 · Write the streaming output",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 8 · Write the streaming output", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Start a separate Parquet query for accepted, enriched sales rows."),
+                    node(NodeKind.ListItem, content="Use Append mode, AvailableNow and a new checkpoint."),
+                    node(NodeKind.ListItem, content="Wait for completion. Read the files, check sale IDs and rebuild the category report."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.DefinitionList, children=[
+                    group([
+                        node(NodeKind.Term, content="Five stored sales"),
+                        node(NodeKind.Definition, content="One each of s1, s2, s3, s4 and s5"),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="The report still agrees"),
+                        node(NodeKind.Definition, children=[
+                            text("books 50.00 · games 40.00"),
+                            line_break(),
+                            text("unmapped 10.00"),
+                        ]),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="The query has finished"),
+                        node(NodeKind.Definition, children=[
+                            code("file_query.isActive == False"),
+                        ]),
+                    ]),
+                ], style="ho-key-points"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""stream_enriched.writeStream.format("parquet").outputMode("append")
+# Add a separate checkpoint, AvailableNow and the output path before start()."""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("114"),
+        ]),
+        ],
+        notes="Use stream_enriched before aggregation, not the changing category report. The fresh checkpoint lets this independent query consume all three prepared arrivals. AvailableNow processes the input available when it starts and then terminates. Use the supplied timeout and stop-on-timeout cleanup. Check five distinct IDs and exact category totals on readback. Batch rejection output was already written; a second streaming audit sink is an optional extension. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )

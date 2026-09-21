@@ -1,0 +1,117 @@
+"""History apache slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, image, line_break, node, paragraph, prose, span, strong, text
+
+pub def slide_history_apache() -> Slide:
+    return Slide(
+        slug="history-apache",
+        title="2013 — Spark joins Apache",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey spark-era",
+        attributes=[attr("data-history-index", "4")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era focal"),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(-638px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("05 / 12", style="history-stop-count"),
+            prose("The Apache Software Foundation", style="history-kicker"),
+            heading("Spark joins Apache", level=1),
+            node(NodeKind.Figure, children=[
+                group([
+                    image("assets/history/apache.png", "The Apache Software Foundation", style="apache-foundation-logo"),
+                    group([
+                        strong("2013"),
+                        paragraph([
+                            text("Spark enters"),
+                            line_break(),
+                            text("the Apache Incubator."),
+                        ]),
+                    ], style="apache-project-row"),
+                    prose("An open project, developed by a community.", style="apache-caption"),
+                ], style="apache-story"),
+            ], style="history-visual"),
+            prose("Spark moves to the Apache Software Foundation and grows beyond the original research team.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("14"),
+        ]),
+        ],
+        notes="""Visual assets: see assets/history/CREDITS.md. Official logos identify the projects, not sponsorship. The Berkeley photo was taken in 2013 and illustrates the location, not the founding event. 2013 — Spark joins Apache.
+
+Keep the Apache Software Foundation and Databricks distinct. Spark is an open-source Apache project, not synonymous with a particular vendor’s platform.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://spark.apache.org/history
+https://spark.apache.org/releases/spark-release-1-0-0.html
+https://spark.apache.org/releases/spark-release-1-3-0.html
+https://spark.apache.org/releases/spark-release-2-0-0.html""",
+    )

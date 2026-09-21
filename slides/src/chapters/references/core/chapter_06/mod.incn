@@ -1,0 +1,13 @@
+"""Teaching order for core reference 06."""
+
+from surface import Chapter
+from chapters.references.core.chapter_06.cover import slide_section_6
+from chapters.references.core.chapter_06.streaming_model import slide_streaming_model
+from chapters.references.core.chapter_06.streaming_operation import slide_streaming_operation
+
+pub def core_reference_06_chapter() -> Chapter:
+    return Chapter(number="6", title="06 / BATCH VS. STREAMING", first_page=1, slides=[
+        slide_section_6(),
+        slide_streaming_model(),
+        slide_streaming_operation(),
+    ])

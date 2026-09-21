@@ -1,0 +1,141 @@
+"""Rdd foundation slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, group, heading, node, prose, span, text
+from components import step_rail, step_cues
+
+pub def slide_rdd_foundation() -> Slide:
+    steps = [
+        TeachingStep(label="Source",
+            heading="A different way to reuse the same sales",
+            explanation="The source stays available. Spark describes partitioned collections and their transformations.",
+            cue_key="0", numbered=true),
+        TeachingStep(label="Partitions",
+            heading="Distributed · one collection, multiple partitions",
+            explanation="Parse the records into RDD partitions. This is a plan until an action requests computation.",
+            cue_key="1", numbered=true),
+        TeachingStep(label="Persist",
+            heading="Reuse · keep a useful intermediate RDD",
+            explanation="After it is computed, persist these partitions for later calculations. Here they fit in memory.",
+            cue_key="2", numbered=true),
+        TeachingStep(label="Reuse",
+            heading="Another calculation, the same persisted data",
+            explanation="Sum and count can reuse the parsed records rather than read and parse the source again.",
+            cue_key="3", numbered=true),
+        TeachingStep(label="Loss",
+            heading="Resilient · a partition becomes unavailable",
+            explanation="The stored copy of P0 is lost. P1 remains available; the source and lineage remain.",
+            cue_key="4", numbered=true),
+        TeachingStep(label="Recover",
+            heading="Lineage · rebuild the missing partition",
+            explanation="Read source P0 and replay its parse. This narrow dependency lets us rebuild only P0.",
+            cue_key="5", numbered=true),
+        TeachingStep(label="Why?",
+            heading="Pause · why does this matter?",
+            explanation="Partitions explain parallel work. Dependencies explain required work. Recovery can explain repeated work.",
+            cue_key="6", numbered=true),
+    ]
+    return Slide(
+        slug="rdd-foundation",
+        title="Resilient Distributed Dataset",
+        frame=Frame.Composed,
+        styles="slide lesson-slide ",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Resilient Distributed Dataset", level=1),
+            group([
+            prose("Reuse distributed data, and retain how it was derived.", style="subtitle"),
+            step_rail(steps),
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="rdd walk", attributes=[attr("id", "rdd-walk-title")]),
+                node(NodeKind.SvgDescription, content="The same sales are parsed into two RDD partitions, persisted for sum and count, and P0 is recovered from its source if lost.", attributes=[attr("id", "rdd-walk-desc")]),
+                node(NodeKind.SvgText, content="Same sales · source data", style="scene-heading", attributes=[attr("x", "20"), attr("y", "28")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 78)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record games source-tile", attributes=[attr("transform", "translate(24 140)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 252)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music source-tile", attributes=[attr("transform", "translate(24 314)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M270 108H442M270 284H442")]),
+                    node(NodeKind.SvgText, content="parse", style="tiny", attributes=[attr("x", "300"), attr("y", "91")]),
+                    node(NodeKind.SvgText, content="parse", style="tiny", attributes=[attr("x", "300"), attr("y", "267")]),
+                ], style="rdd-lineage"),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "440"), attr("y", "52"), attr("width", "314"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "440"), attr("y", "228"), attr("width", "314"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgText, content="Partition P0", style="tiny", attributes=[attr("x", "460"), attr("y", "76")]),
+                node(NodeKind.SvgText, content="Partition P1", style="tiny", attributes=[attr("x", "460"), attr("y", "252")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(466 84)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(466 144)")]),
+                ], style="cached-p0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books ", attributes=[attr("transform", "translate(466 260)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music ", attributes=[attr("transform", "translate(466 320)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Persisted after computation", style="small", attributes=[attr("x", "468"), attr("y", "37")]),
+                ], style="cache-label"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="books group-box", attributes=[attr("x", "930"), attr("y", "75"), attr("width", "352"), attr("height", "114"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Total sales", style="small", attributes=[attr("x", "952"), attr("y", "113")]),
+                    node(NodeKind.SvgText, content="90", style="result-big", attributes=[attr("x", "952"), attr("y", "167")]),
+                    node(NodeKind.SvgRectangle, style="music group-box", attributes=[attr("x", "930"), attr("y", "243"), attr("width", "352"), attr("height", "114"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Number of sales", style="small", attributes=[attr("x", "952"), attr("y", "281")]),
+                    node(NodeKind.SvgText, content="4", style="result-big", attributes=[attr("x", "952"), attr("y", "337")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M754 134H824V300H754M824 217H874V132H924M874 217V300H924")]),
+                ], style="rdd-outputs"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="lost-box", attributes=[attr("x", "462"), attr("y", "84"), attr("width", "268"), attr("height", "114"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="P0 unavailable", style="small", attributes=[attr("x", "482"), attr("y", "124")]),
+                    node(NodeKind.SvgText, content="Recompute from source", style="tiny", attributes=[attr("x", "482"), attr("y", "165")]),
+                ], style="lost-p0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M146 134V408H592V200")]),
+                    node(NodeKind.SvgText, content="Replay the parse for P0", style="tiny", attributes=[attr("x", "304"), attr("y", "392")]),
+                ], style="recovery-route"),
+            ], attributes=[attr("viewBox", "0 0 1308 410"), attr("role", "img"), attr("aria-labelledby", "rdd-walk-title rdd-walk-desc")]),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson", attributes=[attr("data-lesson", "rdd"), attr("data-point", "6")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("31"),
+        ]),
+        ],
+        notes="Start by reconnecting to the benchmark: repeated calculations on the same data can reuse a persisted intermediate result. Our tiny sales sum/count example illustrates reuse, not the logistic-regression benchmark. An RDD is an immutable, partitioned collection. Parsing creates a dependency on source data; transformations are lazy and actions request work. persist/cache alone does not materialise anything. At Persist, explicitly say an action has now computed the partitions; the visual uses an in-memory storage choice and assumes the data fits. Memory/disk storage levels vary; Spark still uses disk for shuffle, spill and storage. Reuse does not guarantee cache availability. Loss represents an unavailable cached partition, not permanent loss of the source. P0 parse is a narrow deterministic dependency; joins/shuffles can require more extensive recovery. Source is assumed available. Sum/count shown are application results combining partition contributions, not necessarily one task each. Stop at Why and let attendees answer before proceeding to DataFrames. References: https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf ; https://spark.apache.org/docs/latest/rdd-programming-guide.html",
+    )

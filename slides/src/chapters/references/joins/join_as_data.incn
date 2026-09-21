@@ -1,0 +1,115 @@
+"""Join as data slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, node, prose, span, text
+from components import step_rail, step_cues
+
+pub def slide_join_as_data() -> Slide:
+    steps = [
+        TeachingStep(label="The same records",
+            heading="A join produces matching row pairs.",
+            explanation="Here the product lookup has one row per key, so each sale has at most one match.",
+            cue_key="", numbered=false),
+        TeachingStep(label="INNER result",
+            heading="INNER requires a matching product.",
+            explanation="s4 / M1 is omitted from the result; the other four sales acquire their categories.",
+            cue_key="", numbered=false),
+        TeachingStep(label="LEFT result",
+            heading="LEFT retains s4 / M1 and sets category to NULL.",
+            explanation="KEEP describes the row. NULL describes its missing right-side value.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-as-data",
+        title="Now express it as data",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide boat-lesson-slide",
+        content=[
+            group([
+            text("06 / JOINS"),
+        ], style="eyebrow"),
+            heading("Now express it as data", level=1),
+            group([
+            step_rail(steps),
+            group([
+                prose("Each boat was a sale. The join adds its matching product category.", style="formal-caption"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="sale"),
+                            node(NodeKind.HeaderCell, content="product_id"),
+                            node(NodeKind.HeaderCell, content="amount"),
+                            node(NodeKind.HeaderCell, content="Product match"),
+                            node(NodeKind.HeaderCell, content="INNER", style="formal-inner"),
+                            node(NodeKind.HeaderCell, content="LEFT", style="formal-left"),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s1"),
+                            node(NodeKind.Cell, content="B1"),
+                            node(NodeKind.Cell, content="25"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-left"),
+                        ], style="formal-B1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s2"),
+                            node(NodeKind.Cell, content="G1"),
+                            node(NodeKind.Cell, content="40"),
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="KEEP · games", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · games", style="formal-left"),
+                        ], style="formal-G1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s3"),
+                            node(NodeKind.Cell, content="B1"),
+                            node(NodeKind.Cell, content="15"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-left"),
+                        ], style="formal-B1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s4"),
+                            node(NodeKind.Cell, content="M1"),
+                            node(NodeKind.Cell, content="10"),
+                            node(NodeKind.Cell, content="No match"),
+                            node(NodeKind.Cell, content="OMIT", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · category = NULL", style="formal-left"),
+                        ], style="formal-M1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s5"),
+                            node(NodeKind.Cell, content="B1"),
+                            node(NodeKind.Cell, content="10"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-left"),
+                        ], style="formal-B1"),
+                    ]),
+                    node(NodeKind.TableFoot, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Result rows / sum(amount)", attributes=[attr("colspan", "4")]),
+                            node(NodeKind.Cell, content="4 / 90", style="formal-inner"),
+                            node(NodeKind.Cell, content="5 / 100", style="formal-left"),
+                        ]),
+                    ]),
+                ], style="formal-join-table"),
+                group([
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"inner\")", style="formal-code-inner"),
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"left\")", style="formal-code-left"),
+                ], style="formal-code"),
+            ], style="formal-scene"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson boat-lesson boat-formal", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("3"),
+        ]),
+        ],
+        notes="End by asking: we know which rows belong together, but what if they live on different machines? Transition directly to shuffle and then skew. Explicitly remove the metaphor. Sale IDs s1–s5 and all amounts are unchanged from the boats. KEEP is an explanation of retention, not a literal output column; product category is the value added by the join. For a USING-style join on product_id, only one key column remains. Unique right keys are critical to these counts. Ordinary equality and missing matches shown; NULL keys, duplicate keys and semi/anti are later topics. Input setup remains joins-example.py. Official reference: https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-join.html",
+    )

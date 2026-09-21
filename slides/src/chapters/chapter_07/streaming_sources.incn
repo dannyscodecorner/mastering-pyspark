@@ -1,0 +1,65 @@
+"""Streaming sources slide."""
+
+from surface import Frame, NodeKind, Slide, code_block, group, heading, node, prose, span, text
+
+pub def slide_streaming_sources() -> Slide:
+    return Slide(
+        slug="streaming-sources",
+        title="Streaming sources",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming sources", level=1),
+            group([
+            group([
+                group([
+                    heading("Files and folders", level=2),
+                    prose("Text · CSV · JSON · ORC · Parquet"),
+                ]),
+                group([
+                    prose("New files arriving in a directory."),
+                    code_block("spark.readStream.text(\"data/words\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+            group([
+                group([
+                    heading("Kafka", level=2),
+                    prose("Topics and partitions"),
+                ]),
+                group([
+                    prose("Read records as they arrive."),
+                    code_block("spark.readStream.format(\"kafka\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+            group([
+                group([
+                    heading("Socket", level=2),
+                    prose("Demonstrations only"),
+                ]),
+                group([
+                    prose("A simple source without fault tolerance."),
+                    code_block("spark.readStream.format(\"socket\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+            group([
+                group([
+                    heading("Rate", level=2),
+                    prose("Testing and benchmarks"),
+                ]),
+                group([
+                    prose("Generate timestamp and value rows."),
+                    code_block("spark.readStream.format(\"rate\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+        ], style="ss-io-table"),
+            prose("The source supplies new input rows to the query.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("97"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 13. Retain the original source inventory. File source: files must arrive atomically; do not teach appending to an existing file as a way to add records. Formats other than fixed-schema text generally need a declared schema in the streaming example. Kafka requires its connector and options; these lines are API entry points, not complete configurations. Socket and rate are for development/testing. Rate behaviour is generated input, not a real external event stream. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )

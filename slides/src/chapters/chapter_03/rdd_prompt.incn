@@ -1,0 +1,15 @@
+"""Rdd prompt slide."""
+
+from surface import Frame, Slide, heading
+
+pub def slide_rdd_prompt() -> Slide:
+    return Slide(
+        slug="rdd-prompt",
+        title="RDD",
+        frame=Frame.Composed,
+        styles="slide rdd-prompt",
+        content=[
+            heading("RDD", level=1),
+        ],
+        notes="Let the acronym sit on screen. Ask: Who has come across RDDs? Can anyone tell me what RDD stands for? How might it relate to the performance difference we just saw? Pause and invite answers before advancing. The next slide expands the acronym and explains partitioned data, persistence and recovery. Keep the distinction clear: RDDs support this model, but reuse across calculations requires persistence; merely creating an RDD does not cache it.",
+    )

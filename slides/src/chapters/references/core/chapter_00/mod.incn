@@ -1,0 +1,13 @@
+"""Teaching order for core reference 00."""
+
+from surface import Chapter
+from chapters.references.core.chapter_00.welcome import slide_welcome
+from chapters.references.core.chapter_00.about_me import slide_about_me
+from chapters.references.core.chapter_00.roadmap import slide_roadmap
+
+pub def core_reference_00_chapter() -> Chapter:
+    return Chapter(number="0", title="DCC / SPARK TRAINING", first_page=1, slides=[
+        slide_welcome(),
+        slide_about_me(),
+        slide_roadmap(),
+    ])

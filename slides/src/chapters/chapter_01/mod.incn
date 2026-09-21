@@ -1,0 +1,19 @@
+"""Teaching order for chapter 01."""
+
+from surface import Chapter
+from chapters.chapter_01.cover import slide_section_1
+from chapters.chapter_01.architecture import slide_architecture
+from chapters.chapter_01.pyspark_code import slide_pyspark_code
+from chapters.chapter_01.classic_pyspark import slide_classic_pyspark
+from chapters.chapter_01.execution_demo import slide_execution_demo
+from chapters.chapter_01.python_spark_recap import slide_python_spark_recap
+
+pub def chapter_01_chapter() -> Chapter:
+    return Chapter(number="1", title="01 / SPARK VS. PYTHON", first_page=1, slides=[
+        slide_section_1(),
+        slide_architecture(),
+        slide_pyspark_code(),
+        slide_classic_pyspark(),
+        slide_execution_demo(),
+        slide_python_spark_recap(),
+    ])

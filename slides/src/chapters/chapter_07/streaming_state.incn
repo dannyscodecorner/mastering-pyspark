@@ -1,0 +1,89 @@
+"""Streaming state slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, prose, rich_heading, span, text
+
+pub def slide_streaming_state() -> Slide:
+    return Slide(
+        slug="streaming-state",
+        title="A running count needs state",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-state-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("A running count needs state", level=1),
+            paragraph([
+            text("After Batch 3, the next "),
+            code("dog"),
+            text(" must continue from 4."),
+        ], style="ss-time-intro"),
+            group([
+            group([
+                heading("Counts retained after Batch 3", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Word counts retained between batches", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="count", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="4"),
+                        ], style="ss-state-dog"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                    ]),
+                ], style="ss-state-table"),
+                prose("Spark keeps aggregate state between batches.", style="ss-state-caption"),
+            ]),
+            group([
+                group([
+                    rich_heading([
+                        text("Another "),
+                        code("dog"),
+                        text(" arrives"),
+                    ], level=3),
+                    paragraph([
+                        text("Read the saved count, add 1, keep 5."),
+                        line_break(),
+                        text("The count does not need every earlier word record."),
+                    ]),
+                ]),
+                group([
+                    heading("More distinct words arrive", level=3),
+                    paragraph([
+                        text("Each new word needs its own count."),
+                        line_break(),
+                        text("The number of retained keys can keep growing."),
+                    ]),
+                ]),
+                group([
+                    heading("Sending output does not clear this state", level=3),
+                    prose("Update and Complete still need these counts for the next batch."),
+                ]),
+            ], style="ss-state-cases"),
+        ], style="ss-state-grid"),
+            paragraph([
+            text("When can Spark forget an old count?"),
+            line_break(),
+            span("For counts over a time interval, we first need to define which time matters."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("92"),
+        ]),
+        ],
+        notes="""Return to the original running word count after examining the rows each output mode sends. Its state is the current count for each observed word, logically partitioned across the executors. This is not a single driver table or an input-history buffer. Another dog changes 4 to 5; the other two entries remain. More records for the same three keys do not require three new entries every batch. New distinct words add keys. An unwindowed aggregation has no event-time boundary that lets Spark forget one of these word counts. State consumes resources, and checkpointing protects it for recovery, as explained later. Spark may still retain source files or progress metadata separately; the claim about not retaining every word concerns the aggregate state needed to update this count. Use the question at the bottom to change the business question explicitly: next we count all words per ten-minute interval rather than each word across the lifetime of the query.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#state-store""",
+    )

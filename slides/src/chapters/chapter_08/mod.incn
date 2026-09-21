@@ -1,0 +1,33 @@
+"""Teaching order for chapter 08."""
+
+from surface import Chapter
+from chapters.chapter_08.cover import slide_section_8
+from chapters.chapter_08.data_work import slide_data_work
+from chapters.chapter_08.pyspark_setup import slide_pyspark_setup
+from chapters.chapter_08.pyspark_inputs import slide_pyspark_inputs
+from chapters.chapter_08.pyspark_cleaning import slide_pyspark_cleaning
+from chapters.chapter_08.pyspark_types import slide_pyspark_types
+from chapters.chapter_08.pyspark_report import slide_pyspark_report
+from chapters.chapter_08.pyspark_write import slide_pyspark_write
+from chapters.chapter_08.pyspark_streaming_query import slide_pyspark_streaming_query
+from chapters.chapter_08.pyspark_streaming_restart import slide_pyspark_streaming_restart
+from chapters.chapter_08.pyspark_streaming_files import slide_pyspark_streaming_files
+from chapters.chapter_08.pyspark_daily_exercise import slide_pyspark_daily_exercise
+from chapters.chapter_08.working_pyspark_recap import slide_working_pyspark_recap
+
+pub def chapter_08_chapter() -> Chapter:
+    return Chapter(number="8", title="08 / WORKING WITH PYSPARK", first_page=1, slides=[
+        slide_section_8(),
+        slide_data_work(),
+        slide_pyspark_setup(),
+        slide_pyspark_inputs(),
+        slide_pyspark_cleaning(),
+        slide_pyspark_types(),
+        slide_pyspark_report(),
+        slide_pyspark_write(),
+        slide_pyspark_streaming_query(),
+        slide_pyspark_streaming_restart(),
+        slide_pyspark_streaming_files(),
+        slide_pyspark_daily_exercise(),
+        slide_working_pyspark_recap(),
+    ])

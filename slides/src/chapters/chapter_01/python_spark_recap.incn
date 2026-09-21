@@ -1,0 +1,51 @@
+"""Python spark recap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_python_spark_recap() -> Slide:
+    return Slide(
+        slug="python-spark-recap",
+        title="Python and Spark: recap",
+        frame=Frame.Composed,
+        styles="slide chapter-recap",
+        content=[
+            group([
+            text("01 / SPARK VS. PYTHON"),
+        ], style="eyebrow"),
+            heading("Python and Spark: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Python and Spark: recap: key takeaways", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Your application", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="PySpark calls Spark from Python. Built-in DataFrame operations execute in the Spark engine."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Driver", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Plans the work, schedules tasks and tracks their completion."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Worker nodes", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Host executor processes that run tasks. Python workers are used when a task needs Python execution."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Cluster manager", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Allocates resources to applications. The driver assigns the tasks."),
+                ]),
+            ]),
+        ], style="chapter-recap-table"),
+            prose("Shuffle data moves between executors; it does not all pass through the driver.", style="chapter-recap-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("9"),
+        ]),
+        ],
+        notes="""Recall the application and cluster diagrams. Keep machine, process and task distinct. Built-in Spark SQL expressions run in the engine; using the Python API does not make every operation a Python UDF. The diagram in this section showed classic PySpark; Spark Connect has a different client connection.
+
+https://spark.apache.org/docs/4.2.0/cluster-overview.html
+https://spark.apache.org/docs/4.2.0/sql-programming-guide.html""",
+    )

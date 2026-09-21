@@ -1,0 +1,217 @@
+"""Execution placement slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, image, line_break, node, paragraph, prose, span, strong, text
+
+pub def slide_execution_placement() -> Slide:
+    return Slide(
+        slug="execution-placement",
+        title="Where do the tasks run?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide execution-content placement-slide placement-workbench",
+        content=[
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            heading("Where do the tasks run?", level=1),
+            group([
+            group([
+                group([
+                    heading("Driver schedules", level=2),
+                    prose("Plans work. Schedules tasks. Tracks completion."),
+                ], style="wb-heading wb-heading-driver"),
+                group([
+                    heading("Executors run tasks", level=2),
+                ], style="wb-heading wb-heading-executor"),
+                image("assets/execution-machines-bare.png", "", style="wb-machines wb-bare"),
+                image("assets/execution-machines.png", "A driver workstation beside two worker machines, each containing an executor process.", style="wb-machines"),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("style", "fill:#b27420;stroke:none")]),
+                        ], attributes=[attr("id", "wb-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "8"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("style", "fill:#527b98;stroke:none")]),
+                        ], attributes=[attr("id", "wb-return"), attr("viewBox", "0 0 10 10"), attr("refX", "8"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M260 110 H355 Q375 110 393 96 Q410 82 440 82 H1065 Q1100 82 1100 115 V145"), attr("style", "stroke:#c18831;stroke-width:5;fill:none"), attr("marker-end", "url(#wb-arrow)")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M685 82 V145"), attr("style", "stroke:#c18831;stroke-width:5;fill:none"), attr("marker-end", "url(#wb-arrow)")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M1100 315 V380 H162 V285"), attr("style", "fill:none;stroke:#527b98;stroke-width:2;stroke-dasharray:7 6"), attr("marker-end", "url(#wb-return)")]),
+                ], style="wb-routes", attributes=[attr("viewBox", "0 0 1308 430"), attr("aria-hidden", "true")]),
+                group([
+                    text("Tasks sent to executors"),
+                ], style="wb-dispatch-label"),
+                group([
+                    node(NodeKind.Strong, content="Stage A", style="wb-stage-a"),
+                    node(NodeKind.Strong, content="Stage B", style="wb-stage-b"),
+                    span("Schedule tasks", style="wb-screen-state"),
+                    group([
+                        strong("Totals"),
+                        node(NodeKind.Span, children=[
+                            text("books "),
+                            node(NodeKind.Bold, content="50"),
+                        ]),
+                        node(NodeKind.Span, children=[
+                            text("games "),
+                            node(NodeKind.Bold, content="40"),
+                        ]),
+                        node(NodeKind.Span, children=[
+                            text("music "),
+                            node(NodeKind.Bold, content="10"),
+                        ]),
+                    ], style="wb-results"),
+                    group([
+                        text("0 / 3 reported"),
+                    ], style="wb-received", attributes=[attr("aria-live", "polite")]),
+                    group([
+                        node(NodeKind.Bold, content="T0"),
+                        node(NodeKind.Bold, content="T1"),
+                        node(NodeKind.Bold, content="T2"),
+                    ], style="wb-queue"),
+                ], style="wb-screen"),
+                group([
+                    strong("Driver"),
+                    span("Coordinates the work"),
+                ], style="wb-driver-name"),
+                group([
+                    node(NodeKind.Header, children=[
+                        strong("Executor 1"),
+                        span("Application process"),
+                    ]),
+                    group([
+                        text("Starting executor…"),
+                    ], style="wb-launch-state"),
+                    group([
+                        group([
+                            text("Available"),
+                        ], style="wb-slot"),
+                        group([
+                            text("Available"),
+                        ], style="wb-slot"),
+                    ], style="wb-slots"),
+                ], style="wb-executor wb-executor-a"),
+                group([
+                    node(NodeKind.Header, children=[
+                        strong("Executor 2"),
+                        span("Application process"),
+                    ]),
+                    group([
+                        text("Starting executor…"),
+                    ], style="wb-launch-state"),
+                    group([
+                        group([
+                            text("Available"),
+                        ], style="wb-slot"),
+                        group([
+                            text("Available"),
+                        ], style="wb-slot"),
+                    ], style="wb-slots"),
+                ], style="wb-executor wb-executor-b"),
+                group([
+                    strong("Worker node A"),
+                ], style="wb-node-name wb-node-a"),
+                group([
+                    strong("Worker node B"),
+                ], style="wb-node-name wb-node-b"),
+                group([
+                    strong("Task 0"),
+                    span("Input partition 0"),
+                    node(NodeKind.Small, content="Running"),
+                ], style="wb-ticket wb-t0 wb-task-a"),
+                group([
+                    strong("Task 1"),
+                    span("Input partition 1"),
+                    node(NodeKind.Small, content="Running"),
+                ], style="wb-ticket wb-t1 wb-task-a"),
+                group([
+                    strong("Task 2"),
+                    span("Input partition 2"),
+                    node(NodeKind.Small, content="Running"),
+                ], style="wb-ticket wb-t2 wb-task-a"),
+                group([
+                    strong("Task 3"),
+                    span("Shuffle partition 0"),
+                    node(NodeKind.Small, content="Final aggregate"),
+                ], style="wb-ticket wb-t3 wb-task-b"),
+                group([
+                    strong("Task 4"),
+                    span("Shuffle partition 1"),
+                    node(NodeKind.Small, content="Final aggregate"),
+                ], style="wb-ticket wb-t4 wb-task-b"),
+                group([
+                    text("Task completion status back to driver"),
+                ], style="wb-return-label"),
+                group([
+                    text("Stage A complete"),
+                ], style="wb-complete"),
+                group([
+                    text("Task 0 complete"),
+                ], style="wb-report", attributes=[attr("hidden", flag=true)]),
+                group([
+                    text("Task 1 complete"),
+                ], style="wb-report", attributes=[attr("hidden", flag=true)]),
+                group([
+                    text("Task 2 complete"),
+                ], style="wb-report", attributes=[attr("hidden", flag=true)]),
+            ], style="wb-scene"),
+            group([
+                group([
+                    strong("Stage A"),
+                    span("T0"),
+                    span("T1"),
+                    span("T2"),
+                ]),
+                node(NodeKind.Bold, content="then"),
+                group([
+                    strong("Stage B"),
+                    span("T3"),
+                    span("T4"),
+                ]),
+                paragraph([
+                    text("Same machines. Same processes."),
+                    line_break(),
+                    strong("Different tasks."),
+                ]),
+            ], style="wb-progression"),
+            group([
+                node(NodeKind.Paragraph, children=[
+                    strong("Imagine three machines: one driver and two worker nodes."),
+                    span("Start with the hardware. Next, we will put the processes inside it."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("First, executor processes start on the workers."),
+                    span("The cluster manager allocates resources and arranges executor startup."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("The driver sends each task to an executor."),
+                    span("Stage A runs across both nodes; each task processes one input partition."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("Tasks finish. Their executors report completion."),
+                    span("The processes remain available. Shuffle data stays with the workers."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("After the shuffle, the driver schedules Stage B."),
+                    span("New tasks read shuffle partitions and produce the final totals."),
+                ], attributes=[attr("data-cue", flag=true)]),
+            ], style="lesson-cues"),
+            group([
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Machines"),
+                    node(NodeKind.ListItem, content="Start executors"),
+                    node(NodeKind.ListItem, content="Dispatch & run"),
+                    node(NodeKind.ListItem, content="Complete"),
+                    node(NodeKind.ListItem, content="Next stage"),
+                ], style="lesson-rail"),
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson workbench-walk", attributes=[attr("data-lesson", flag=true), attr("data-point", "4")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("51"),
+        ]),
+        ],
+        notes="Return to the same three Stage A tasks and two Stage B tasks. A worker node is a machine (physical or virtual); an executor is an application-specific process on a node; a task is work scheduled onto an executor. One executor per node is an illustrative layout, not a universal rule. Multiple executors may share a node. The two visible positions represent available concurrency for teaching, not a claim that every executor always has two cores or that one task always requires exactly one core. Concurrency depends on allocated cores, task resource requirements and configuration. In Stage A executor 1 runs tasks 0 and 1, while executor 2 runs task 2. After the shuffle, those executor processes can run tasks from Stage B. Task 3 combines books 40 + 10 to 50, task 4 finalises games 40 and music 10. For this example the retained executor placement is unchanged; actual scheduling is not guaranteed to match and dynamic allocation can change the executor population. The driver coordinates tasks and receives status, but shuffle records are read by downstream tasks rather than gathered at the driver. The next slide follows those records through the shuffle. The driver box is a logical coordinator, not a claim that it always runs outside the cluster. The cluster manager allocates resources; resource acquisition is already covered in the application architecture and is omitted here to focus on execution placement. Source: https://spark.apache.org/docs/latest/cluster-overview.html",
+    )

@@ -1,0 +1,147 @@
+"""Shuffle cost slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, emphasis, group, heading, line_break, node, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_shuffle_cost() -> Slide:
+    steps = [
+        TeachingStep(label="Follow one sale",
+            heading="Follow B1 / 10 along the Worker C → Worker A arrow.",
+            explanation="We have chosen one remote transfer from the diagram you just saw.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Prepare & write",
+            heading="The source has to prepare and store the data for its destinations.",
+            explanation="Even before matching rows, Spark has partitioned, serialized and written shuffle data.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Fetch & read",
+            heading="The destination fetches its blocks, then reads and decodes the records.",
+            explanation="At scale, the bytes written, read and transferred compete for finite disk and network bandwidth.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Now join locally",
+            heading="The join task can now match this sale with its product.",
+            explanation="The cost depends on how much data must move, how it is processed, and how evenly the work is spread.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="shuffle-cost",
+        title="The work hidden in one arrow",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide shuffle-cost-slide",
+        content=[
+            group([
+            text("REFERENCE / SHUFFLE CLOSE-UP"),
+        ], style="eyebrow"),
+            heading("The work hidden in one arrow", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Bold, content="B1"),
+                    span("10"),
+                ], style="sc-sale"),
+                node(NodeKind.Span, children=[
+                    text("The same sale on "),
+                    strong("Worker C"),
+                    text(", needed by the join task on "),
+                    strong("Worker A"),
+                ]),
+            ], style="sc-thread"),
+            group([
+                group([
+                    heading("Worker C", level=2),
+                    prose("Produces shuffle data", style="sc-machine-role"),
+                ], style="sc-source sc-machine"),
+                group([
+                    heading("Worker A", level=2),
+                    prose("Runs this join task", style="sc-machine-role"),
+                ], style="sc-target sc-machine"),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10 Z")]),
+                        ], attributes=[attr("id", "sc-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgPath, style="sc-link sc-write-reveal", attributes=[attr("pathLength", "1"), attr("d", "M268 181 H366")]),
+                    node(NodeKind.SvgPath, style="sc-link sc-fetch-reveal sc-remote-link", attributes=[attr("pathLength", "1"), attr("d", "M588 181 H858")]),
+                    node(NodeKind.SvgPath, style="sc-link sc-join-reveal", attributes=[attr("pathLength", "1"), attr("d", "M1086 181 H1148")]),
+                ], style="sc-links", attributes=[attr("viewBox", "0 0 1308 300"), attr("aria-hidden", "true"), attr("focusable", "false")]),
+                group([
+                    span("Read the record", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="B1"),
+                        span("10"),
+                    ], style="ss-record ss-key-B1"),
+                    prose("From its input partition"),
+                ], style="sc-input"),
+                group([
+                    span("Prepare a shuffle block", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="For partition 0"),
+                        span("Encoded B1 records"),
+                        emphasis("Local shuffle storage"),
+                    ], style="sc-block"),
+                ], style="sc-write sc-write-reveal"),
+                group([
+                    node(NodeKind.Bold, content="Fetch the block"),
+                    span("Across the network"),
+                ], style="sc-fetch-label sc-fetch-reveal"),
+                group([
+                    span("Read + decode", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="B1"),
+                        span("10"),
+                    ], style="ss-record ss-key-B1"),
+                    prose("Alongside the other B1 inputs"),
+                ], style="sc-read sc-fetch-reveal"),
+                group([
+                    span("Join", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="B1"),
+                        span("10"),
+                        strong("books"),
+                    ], style="sc-joined"),
+                ], style="sc-join sc-join-reveal"),
+                group([
+                    rich_heading([
+                        text("What does it take"),
+                        line_break(),
+                        text("to get this record there?"),
+                    ], level=2),
+                ], style="sc-question"),
+            ], style="sc-scene"),
+            group([
+                group([
+                    node(NodeKind.Bold, content="CPU"),
+                    span("Partitioning and serialization"),
+                ], style="sc-resource sc-write-reveal"),
+                group([
+                    node(NodeKind.Bold, content="Disk I/O"),
+                    span("Writing and reading shuffle blocks"),
+                ], style="sc-resource sc-write-reveal"),
+                group([
+                    node(NodeKind.Bold, content="Network I/O"),
+                    span("Fetching blocks held remotely"),
+                ], style="sc-resource sc-fetch-reveal"),
+            ], style="sc-resources"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                node(NodeKind.Link, content="Back to the chapter", style="sc-reference-return", attributes=[attr("href", "index.html#shuffle-cost-alternative")]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson shuffle-cost-walk", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("5"),
+        ]),
+        ],
+        notes="""Optional reference close-up for the main chapter’s shuffle lesson. Return to the chapter using the link beside Replay. Keep the audience on the exact B1 sale with amount10 from Worker C, going to the join task on Worker A. Do not introduce new data or a benchmark.
+
+1. “Let’s open just one of those arrows.” 2. The source task assigns records to destination partitions, encodes them, and writes intermediate shuffle output. A block contains records for one destination; the pictured B1 sale is one representative record, not a separate network request or file per row. Batches/blocks are transferred. 3. The downstream task fetches the blocks for its partition from their source locations, then reads and deserializes the data. The remote part crosses the network; local blocks do not. Explain WHY this costs time: extra passes over data, CPU for encoding/decoding, storage I/O and network transfer. Larger volumes compete for finite bandwidth and can add memory pressure; sorting or hashing inside the local join contributes additional work. The transfer arrow is not a fixed-duration timeline, and the picture does not model concurrent pipelining. 4. The selected sale is matched with B1/books, giving B1/10/books. The other B1 records and product record come from the preceding diagram. Do not say all cluster tasks must wait until every transfer in the cluster has finished.
+
+This is the conventional Spark shuffle with worker-local shuffle storage; it is not another Parquet/HDFS source scan. Input caching does not remove a required exchange. Implementations with remote shuffle services differ. A compatible existing distribution or a broadcast strategy may avoid the illustrated exchanges. Partial aggregation can reduce the records/bytes sent for suitable aggregate functions. This is not a claim that grouping must transfer every raw row. End with: “Now we can compare strategies by asking what they move and what they do once it arrives. Then: what happens if one destination receives most of it?” Continue into sort-merge and shuffled hash; broadcast changes how matching data is made available, and the existing skew lesson shows the long tail.
+
+Sources: https://spark.apache.org/docs/latest/rdd-programming-guide.html#shuffle-operations ; https://spark.apache.org/docs/latest/sql-performance-tuning.html . Visual continuity inspired by UW-Madison CS544 https://ms.sites.cs.wisc.edu/cs544/s24/lec/25-spark/slides.pdf#page=35 .""",
+    )

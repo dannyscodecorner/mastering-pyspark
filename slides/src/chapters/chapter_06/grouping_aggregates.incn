@@ -1,0 +1,95 @@
+"""Grouping aggregates slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, paragraph, span, text
+
+pub def slide_grouping_aggregates() -> Slide:
+    return Slide(
+        slug="grouping-aggregates",
+        title="Group the rows. Calculate for each group.",
+        frame=Frame.Composed,
+        styles="slide join-slide aggregate-code",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Group the rows. Calculate for each group.", level=1),
+            group([
+            group([
+                heading("Continue with the joined sales", level=2),
+                code_block("""totals = (
+    enriched
+    .groupBy("category")
+    .agg(
+        F.sum("amount").alias("total"),
+        F.count("*").alias("sales_count"),
+    )
+)
+
+totals.show()"""),
+                paragraph([
+                    text("Same "),
+                    code("enriched"),
+                    text(" DataFrame. Same five sales."),
+                ], style="ag-context"),
+            ]),
+            group([
+                heading("One result row per category", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="category"),
+                            node(NodeKind.HeaderCell, content="total"),
+                            node(NodeKind.HeaderCell, content="sales_count"),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="50"),
+                            node(NodeKind.Cell, content="3"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="40"),
+                            node(NodeKind.Cell, content="1"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="NULL"),
+                            node(NodeKind.Cell, content="10"),
+                            node(NodeKind.Cell, content="1"),
+                        ]),
+                    ]),
+                ], style="ag-result"),
+                group([
+                    paragraph([
+                        code("groupBy"),
+                        span("Which rows belong together?"),
+                    ]),
+                    paragraph([
+                        code("agg"),
+                        span("What do we calculate for each group?"),
+                    ]),
+                    paragraph([
+                        code("alias"),
+                        span("What do we call the result columns?"),
+                    ]),
+                ], style="ag-roles"),
+            ]),
+        ], style="ag-code-layout"),
+            paragraph([
+            text("Other aggregate functions: "),
+            code("avg"),
+            text(" · "),
+            code("min"),
+            text(" · "),
+            code("max"),
+            text(" · "),
+            code("countDistinct"),
+        ], style="ag-bottom"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("59"),
+        ]),
+        ],
+        notes="Inspired by the original corpus: Section 3, 3.5 Grouping, Joining, and Aggregating part 2, slides4,5,10, covering aggregate functions, GroupedData and aliases. Continue from enriched on the opening code slide; functions is already imported as F. Explain grouping keys first, then the two aggregate expressions and the names of their output columns. Three books sales25,15,10 sum to50; games40 has one sale; unmatched M1 has NULL category and amount10. Spark groups null category values together. count(\"*\") counts rows, including the row with NULL category; count(\"category\") would exclude null category values. groupBy returns GroupedData; agg returns a DataFrame. The table shows an illustrative order: show alone does not guarantee row order. Keep this explanation on semantics and syntax; do not discuss shuffle or partial aggregation yet. Close with: simple to write, but what happens when the required records live in different partitions?",
+    )

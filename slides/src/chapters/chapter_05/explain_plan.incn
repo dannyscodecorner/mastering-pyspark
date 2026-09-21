@@ -1,0 +1,48 @@
+"""Explain plan slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_explain_plan() -> Slide:
+    return Slide(
+        slug="explain-plan",
+        title="Explain the plan",
+        frame=Frame.Composed,
+        styles="slide lesson-slide execution-content",
+        content=[
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            heading("Explain the plan", level=1),
+            prose("Recognise the operators from the story we just followed.", style="subtitle"),
+            group([
+            group([
+                code_block("totals.explain(mode=\"extended\")"),
+                prose("Unresolved → analysed → optimised → physical"),
+                code_block("totals.explain(mode=\"formatted\")"),
+                prose("Physical outline + operator details"),
+                prose("Inspecting the plan does not compute the result rows.", style="explain-warning"),
+            ]),
+            group([
+                span("SIMPLIFIED PHYSICAL OUTLINE · READ BOTTOM-UP", style="exec-label"),
+                node(NodeKind.Preformatted, content="""HashAggregate  ← final totals
+└─ Exchange    ← shuffle by category
+   └─ HashAggregate  ← partial totals
+      └─ Filter      ← amount > 0
+         └─ Scan parquet""", style="explain-tree"),
+                paragraph([
+                    text("With AQE, look for "),
+                    code("AdaptiveSparkPlan"),
+                    text("."),
+                    line_break(),
+                    text("An initial plan may change during execution."),
+                ]),
+            ]),
+        ], style="explain-layout"),
+            prose("Where will data move? What work happens before and after that?", style="exec-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("54"),
+        ]),
+        ],
+        notes="Use the same totals DataFrame. Left snippets are valid API calls; right outline is intentionally simplified teaching text, not captured Spark output. Real explain labels, pushed filters, wrappers, attribute ids and operator choices vary by version, source and configuration. extended labels the first part Parsed Logical Plan even for DataFrame expressions; relate it to unresolved. formatted includes node details not shown here. explain may analyse/plan and access metadata but does not execute this query to produce result rows. It is not a timings report. Initial AQE output can show isFinalPlan=false; a later executed plan may differ, but do not promise that explaining totals after show always exposes the final plan used by show, which can wrap the query. No Spark UI demonstration here. Leave execution inspection for the dedicated Glue subsection. Source: https://spark.apache.org/docs/3.5.9/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.explain.html",
+    )

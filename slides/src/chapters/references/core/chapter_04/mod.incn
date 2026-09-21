@@ -1,0 +1,13 @@
+"""Teaching order for core reference 04."""
+
+from surface import Chapter
+from chapters.references.core.chapter_04.cover import slide_section_4
+from chapters.references.core.chapter_04.lazy_pandas import slide_lazy_pandas
+from chapters.references.core.chapter_04.dataframe_example import slide_dataframe_example
+
+pub def core_reference_04_chapter() -> Chapter:
+    return Chapter(number="4", title="04 / LAZY PANDAS", first_page=1, slides=[
+        slide_section_4(),
+        slide_lazy_pandas(),
+        slide_dataframe_example(),
+    ])

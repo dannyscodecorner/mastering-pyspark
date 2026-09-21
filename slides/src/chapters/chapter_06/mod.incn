@@ -1,0 +1,47 @@
+"""Teaching order for chapter 06."""
+
+from surface import Chapter
+from chapters.chapter_06.cover import slide_section_6
+from chapters.chapter_06.group_join_code import slide_group_join_code
+from chapters.chapter_06.join_types import slide_join_types
+from chapters.chapter_06.grouping_aggregates import slide_grouping_aggregates
+from chapters.chapter_06.join_shuffle import slide_join_shuffle
+from chapters.chapter_06.shuffle_cost_alternative import slide_shuffle_cost_alternative
+from chapters.chapter_06.skew_definition import slide_skew_definition
+from chapters.chapter_06.join_skew import slide_join_skew
+from chapters.chapter_06.join_strategies import slide_join_strategies
+from chapters.chapter_06.join_sort_merge import slide_join_sort_merge
+from chapters.chapter_06.join_shuffled_hash import slide_join_shuffled_hash
+from chapters.chapter_06.join_broadcast import slide_join_broadcast
+from chapters.chapter_06.join_nested_loop import slide_join_nested_loop
+from chapters.chapter_06.join_cartesian import slide_join_cartesian
+from chapters.chapter_06.join_hints import slide_join_hints
+from chapters.chapter_06.join_to_aggregation import slide_join_to_aggregation
+from chapters.chapter_06.aggregation_partials import slide_aggregation_partials
+from chapters.chapter_06.join_multiplicity import slide_join_multiplicity
+from chapters.chapter_06.join_checkpoint import slide_join_checkpoint
+from chapters.chapter_06.group_join_recap import slide_group_join_recap
+
+pub def chapter_06_chapter() -> Chapter:
+    return Chapter(number="6", title="06 / FOLLOWING THE FLOW OF DATA", first_page=1, slides=[
+        slide_section_6(),
+        slide_group_join_code(),
+        slide_join_types(),
+        slide_grouping_aggregates(),
+        slide_join_shuffle(),
+        slide_shuffle_cost_alternative(),
+        slide_skew_definition(),
+        slide_join_skew(),
+        slide_join_strategies(),
+        slide_join_sort_merge(),
+        slide_join_shuffled_hash(),
+        slide_join_broadcast(),
+        slide_join_nested_loop(),
+        slide_join_cartesian(),
+        slide_join_hints(),
+        slide_join_to_aggregation(),
+        slide_aggregation_partials(),
+        slide_join_multiplicity(),
+        slide_join_checkpoint(),
+        slide_group_join_recap(),
+    ])

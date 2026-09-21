@@ -1,0 +1,151 @@
+"""Streaming programming model slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, span, strong, text
+
+pub def slide_streaming_programming_model() -> Slide:
+    return Slide(
+        slug="streaming-programming-model",
+        title="How Spark keeps the result up to date",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-incremental-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("How Spark keeps the result up to date", level=1),
+            group([
+            group([
+                strong("Count each word"),
+                span("Micro-batch execution"),
+            ]),
+            node(NodeKind.Preformatted, children=[
+                code("words.groupBy(\"word\").count()"),
+            ], style="language-python"),
+        ], style="ss-incremental-query"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The same word-count query incorporates three batches of new input into its existing counts.", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-incremental-row-name"),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.Cell),
+                    node(NodeKind.HeaderCell, content="Batch 1", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 2", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 3", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="New input", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("cat dog"),
+                            line_break(),
+                            text("dog dog"),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        code("owl cat"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("dog"),
+                            line_break(),
+                            text("owl"),
+                        ]),
+                    ]),
+                ], style="ss-incremental-input"),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Running"),
+                        line_break(),
+                        text("counts"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, children=[
+                                    strong("1"),
+                                ]),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, children=[
+                                    strong("3"),
+                                ]),
+                            ]),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, children=[
+                                    span("1 + 1 = "),
+                                    strong("2"),
+                                ]),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, children=[
+                                    strong("1"),
+                                ]),
+                            ]),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, children=[
+                                    span("3 + 1 = "),
+                                    strong("4"),
+                                ]),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, children=[
+                                    span("1 + 1 = "),
+                                    strong("2"),
+                                ]),
+                            ]),
+                        ]),
+                    ]),
+                ], style="ss-incremental-result"),
+            ]),
+        ], style="ss-incremental-table"),
+            paragraph([
+            text("Spark updates the existing counts with each new batch."),
+            line_break(),
+            span("When does the next batch start? That depends on the trigger."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("83"),
+        ]),
+        ],
+        notes="""We now have a DataFrame whose input keeps arriving. What happens when we run a query against it? We define the query once. Once started, Spark keeps processing new input and updating the result.
+
+Use the same cat, dog and owl input lines from the preceding growing-table slide. Here words means the streaming DataFrame after splitting those lines into individual words; the full code follows later. For this illustration, the first two lines arrive in batch 1, owl cat in batch 2, and dog plus owl in batch 3. These batch boundaries are illustrative, not implied by the animation's arrival timing.
+
+Read from left to right. Batch 1 produces cat 1 and dog 3. Batch 2 brings owl cat: Spark adds one to the existing cat count and creates an owl count. The dog count stays at three. Batch 3 adds dog and owl, taking the counts to cat 2, dog 4 and owl 2. Bold green values are newly created or updated; the equations show how the old count contributes. Batch 1 contains only cat and dog: the owl result row first appears when owl arrives in batch 2.
+
+Spark does not need to count the entire input history again. It retains aggregation state and incorporates the next portion of new input. We are showing the logical running result, not every detail of partial aggregation, state-store layout or physical partitioning, and not the rows already written to a sink. This worked example uses default micro-batch execution. The next batch normally starts as soon as the previous one finishes; a fixed interval is optional. Real-time mode has different execution and support constraints, so do not suggest the same word-count query is supported unchanged in every runtime and mode.
+
+We have seen how the counts change. Next, explain when a new micro-batch starts by comparing trigger settings, then introduce Real-time mode. After that, return to this example for the output-mode question: which results should Spark send to the destination?
+
+Sources: https://spark.apache.org/docs/4.2.0/streaming/getting-started.html ; https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers""",
+    )

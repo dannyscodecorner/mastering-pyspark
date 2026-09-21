@@ -1,0 +1,51 @@
+"""Abstractions recap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_abstractions_recap() -> Slide:
+    return Slide(
+        slug="abstractions-recap",
+        title="Core abstractions: recap",
+        frame=Frame.Composed,
+        styles="slide chapter-recap",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Core abstractions: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Core abstractions: recap: key takeaways", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="RDDs", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Immutable, partitioned collections. Lineage records how their partitions were derived."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="DataFrames", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Transformations describe new DataFrames. Named columns and expressions help Spark SQL optimise the work."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Persistence", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Computed partitions can be kept for reuse. Defining an RDD or DataFrame does not cache it."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Recovery", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Lost RDD partitions can be recomputed from their dependencies, while the required input remains available."),
+                ]),
+            ]),
+        ], style="chapter-recap-table"),
+            prose("A DataFrame is still distributed data: its rows are processed in partitions.", style="chapter-recap-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("37"),
+        ]),
+        ],
+        notes="""Return to the same sales and the recovered P0. Immutability applies to transformations: select creates a new DataFrame description, and reassignment changes a Python binding. It does not eagerly duplicate rows. Reuse avoids work only while the persisted data is available. Recovery depends on available input and recomputable lineage; it is not a backup of arbitrary external changes. Typed Datasets remain a Scala/Java reference topic.
+
+https://spark.apache.org/docs/4.2.0/rdd-programming-guide.html
+https://spark.apache.org/docs/4.2.0/sql-programming-guide.html""",
+    )

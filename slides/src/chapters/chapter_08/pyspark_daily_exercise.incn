@@ -1,0 +1,80 @@
+"""Pyspark daily exercise slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, code_block, group, heading, node, paragraph, span, strong, text
+
+pub def slide_pyspark_daily_exercise() -> Slide:
+    return Slide(
+        slug="pyspark-daily-exercise",
+        title="Exercise 9 · Build a daily report",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 9 · Build a daily report", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, children=[
+                        text("Add a sale date to the batch "),
+                        code("enriched"),
+                        text(" DataFrame."),
+                    ]),
+                    node(NodeKind.ListItem, content="Group by date and category, then sum the amount."),
+                    node(NodeKind.ListItem, content="Check the four result rows and reconcile the total."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Expected daily report", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="Date", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Category", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Total", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Sep 01"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="25.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Sep 01"),
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="40.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Sep 02"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="25.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Sep 02"),
+                            node(NodeKind.Cell, content="unmapped"),
+                            node(NodeKind.Cell, content="10.00"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                paragraph([
+                    text("Total: "),
+                    strong("100.00"),
+                ], style="ho-note"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""F.to_date("sold_at")
+# Use withColumn, groupBy and agg to build the daily breakdown."""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("115"),
+        ]),
+        ],
+        notes="Give participants time to write this variation before opening the reference answer in Exercise9. Work on the bounded enriched DataFrame. Timestamps are UTC and all records are from September2026. The full reference checks four rows and total100. Discuss why grouping changes the grain but should not change the total. Finally run the cleanup cell to stop the local SparkSession. Keep the input, output and checkpoint folders available for inspection.",
+    )

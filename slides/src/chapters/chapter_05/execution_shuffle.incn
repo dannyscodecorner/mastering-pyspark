@@ -1,0 +1,71 @@
+"""Execution shuffle slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_execution_shuffle() -> Slide:
+    return Slide(
+        slug="execution-shuffle",
+        title="Why shuffle?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide execution-content",
+        content=[
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            heading("Why shuffle?", level=1),
+            prose("We combined rows locally. Now combine partial totals across partitions.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("fill", "context-stroke")]),
+                    ], attributes=[attr("id", "sh-key-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgText, content="Stage A · partial totals", attributes=[attr("x", "20"), attr("y", "27"), attr("style", "font-size:22px;font-weight:700")]),
+                node(NodeKind.SvgText, content="Shuffle · same keys meet", attributes=[attr("x", "425"), attr("y", "27"), attr("style", "font-size:22px;font-weight:700")]),
+                node(NodeKind.SvgText, content="Stage B · final aggregation", attributes=[attr("x", "815"), attr("y", "27"), attr("style", "font-size:22px;font-weight:700")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "15"), attr("y", "48"), attr("width", "320"), attr("height", "92"), attr("rx", "8")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "15"), attr("y", "156"), attr("width", "320"), attr("height", "113"), attr("rx", "8")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "15"), attr("y", "285"), attr("width", "320"), attr("height", "86"), attr("rx", "8")]),
+                ], attributes=[attr("fill", "#edf6fe"), attr("stroke", "#a9c5da")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Task 0 · partition 0", attributes=[attr("x", "35"), attr("y", "78"), attr("style", "font-size:19px;fill:#526775")]),
+                    node(NodeKind.SvgText, content="books: 40", attributes=[attr("x", "35"), attr("y", "111"), attr("style", "fill:#2277aa;font-weight:700")]),
+                    node(NodeKind.SvgText, content="25 + 15 locally", attributes=[attr("x", "178"), attr("y", "111"), attr("style", "font-size:17px;fill:#526775")]),
+                    node(NodeKind.SvgText, content="Task 1 · partition 1", attributes=[attr("x", "35"), attr("y", "187"), attr("style", "font-size:19px;fill:#526775")]),
+                    node(NodeKind.SvgText, content="books: 10", attributes=[attr("x", "35"), attr("y", "218"), attr("style", "fill:#2277aa;font-weight:700")]),
+                    node(NodeKind.SvgText, content="games: 40", attributes=[attr("x", "35"), attr("y", "250"), attr("style", "fill:#996a1c;font-weight:700")]),
+                    node(NodeKind.SvgText, content="Task 2 · partition 2", attributes=[attr("x", "35"), attr("y", "316"), attr("style", "font-size:19px;fill:#526775")]),
+                    node(NodeKind.SvgText, content="music: 10", attributes=[attr("x", "35"), attr("y", "349"), attr("style", "fill:#218675;font-weight:700")]),
+                ], attributes=[attr("style", "font-size:22px")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("stroke", "#2277aa"), attr("d", "M340 107 C520 107 610 110 806 110")]),
+                    node(NodeKind.SvgPath, attributes=[attr("stroke", "#2277aa"), attr("d", "M340 214 C545 214 604 151 806 151")]),
+                    node(NodeKind.SvgPath, attributes=[attr("stroke", "#c28e37"), attr("d", "M340 246 C540 246 600 291 806 291")]),
+                    node(NodeKind.SvgPath, attributes=[attr("stroke", "#39a08e"), attr("d", "M340 345 C540 345 640 339 806 339")]),
+                ], attributes=[attr("fill", "none"), attr("stroke-width", "3"), attr("marker-end", "url(#sh-key-arrow)")]),
+                node(NodeKind.SvgRectangle, attributes=[attr("x", "815"), attr("y", "48"), attr("width", "477"), attr("height", "142"), attr("rx", "9"), attr("fill", "#e2f1fb"), attr("stroke", "#6aaddb")]),
+                node(NodeKind.SvgText, content="Task 3 · shuffle partition 0", attributes=[attr("x", "836"), attr("y", "78"), attr("style", "font-size:19px;fill:#526775")]),
+                node(NodeKind.SvgText, content="books: 40", attributes=[attr("x", "836"), attr("y", "115"), attr("style", "font-size:22px;fill:#2277aa")]),
+                node(NodeKind.SvgText, content="books: 10", attributes=[attr("x", "836"), attr("y", "155"), attr("style", "font-size:22px;fill:#2277aa")]),
+                node(NodeKind.SvgText, content="→", attributes=[attr("x", "971"), attr("y", "139"), attr("style", "font-size:30px")]),
+                node(NodeKind.SvgRectangle, attributes=[attr("x", "1020"), attr("y", "100"), attr("width", "252"), attr("height", "64"), attr("rx", "6"), attr("fill", "#e1f1df"), attr("stroke", "#8cba95")]),
+                node(NodeKind.SvgText, content="books: 50", attributes=[attr("x", "1146"), attr("y", "140"), attr("text-anchor", "middle"), attr("style", "font-size:28px;font-weight:700;fill:#08753b")]),
+                node(NodeKind.SvgRectangle, attributes=[attr("x", "815"), attr("y", "228"), attr("width", "477"), attr("height", "143"), attr("rx", "9"), attr("fill", "#eef8ed"), attr("stroke", "#8cba95")]),
+                node(NodeKind.SvgText, content="Task 4 · shuffle partition 1", attributes=[attr("x", "836"), attr("y", "258"), attr("style", "font-size:19px;fill:#526775")]),
+                node(NodeKind.SvgText, content="games: 40", attributes=[attr("x", "836"), attr("y", "298"), attr("style", "font-size:22px;fill:#996a1c")]),
+                node(NodeKind.SvgText, content="music: 10", attributes=[attr("x", "836"), attr("y", "345"), attr("style", "font-size:22px;fill:#218675")]),
+                node(NodeKind.SvgText, content="→", attributes=[attr("x", "971"), attr("y", "323"), attr("style", "font-size:30px")]),
+                node(NodeKind.SvgText, content="games: 40", attributes=[attr("x", "1035"), attr("y", "299"), attr("style", "font-size:23px;font-weight:700;fill:#996a1c")]),
+                node(NodeKind.SvgText, content="music: 10", attributes=[attr("x", "1035"), attr("y", "345"), attr("style", "font-size:23px;font-weight:700;fill:#218675")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-label", "The same three tasks send partial totals through a shuffle. Books 40 from task 0 and books 10 from task 1 meet in shuffle partition 0, where final aggregation produces books 50. Games 40 and music 10 share shuffle partition 1.")]),
+        ], style="exec-shuffle"),
+            prose("Partial aggregation reduces what moves. The shuffle brings matching keys together.", style="exec-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("52"),
+        ]),
+        ],
+        notes="Continue the exact partition example from “Jobs, stages and tasks”. Task 0 has already combined books 25 and 15 into books 40. Task 1 contributes books 10 and games 40. Task 2 contributes music 10. Five input rows have become four partial records before transfer. The shuffle routes books 40 and books 10 to the same destination partition; final aggregation there produces books 50. Games and music each have only one partial, so their final values stay unchanged. This is useful contrast: aggregation changes values only where multiple contributions must be combined. Shuffle itself moves and groups records; the following aggregation adds the values. Distinct keys can share a partition; this routing is illustrative, not a claim about Spark's actual hash mapping. Tasks run on executors, not on the driver. Transfers can involve network and disk I/O; not every block must cross a machine boundary. Existing distribution can sometimes avoid an exchange. Task counts are illustrative. Connect to section 03: memory reuse does not eliminate shuffles.",
+    )

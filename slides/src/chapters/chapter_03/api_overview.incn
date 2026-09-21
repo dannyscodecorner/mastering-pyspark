@@ -1,0 +1,76 @@
+"""Api overview slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, line_break, node, paragraph, prose, span, strong, text
+
+pub def slide_api_overview() -> Slide:
+    return Slide(
+        slug="api-overview",
+        title="How the APIs fit together",
+        frame=Frame.Composed,
+        styles="slide lesson-slide",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("How the APIs fit together", level=1),
+            prose("Different ways to describe work. The same distributed foundations.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            group([
+                heading("RDD API", level=2),
+                prose("Elements + your functions"),
+                group([
+                    text("↓"),
+                ], style="api-down"),
+                prose("You specify the transformations", style="api-direct-caption"),
+            ], style="api-direct"),
+            group([
+                group([
+                    group([
+                        heading("DataFrame", level=2),
+                        paragraph([
+                            text("Named columns + expressions"),
+                            line_break(),
+                            node(NodeKind.Bold, content="Our PySpark interface"),
+                        ]),
+                    ]),
+                    node(NodeKind.Small, children=[
+                        node(NodeKind.Link, content="Reference: typed Datasets in Scala / Java ↗", attributes=[attr("href", "core-abstractions-reference.html#dataset-context")]),
+                    ]),
+                ], style="api-family"),
+                group([
+                    text("↓"),
+                ], style="api-down"),
+                group([
+                    node(NodeKind.Bold, content="Spark SQL / Catalyst"),
+                    span("Logical plan → optimised physical plan"),
+                ], style="api-planner"),
+                group([
+                    text("↓"),
+                ], style="api-down"),
+            ], style="api-structured"),
+            group([
+                strong("Distributed execution · RDDs underneath"),
+                span("Partitions   →   tasks on executors   ·   dependencies   ·   recovery"),
+            ], style="api-runtime"),
+        ], style="api-map", attributes=[attr("aria-label", "RDD operations go to distributed execution. DataFrame operations go through Spark SQL planning and optimisation before distributed execution.")]),
+            group([
+            group([
+                strong("groupBy / join"),
+                span("May move data between partitions: a shuffle."),
+            ]),
+            group([
+                strong("One slow partition"),
+                span("Uneven work can hold up the whole stage."),
+            ]),
+            group([
+                strong("Use the result again"),
+                span("Persistence can avoid repeating earlier work."),
+            ]),
+        ], style="api-why"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("36"),
+        ]),
+        ],
+        notes="Recap the two interfaces in this course: RDDs and DataFrames. Start at DataFrame: we describe what we want using schema-aware expressions. Catalyst analyses and optimises that query and produces a physical plan. Spark SQL uses internal row/columnar representations and RDD-based execution beneath those operators. Compare the left RDD API path: users supply transformations directly; arbitrary functions do not give Catalyst equivalent relational information. Do not call a DataFrame merely an RDD with column names. Both paths rely on partitions and dependencies and run tasks on executors. That is why learning the lower layer helps diagnose a shuffle, skew, repeated computation and recovery. A DataFrame can be created from an RDD plus a schema, but need not originate from a Python RDD. No manual conversion to RDD is needed. In classic PySpark, df.rdd exposes Python Rows; moving to arbitrary Python RDD transformations leaves Spark SQL relational optimisation for those transformations. Spark Connect does not support the RDD API. If asked about the reference link: Spark 2.0 unified DataFrame/Dataset in Scala/Java; Scala DataFrame is Dataset[Row], Java uses Dataset<Row>. Python has no typed Dataset[T] API. Source: https://spark.apache.org/releases/spark-release-2-0-0.html ; https://spark.apache.org/docs/latest/sql-programming-guide.html ; https://github.com/apache/spark/blob/v4.0.0/sql/core/src/main/scala/org/apache/spark/sql/execution/SparkPlan.scala . End by pointing to Catalyst: “This is Catalyst, Spark’s query optimiser. I’ll come back to that.” Then say “But first…” and advance to the Lazy Pandas cover. Leave the execution question open for the audience.",
+    )

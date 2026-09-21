@@ -1,0 +1,114 @@
+"""Data distributed slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_data_distributed() -> Slide:
+    return Slide(
+        slug="data-distributed",
+        title="A DataFrame is still distributed",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("A DataFrame is still distributed", level=1),
+            prose("A familiar table does not mean all the rows live in Python.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="One table, multiple partitions", attributes=[attr("id", "data-distributed-title")]),
+                node(NodeKind.SvgDescription, content="The table is our logical view; executors process its partitions.", attributes=[attr("id", "data-distributed-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "data-distributed-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "8"), attr("width", "420"), attr("height", "366"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="sales", style="trial-title", attributes=[attr("x", "32"), attr("y", "51")]),
+                    node(NodeKind.SvgText, content="One logical table", style="trial-note", attributes=[attr("x", "32"), attr("y", "84")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "112"), attr("width", "372"), attr("height", "42"), attr("fill", "#d7e8f6")]),
+                    node(NodeKind.SvgText, content="category", style="trial-code", attributes=[attr("x", "48"), attr("y", "141")]),
+                    node(NodeKind.SvgText, content="amount", style="trial-code", attributes=[attr("x", "304"), attr("y", "141")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "154"), attr("width", "372"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "48"), attr("y", "183")]),
+                    node(NodeKind.SvgText, content="25", style="trial-code", attributes=[attr("x", "322"), attr("y", "183")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "196"), attr("width", "372"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="games", style="trial-code", attributes=[attr("x", "48"), attr("y", "225")]),
+                    node(NodeKind.SvgText, content="40", style="trial-code", attributes=[attr("x", "322"), attr("y", "225")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "238"), attr("width", "372"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "48"), attr("y", "267")]),
+                    node(NodeKind.SvgText, content="15", style="trial-code", attributes=[attr("x", "322"), attr("y", "267")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "32"), attr("y", "280"), attr("width", "372"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="music", style="trial-code", attributes=[attr("x", "48"), attr("y", "309")]),
+                    node(NodeKind.SvgText, content="10", style="trial-code", attributes=[attr("x", "322"), attr("y", "309")]),
+                    node(NodeKind.SvgText, content="Python holds a reference", style="trial-note", attributes=[attr("x", "32"), attr("y", "346")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "One logical table")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M428 188H492Q500 188 500 180V110Q500 102 508 102H572M500 188V298Q500 306 508 306H572"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "576"), attr("y", "8"), attr("width", "724"), attr("height", "174"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Executor A", style="trial-title", attributes=[attr("x", "600"), attr("y", "46")]),
+                    node(NodeKind.SvgText, content="Partition 0", style="trial-note", attributes=[attr("x", "600"), attr("y", "78")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "850"), attr("y", "66"), attr("width", "420"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "866"), attr("y", "95")]),
+                    node(NodeKind.SvgText, content="25", style="trial-code", attributes=[attr("x", "1188"), attr("y", "95")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "850"), attr("y", "108"), attr("width", "420"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="games", style="trial-code", attributes=[attr("x", "866"), attr("y", "137")]),
+                    node(NodeKind.SvgText, content="40", style="trial-code", attributes=[attr("x", "1188"), attr("y", "137")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "576"), attr("y", "208"), attr("width", "724"), attr("height", "166"), attr("rx", "12"), attr("fill", "#f8efe0"), attr("stroke", "#b79762"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Executor B", style="trial-title", attributes=[attr("x", "600"), attr("y", "246")]),
+                    node(NodeKind.SvgText, content="Partition 1", style="trial-note", attributes=[attr("x", "600"), attr("y", "278")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "850"), attr("y", "266"), attr("width", "420"), attr("height", "42"), attr("fill", "#e8f3ee")]),
+                    node(NodeKind.SvgText, content="books", style="trial-code", attributes=[attr("x", "866"), attr("y", "295")]),
+                    node(NodeKind.SvgText, content="15", style="trial-code", attributes=[attr("x", "1188"), attr("y", "295")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "850"), attr("y", "308"), attr("width", "420"), attr("height", "42"), attr("fill", "#f8efe0")]),
+                    node(NodeKind.SvgText, content="music", style="trial-code", attributes=[attr("x", "866"), attr("y", "337")]),
+                    node(NodeKind.SvgText, content="10", style="trial-code", attributes=[attr("x", "1188"), attr("y", "337")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "Partitions are processed on executors")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "576"), attr("y", "158"), attr("width", "724"), attr("height", "52"), attr("rx", "12"), attr("fill", "#26343d"), attr("stroke", "#26343d"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="At execution: project amount on each partition", style="trial-code trial-light", attributes=[attr("x", "596"), attr("y", "193")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "One expression, tasks working on separate partitions")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "data-distributed-title data-distributed-desc")]),
+            group([
+                paragraph([
+                    strong("One table, multiple partitions"),
+                    span("The table is our logical view; executors process its partitions."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · The table we work with"),
+                    span("sales refers to a DataFrame. The Python variable does not hold every row locally."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Look beneath that table"),
+                    span("At execution time, tasks process subsets of rows on executors."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Describe an operation once"),
+                    span("Spark schedules the partition-level work. We do not write a loop over machines."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "One table, multiple partitions. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("33"),
+        ]),
+        ],
+        notes="""TRIAL NARRATIVE, 2 of 3. Keep the same four sales so the audience does not have to learn a second example.
+“Here is the table again. Where do you think these rows live?” Pause before revealing executors. “The table is the view we program against. When Spark executes, tasks process partitions of rows.” Indicate that both partitions have the same schema. Then reveal select: “We describe an operation once. Spark schedules the work over partitions.”
+The connecting fork maps the logical table to an illustrative execution view; it does not mean the driver ships a local table to executors. Two partitions and two executors are only an example. Executors process many partitions over time; partitions are not permanently attached to particular machines. The row colours simply help recognise records, not a partitioning rule. select builds a new plan; the diagram previews what happens when an action eventually requests execution. Do not imply select immediately schedules tasks. This qualification is the bridge to the next slide and lazy evaluation.
+Source: https://spark.apache.org/docs/latest/sql-programming-guide.html""",
+    )

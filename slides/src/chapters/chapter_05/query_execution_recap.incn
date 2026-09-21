@@ -1,0 +1,58 @@
+"""Query execution recap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, prose, span, text
+
+pub def slide_query_execution_recap() -> Slide:
+    return Slide(
+        slug="query-execution-recap",
+        title="Query execution: recap",
+        frame=Frame.Composed,
+        styles="slide chapter-recap recap-five",
+        content=[
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            heading("Query execution: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Query execution: recap: key takeaways", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Planning", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Catalyst resolves the request, optimises it and chooses physical operators."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Stages and tasks", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="The driver schedules stage tasks on executors. Each task processes a partition."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Shuffle", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="An exchange redistributes data. Downstream tasks read it in the required partitioning."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Adaptation", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="AQE can revise downstream work using statistics collected during execution."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Inspection", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        code("explain()"),
+                        text(" shows the plan. Inspecting it does not compute the result rows."),
+                    ]),
+                ]),
+            ]),
+        ], style="chapter-recap-table"),
+            prose("Follow the plan to see where data moves and what each stage has to do.", style="chapter-recap-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("55"),
+        ]),
+        ],
+        notes="""Recall the category totals: local aggregation, exchange, then final aggregation. A task belongs to a stage; an executor is a process that can run many tasks. Stages are not dedicated machines. The driver schedules work, while the cluster manager allocates application resources. AQE may revise downstream choices after runtime statistics become available; it does not make completed shuffle work free. One action is not a guarantee of exactly one Spark job.
+
+https://spark.apache.org/docs/4.2.0/cluster-overview.html
+https://spark.apache.org/docs/4.2.0/sql-performance-tuning.html""",
+    )

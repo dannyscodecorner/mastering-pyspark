@@ -1,0 +1,93 @@
+"""Rdd foundation slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_rdd_foundation() -> Slide:
+    return Slide(
+        slug="rdd-foundation",
+        title="Resilient Distributed Dataset",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Resilient Distributed Dataset", level=1),
+            prose("An immutable, partitioned collection, with a record of how it was derived.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Resilient Distributed Dataset", attributes=[attr("id", "rdd-foundation-title")]),
+                node(NodeKind.SvgDescription, content="An immutable, partitioned collection, with a record of how it was derived.", attributes=[attr("id", "rdd-foundation-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "rdd-foundation-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "14"), attr("width", "370"), attr("height", "350"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Dataset", style="trial-title", attributes=[attr("x", "30"), attr("y", "54")]),
+                    node(NodeKind.SvgText, content="A collection of elements", style="trial-note", attributes=[attr("x", "30"), attr("y", "96")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "30"), attr("y", "130")]),
+                    node(NodeKind.SvgText, content="P0: books 25 · games 40", style="trial-note", attributes=[attr("x", "30"), attr("y", "164")]),
+                    node(NodeKind.SvgText, content="P1: books 15 · music 10", style="trial-note", attributes=[attr("x", "30"), attr("y", "198")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "Dataset: a collection split into partitions")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "468"), attr("y", "14"), attr("width", "370"), attr("height", "350"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Distributed", style="trial-title", attributes=[attr("x", "490"), attr("y", "54")]),
+                    node(NodeKind.SvgText, content="Transform each partition", style="trial-note", attributes=[attr("x", "490"), attr("y", "96")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "490"), attr("y", "130")]),
+                    node(NodeKind.SvgText, content="map: read each record", style="trial-note", attributes=[attr("x", "490"), attr("y", "164")]),
+                    node(NodeKind.SvgText, content="filter: keep amount > 20", style="trial-note", attributes=[attr("x", "490"), attr("y", "198")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M378 188H468"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                    node(NodeKind.SvgText, content="derive", style="trial-note", attributes=[attr("x", "391"), attr("y", "164")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "Distributed: transformations operate over partitions")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "928"), attr("y", "14"), attr("width", "370"), attr("height", "350"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Resilient", style="trial-title", attributes=[attr("x", "950"), attr("y", "54")]),
+                    node(NodeKind.SvgText, content="Record how it was derived", style="trial-note", attributes=[attr("x", "950"), attr("y", "96")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "950"), attr("y", "130")]),
+                    node(NodeKind.SvgText, content="Lost partition?", style="trial-note", attributes=[attr("x", "950"), attr("y", "164")]),
+                    node(NodeKind.SvgText, content="Recompute its dependencies.", style="trial-note", attributes=[attr("x", "950"), attr("y", "198")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M838 188H928"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                    node(NodeKind.SvgText, content="lineage", style="trial-note", attributes=[attr("x", "847"), attr("y", "164")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Resilient: recorded dependencies support recovery")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "rdd-foundation-title rdd-foundation-desc")]),
+            group([
+                paragraph([
+                    strong("Resilient Distributed Dataset"),
+                    span("An immutable, partitioned collection, with a record of how it was derived."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Dataset"),
+                    span("A logical collection of elements. Here, the same four sales records."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Distributed"),
+                    span("Transformations describe work over partitions; Spark schedules tasks to execute it."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Resilient"),
+                    span("Lineage records dependencies that Spark can use to recompute lost partitions."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Resilient Distributed Dataset. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("26"),
+        ]),
+        ],
+        notes="Introduce the acronym in the order Dataset, Distributed, Resilient after the problem. Immutability means transformations produce new RDDs instead of changing an existing one. These are descriptions, not three fully materialised copies. Actions trigger computation. Deterministic transformations and available source data underpin recomputation; arbitrary external side effects are not made safely repeatable. Detailed scheduling and shuffle boundaries come in the execution section. https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf",
+    )

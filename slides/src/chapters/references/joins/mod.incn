@@ -1,0 +1,17 @@
+"""Teaching order for joins reference 00."""
+
+from surface import Chapter
+from chapters.references.joins.join_rows import slide_join_rows
+from chapters.references.joins.join_all_sales import slide_join_all_sales
+from chapters.references.joins.join_as_data import slide_join_as_data
+from chapters.references.joins.join_existence import slide_join_existence
+from chapters.references.joins.shuffle_cost import slide_shuffle_cost
+
+pub def joins_reference_00_chapter() -> Chapter:
+    return Chapter(number="6", title="06 / JOINS", first_page=1, slides=[
+        slide_join_rows(),
+        slide_join_all_sales(),
+        slide_join_as_data(),
+        slide_join_existence(),
+        slide_shuffle_cost(),
+    ])

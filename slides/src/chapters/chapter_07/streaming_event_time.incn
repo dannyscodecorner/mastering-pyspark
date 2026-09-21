@@ -1,0 +1,96 @@
+"""Streaming event time slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_streaming_event_time() -> Slide:
+    return Slide(
+        slug="streaming-event-time",
+        title="Count words by when they happened",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-window-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Count words by when they happened", level=1),
+            paragraph([
+            text("Now each word has an "),
+            code("event_time"),
+            text(" timestamp. Count all words per ten-minute interval."),
+        ], style="ss-time-intro"),
+            node(NodeKind.Preformatted, children=[
+            code("""window_counts = events.groupBy(
+    F.window("event_time", "10 minutes")
+).count()"""),
+        ], style="language-python ss-window-query"),
+            group([
+            group([
+                heading("Input in arrival order", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Four word events, including a delayed cat record", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="Arrival", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="event_time", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="12:01"),
+                            node(NodeKind.Cell, content="cat"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="12:04"),
+                            node(NodeKind.Cell, content="dog"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="12:12"),
+                            node(NodeKind.Cell, content="owl"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="4 · late"),
+                            node(NodeKind.Cell, content="12:03"),
+                            node(NodeKind.Cell, content="cat"),
+                        ], style="ss-late-word"),
+                    ]),
+                ], style="ss-timed-events"),
+            ]),
+            group([
+                heading("Counts after these arrivals", level=2),
+                node(NodeKind.DefinitionList, children=[
+                    group([
+                        node(NodeKind.Term, content="12:00–12:10"),
+                        node(NodeKind.Definition, children=[
+                            span("2 → "),
+                            text("3"),
+                        ]),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="12:10–12:20"),
+                        node(NodeKind.Definition, content="1"),
+                    ]),
+                ], style="ss-window-totals"),
+                paragraph([
+                    text("The late cat belongs to the first window."),
+                    line_break(),
+                    text("Window start is included, end is excluded."),
+                ], style="ss-window-note"),
+            ]),
+        ], style="ss-window-grid"),
+            prose("Event time is when the event happened. Processing time is when Spark handles it.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("93"),
+        ]),
+        ],
+        notes="""Explicitly introduce a new timestamped example. The original text source had only value; it did not contain event_time. Here events is a streaming DataFrame with event_time TIMESTAMP and word STRING. For a Parquet source, the reader would be events = spark.readStream.schema("event_time TIMESTAMP, word STRING").parquet("data/timed-words"). This path and the timestamped rows are illustrative, separate from the supplied plain-text word-count files. No new Spark run or timed Parquet fixture is claimed. All displayed times share the same date and session time zone. F is the functions alias introduced earlier. This query counts rows per tumbling ten-minute event-time window, not per word. Adding word to groupBy would instead count each word within each interval. No watermark has been configured yet, so old windows can continue to change and their state is retained. A window alone does not make a count final.
+
+Read the arrivals in order. Cat at12:01 and dog at12:04 make two events in the first interval. Owl at12:12 belongs to the next. The last-arriving cat carries event time12:03, so it raises the earlier interval to3. The arrival index is explanatory ordering, not an extra source column or a batch number. Late means event-time order differs from arrival order; it does not mean invalid. The displayed totals are aggregate state after the arrivals. If publishing the evolving result, this no-watermark query can use Update with a compatible sink. Now ask how long Spark should keep accepting changes to that older interval.
+
+https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.functions.window.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#handling-late-data-and-watermarking""",
+    )

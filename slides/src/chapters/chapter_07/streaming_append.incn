@@ -1,0 +1,98 @@
+"""Streaming append slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_streaming_append() -> Slide:
+    return Slide(
+        slug="streaming-append",
+        title="Output mode: Append",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-emission-slide ss-emission-append",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Output mode: Append", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                code("words.select(\"word\")"),
+            ], style="language-python"),
+            node(NodeKind.Preformatted, children=[
+                code(".outputMode(\"append\")"),
+            ], style="language-python"),
+        ], style="ss-emission-code"),
+            group([
+            group([
+                heading("New input", level=2),
+                prose("Batch 3", style="ss-emission-label"),
+                group([
+                    code("dog"),
+                    code("owl"),
+                ], style="ss-record-list"),
+            ], style="ss-emission-input"),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("A query without aggregation", level=2),
+                prose("One result row per input row", style="ss-emission-label"),
+                group([
+                    group([
+                        code("dog"),
+                        span("Final"),
+                    ]),
+                    group([
+                        code("owl"),
+                        span("Final"),
+                    ]),
+                ], style="ss-append-records"),
+                paragraph([
+                    text("Later input adds more rows."),
+                    line_break(),
+                    text("It does not revise these rows."),
+                ]),
+            ], style="ss-append-query"),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Sent to the sink", level=2),
+                prose("Only the new, final rows", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Rows emitted by Append after Batch 3 for the select query", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                        ]),
+                    ]),
+                ], style="ss-emission-sent"),
+                prose("2 rows emitted", style="ss-emission-total"),
+                prose("Earlier rows are not sent again.", style="ss-emission-history"),
+            ], style="ss-emission-output"),
+        ], style="ss-emission-flow"),
+            paragraph([
+            text("Append is the default. An unwindowed running count cannot use it."),
+            line_break(),
+            span("Windowed counts can append once a watermark makes the result final."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("89"),
+        ]),
+        ],
+        notes="""Keep the incoming dog and owl records from Batch 3, but explicitly change the query: this is select, with no aggregation. Each input row produces a result row whose value will not be revised by future input. Append therefore emits the new dog and owl rows; it does not resend earlier rows or remove duplicate words. The repeated words are separate input records.
+
+This is deliberately not the unwindowed running count on the neighbouring slides. That count never becomes final while more input can arrive, so Append is unsupported for it. Compatible windowed aggregations can append results after event-time progress and a watermark finalize their windows. The watermark advances with observed event time, not merely wall-clock time; an idle stream may leave a window unpublished. Full window and late-data mechanics follow later.
+
+Append is the default output mode. The visible writer line is a setting fragment, not a complete running query. In this stateless example Update would emit the same rows, while Complete requires an aggregation. Row order is illustrative.
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )

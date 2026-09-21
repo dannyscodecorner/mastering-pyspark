@@ -1,0 +1,45 @@
+"""Streaming model slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, span, text
+
+pub def slide_streaming_model() -> Slide:
+    return Slide(
+        slug="streaming-model",
+        title="Spark Structured Streaming",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("06 / BATCH VS. STREAMING"),
+        ], style="eyebrow"),
+            heading("Spark Structured Streaming", level=1),
+            node(NodeKind.OrderedList, children=[
+            node(NodeKind.ListItem, children=[
+                span("01"),
+                text("Bounded data versus ongoing input"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("02"),
+                text("Structured Streaming and micro-batches"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("03"),
+                text("Sources, sinks and query progress"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("04"),
+                text("Stateless and stateful computation"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("05"),
+                text("Event time, windows and watermarks"),
+            ]),
+        ], style="topic-list"),
+            span("CONTENT SKELETON", style="draft-label"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("49"),
+        ]),
+        ],
+        notes="",
+    )

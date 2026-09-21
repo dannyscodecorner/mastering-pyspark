@@ -1,0 +1,42 @@
+"""Spark connect slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, text
+
+pub def slide_spark_connect() -> Slide:
+    return Slide(
+        slug="spark-connect",
+        title="Spark Connect",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("09 / SPARK IN AWS GLUE"),
+        ], style="eyebrow"),
+            heading("Spark Connect", level=1),
+            prose("Classic PySpark and the client–server architecture", style="subtitle"),
+            node(NodeKind.OrderedList, children=[
+            node(NodeKind.ListItem, children=[
+                span("01"),
+                text("The classic PySpark process model"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("02"),
+                text("The Spark Connect client/server boundary"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("03"),
+                text("What crosses the connection"),
+            ]),
+            node(NodeKind.ListItem, children=[
+                span("04"),
+                text("API support, limitations and version compatibility"),
+            ]),
+        ], style="topic-list"),
+            span("CONTENT SKELETON", style="draft-label"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("118"),
+        ]),
+        ],
+        notes="Preserved runtime-context outline for development in chapter09. Classic versus Connect explains the interface used by the chosen environment; this is not a claim that every AWS Glue session supports Spark Connect. Confirm the chosen interface and runtime before developing the lesson.",
+    )

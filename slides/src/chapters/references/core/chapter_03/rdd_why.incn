@@ -1,0 +1,83 @@
+"""Rdd why slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_rdd_why() -> Slide:
+    return Slide(
+        slug="rdd-why",
+        title="But why is this important?",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial question-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("But why is this important?", level=1),
+            prose("Take a moment. What does this help us understand about Spark?", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="But why is this important?", attributes=[attr("id", "rdd-why-title")]),
+                node(NodeKind.SvgDescription, content="Take a moment. What does this help us understand about Spark?", attributes=[attr("id", "rdd-why-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "rdd-why-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "90"), attr("width", "410"), attr("height", "240"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Partitions", style="trial-title", attributes=[attr("x", "30"), attr("y", "130")]),
+                    node(NodeKind.SvgText, content="How can the work", style="trial-note", attributes=[attr("x", "30"), attr("y", "172")]),
+                    node(NodeKind.SvgText, content="be divided?", style="trial-note", attributes=[attr("x", "30"), attr("y", "206")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "Partitions explain parallel work")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "448"), attr("y", "90"), attr("width", "410"), attr("height", "240"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Dependencies", style="trial-title", attributes=[attr("x", "470"), attr("y", "130")]),
+                    node(NodeKind.SvgText, content="What has to happen", style="trial-note", attributes=[attr("x", "470"), attr("y", "172")]),
+                    node(NodeKind.SvgText, content="before this result?", style="trial-note", attributes=[attr("x", "470"), attr("y", "206")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "Dependencies explain required work")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "888"), attr("y", "90"), attr("width", "410"), attr("height", "240"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Recovery", style="trial-title", attributes=[attr("x", "910"), attr("y", "130")]),
+                    node(NodeKind.SvgText, content="What might need", style="trial-note", attributes=[attr("x", "910"), attr("y", "172")]),
+                    node(NodeKind.SvgText, content="to run again?", style="trial-note", attributes=[attr("x", "910"), attr("y", "206")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Recovery explains repeated work")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "rdd-why-title rdd-why-desc")]),
+            group([
+                paragraph([
+                    strong("But why is this important?"),
+                    span("Take a moment. What does this help us understand about Spark?"),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Parallel work"),
+                    span("Partitions help explain how Spark divides a computation into tasks."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Required work"),
+                    span("Dependencies explain the work a result depends on."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Repeated work"),
+                    span("Recovery explains why some work may run again after data is lost."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "But why is this important?. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("28"),
+        ]),
+        ],
+        notes="Stop here before advancing any point. Ask the audience: Why spend time understanding RDDs if we will mainly write DataFrames? Let them answer. Reveal the three concepts gradually, using their answers where possible. This is execution vocabulary, not a recommendation to rewrite DataFrame code with the RDD API. Then ask: we can distribute and recover our calculation, but how much does Spark know about what our Python function means?",
+    )

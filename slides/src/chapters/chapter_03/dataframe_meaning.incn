@@ -1,0 +1,120 @@
+"""Dataframe meaning slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, node, prose, span, text
+from components import step_rail, step_cues
+
+pub def slide_dataframe_meaning() -> Slide:
+    steps = [
+        TeachingStep(label="RDD",
+            heading="RDDs gave us distributed collections",
+            explanation="But an arbitrary Python function does not expose its column-level meaning to Spark SQL.",
+            cue_key="0", numbered=true),
+        TeachingStep(label="Schema",
+            heading="Give the values names and types",
+            explanation="category is a string; amount is a number. The rows still belong to distributed partitions.",
+            cue_key="1", numbered=true),
+        TeachingStep(label="Request",
+            heading="Use built-in expressions",
+            explanation="Request amount values above 20. Spark can analyse this request and plan the computation.",
+            cue_key="2", numbered=true),
+        TeachingStep(label="Prune",
+            heading="Why this helps · read only required columns",
+            explanation="With a suitable columnar source, the unused category column can be pruned from the read.",
+            cue_key="3", numbered=true),
+        TeachingStep(label="Execute",
+            heading="Execute the plan across partitions",
+            explanation="For this example, the requested values are 25 and 40. Supported filters may also be pushed toward the source.",
+            cue_key="4", numbered=true),
+        TeachingStep(label="Why?",
+            heading="Why learn the lower layers?",
+            explanation="A DataFrame query becomes an execution plan over partitions. Shuffles, persistence and recovery still matter.",
+            cue_key="5", numbered=true),
+    ]
+    return Slide(
+        slug="dataframe-meaning",
+        title="Give Spark more information",
+        frame=Frame.Composed,
+        styles="slide lesson-slide ",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Give Spark more information", level=1),
+            group([
+            prose("A schema and expressions make the request visible to the optimiser.", style="subtitle"),
+            step_rail(steps),
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="dataframe walk", attributes=[attr("id", "dataframe-walk-title")]),
+                node(NodeKind.SvgDescription, content="The sales become named columns; an amount-only filter permits column pruning with a supporting source and executes across partitions.", attributes=[attr("id", "dataframe-walk-desc")]),
+                node(NodeKind.SvgText, content="Same sales · Parquet source", style="scene-heading", attributes=[attr("x", "20"), attr("y", "28")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 78)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record games source-tile", attributes=[attr("transform", "translate(24 140)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 252)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music source-tile", attributes=[attr("transform", "translate(24 314)")]),
+                node(NodeKind.SvgText, content="Rows + schema", style="scene-heading", attributes=[attr("x", "446"), attr("y", "28")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "440"), attr("y", "52"), attr("width", "314"), attr("height", "336"), attr("rx", "10")]),
+                node(NodeKind.SvgText, content="category", style="small column-cat", attributes=[attr("x", "460"), attr("y", "82")]),
+                node(NodeKind.SvgText, content="amount", style="small", attributes=[attr("x", "632"), attr("y", "82")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="books", style="small column-cat", attributes=[attr("x", "462"), attr("y", "132")]),
+                    node(NodeKind.SvgText, content="25", style="small", attributes=[attr("x", "654"), attr("y", "132")]),
+                ], style="df-row row-0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="games", style="small column-cat", attributes=[attr("x", "462"), attr("y", "194")]),
+                    node(NodeKind.SvgText, content="40", style="small", attributes=[attr("x", "654"), attr("y", "194")]),
+                ], style="df-row row-1"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="books", style="small column-cat", attributes=[attr("x", "462"), attr("y", "294")]),
+                    node(NodeKind.SvgText, content="15", style="small", attributes=[attr("x", "654"), attr("y", "294")]),
+                ], style="df-row row-2"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="music", style="small column-cat", attributes=[attr("x", "462"), attr("y", "356")]),
+                    node(NodeKind.SvgText, content="10", style="small", attributes=[attr("x", "654"), attr("y", "356")]),
+                ], style="df-row row-3"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="query-box", attributes=[attr("x", "830"), attr("y", "53"), attr("width", "462"), attr("height", "105"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="select(\"amount\")", style="code-label", attributes=[attr("x", "850"), attr("y", "88")]),
+                    node(NodeKind.SvgText, content="filter(col(\"amount\") > 20)", style="code-label", attributes=[attr("x", "850"), attr("y", "126")]),
+                ], style="df-query"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="music group-box", attributes=[attr("x", "930"), attr("y", "202"), attr("width", "352"), attr("height", "184"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Requested result", style="small", attributes=[attr("x", "952"), attr("y", "240")]),
+                    node(NodeKind.SvgText, content="25", style="result-big", attributes=[attr("x", "966"), attr("y", "298")]),
+                    node(NodeKind.SvgText, content="40", style="result-big", attributes=[attr("x", "966"), attr("y", "359")]),
+                ], style="df-result"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Tasks still process partitions", style="tiny", attributes=[attr("x", "446"), attr("y", "405")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M754 262H924")]),
+                ], style="df-execution"),
+            ], attributes=[attr("viewBox", "0 0 1308 410"), attr("role", "img"), attr("aria-labelledby", "dataframe-walk-title dataframe-walk-desc")]),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson", attributes=[attr("data-lesson", "dataframe"), attr("data-point", "5")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("32"),
+        ]),
+        ],
+        notes="Keep the scene fixed while changing what Spark knows about the request. A DataFrame is not a wrapper around a Python RDD: Spark SQL builds logical and physical plans and uses internal row/columnar representations. The lower-level concepts of partitions, dependencies and tasks remain useful. Compare rdd.filter(lambda sale: sale[1] > 20) with a built-in col(\"amount\") > 20 expression verbally. Python UDFs may again hide logic. This demonstration changes the data source representation to Parquet explicitly so column pruning is meaningful; CSV cannot generally avoid reading physical bytes for unused columns in the same way. At Request no execution has happened; show results only at Execute. Filter pushdown depends on source capabilities and statistics; not every rejected row can be skipped at read. A residual filter may remain. Original category values remain as faint explanatory context after pruning. Explain the relationship explicitly: the RDD API lets you specify functions on distributed elements; the DataFrame API lets you specify schema-aware expressions that Catalyst can optimise. Spark SQL physical execution uses internal RDDs of rows or columnar batches, not a Python RDD wrapped in column names. A groupBy may introduce a shuffle; a skewed partition can delay the job; repeated actions can recompute work unless retained appropriately. These are why the RDD mental model still matters when writing DataFrame code. Calling df.rdd in classic PySpark exposes Python Row objects and subsequent arbitrary Python transformations are outside Catalyst relational optimisation. It is not necessary to call df.rdd for DataFrames to execute. Spark Connect does not expose this RDD API. Next, show that a transformation describes a new DataFrame and that assigning it to the same Python name does not mutate the original. The API overview then connects these interfaces to distributed execution. Dataset details are reference material only. Source: https://spark.apache.org/docs/latest/sql-programming-guide.html ; https://spark.apache.org/docs/latest/sql-data-sources-parquet.html",
+    )

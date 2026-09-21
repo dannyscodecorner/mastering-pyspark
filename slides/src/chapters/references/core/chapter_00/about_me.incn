@@ -1,0 +1,30 @@
+"""About me slide."""
+
+from surface import Frame, Slide, group, heading, image, prose
+
+pub def slide_about_me() -> Slide:
+    return Slide(
+        slug="about-me",
+        title="About Me — Danny Meijer",
+        frame=Frame.Composed,
+        styles="slide about-editorial",
+        content=[
+            image("assets/about-me-portland.png", "Danny Meijer with colourful curly hair and glasses, seated with a coffee, beside his professional introduction.", style="about-editorial-art"),
+            group([
+            heading("About Me — Danny Meijer", level=1),
+            prose("Independent data & software engineer."),
+            prose("20 years of experience in Software engineering, Data Engineering and Cloud."),
+            heading("Large-scale data platforms", level=2),
+            prose("Previously Principal Software Engineer at Nike."),
+            heading("Core technologies", level=2),
+            prose("Spark, Databricks, Python, SQL and AWS."),
+            heading("Teaching PySpark", level=2),
+            prose("Creator of Mastering Big Data Analytics with PySpark."),
+            heading("Creator of Incan", level=2),
+            prose("A Python-readable, Rust-native programming language."),
+            prose("Curious. Pragmatic. Always learning."),
+            prose("Danny’s Code Corner"),
+        ], style="sr-only"),
+        ],
+        notes="Introduce yourself as an independent data and software engineer with 20 years of experience (confirmed by Danny for this slide). Previously Principal Software Engineer at Nike; Nike employment ended March 2026. Briefly connect your data-platform experience and original PySpark course to today’s workshop. No need to enumerate a CV: these are short points to introduce your background. Portrait artwork updated using Danny’s supplied Portland coffee-shop photograph as the image-editing reference. Background facts checked against the May 2026 CV source material; current role and experience total confirmed by Danny in this conversation. Introduce yourself as an independent data and software engineer, with 20 years across software, data and cloud. Nike is a previous role. Connect the course to your teaching experience; briefly introduce Incan as a Python-readable, Rust-native language you created. Artwork follows the selected third visual direction, with mountains removed. The visual typography is part of the full-slide artwork; the biography is also provided as accessible HTML.",
+    )

@@ -1,0 +1,131 @@
+"""History spark begins slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, image, line_break, node, paragraph, prose, span, strong, text
+
+pub def slide_history_spark_begins() -> Slide:
+    return Slide(
+        slug="history-spark-begins",
+        title="2009 — Spark begins",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey spark-era",
+        attributes=[attr("data-history-index", "2")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era focal"),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(-202px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("03 / 12", style="history-stop-count"),
+            prose("UC Berkeley · AMPLab", style="history-kicker"),
+            heading("Spark begins", level=1),
+            node(NodeKind.Figure, children=[
+                group([
+                    group([
+                        image("assets/history/spark.png", "Apache Spark"),
+                        paragraph([
+                            text("UC Berkeley"),
+                            line_break(),
+                            strong("AMPLab"),
+                        ], style="origin-place"),
+                        paragraph([
+                            text("Iterative algorithms."),
+                            line_break(),
+                            text("Interactive analysis."),
+                            line_break(),
+                            text("The same data, reused."),
+                        ]),
+                    ], style="berkeley-story-copy"),
+                    group([
+                        image("assets/history/berkeley.jpg", "Sather Tower at the University of California, Berkeley"),
+                        node(NodeKind.Span, children=[
+                            text("UC Berkeley · Sather Tower"),
+                            line_break(),
+                            text("Photo: Daderot, CC0 · 2013"),
+                        ]),
+                    ], style="berkeley-photo"),
+                ], style="berkeley-story"),
+            ], style="history-visual"),
+            prose("Reuse working data across computations, instead of repeatedly starting from stored output.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("14"),
+        ]),
+        ],
+        notes="""Visual assets: see assets/history/CREDITS.md. Official logos identify the projects, not sponsorship. The Berkeley photo was taken in 2013 and illustrates the location, not the founding event. 2009 — Spark begins.
+
+Spark began at UC Berkeley’s AMPLab in 2009, with Matei Zaharia and collaborators. Explain the pain before naming the solution: iterative algorithms and interactive analysis repeatedly work over the same data. Chaining separate MapReduce jobs adds repeated storage I/O and job overhead. Spark supports reusable distributed datasets and more general computation flows. Do not describe Spark as disk-free or promise a universal speedup.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://research.google/pubs/the-google-file-system/
+https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/
+https://svn.apache.org/repos/asf/hadoop/common/tags/release-0.2.0/site/index.html
+https://spark.apache.org/history
+https://www.usenix.org/conference/hotcloud-10/spark-cluster-computing-working-sets""",
+    )

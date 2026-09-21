@@ -1,0 +1,92 @@
+"""Mapreduce jobs slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_mapreduce_jobs() -> Slide:
+    return Slide(
+        slug="mapreduce-jobs",
+        title="When one job needs another",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("When one job needs another", level=1),
+            prose("Reusing a result across jobs means writing it out and reading it back.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="When one job needs another", attributes=[attr("id", "mapreduce-jobs-title")]),
+                node(NodeKind.SvgDescription, content="Reusing a result across jobs means writing it out and reading it back.", attributes=[attr("id", "mapreduce-jobs-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "mapreduce-jobs-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "38"), attr("width", "360"), attr("height", "280"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Job 1", style="trial-title", attributes=[attr("x", "30"), attr("y", "78")]),
+                    node(NodeKind.SvgText, content="Read sales", style="trial-note", attributes=[attr("x", "30"), attr("y", "120")]),
+                    node(NodeKind.SvgText, content="Map → shuffle → reduce", style="trial-note", attributes=[attr("x", "30"), attr("y", "154")]),
+                    node(NodeKind.SvgText, content="Write category totals", style="trial-note", attributes=[attr("x", "30"), attr("y", "188")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "406"), attr("y", "100"), attr("width", "210"), attr("height", "180"), attr("rx", "12"), attr("fill", "#f8efe0"), attr("stroke", "#b79762"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Storage", style="trial-title", attributes=[attr("x", "428"), attr("y", "140")]),
+                    node(NodeKind.SvgText, content="Job output", style="trial-note", attributes=[attr("x", "428"), attr("y", "182")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M368 188H406"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "The first job writes a reusable result")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "654"), attr("y", "38"), attr("width", "360"), attr("height", "280"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Job 2", style="trial-title", attributes=[attr("x", "676"), attr("y", "78")]),
+                    node(NodeKind.SvgText, content="Read category totals", style="trial-note", attributes=[attr("x", "676"), attr("y", "120")]),
+                    node(NodeKind.SvgText, content="Another calculation", style="trial-note", attributes=[attr("x", "676"), attr("y", "154")]),
+                    node(NodeKind.SvgText, content="Write another result", style="trial-note", attributes=[attr("x", "676"), attr("y", "188")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M616 188H654"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "The next job reads the previous output")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "1052"), attr("y", "38"), attr("width", "248"), attr("height", "280"), attr("rx", "12"), attr("fill", "#f8efe0"), attr("stroke", "#b79762"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Repeat", style="trial-title", attributes=[attr("x", "1074"), attr("y", "78")]),
+                    node(NodeKind.SvgText, content="Read", style="trial-note", attributes=[attr("x", "1074"), attr("y", "120")]),
+                    node(NodeKind.SvgText, content="Compute", style="trial-note", attributes=[attr("x", "1074"), attr("y", "154")]),
+                    node(NodeKind.SvgText, content="Write", style="trial-note", attributes=[attr("x", "1074"), attr("y", "188")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M1014 188H1052"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Repeated reuse repeats storage costs")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "mapreduce-jobs-title mapreduce-jobs-desc")]),
+            group([
+                paragraph([
+                    strong("When one job needs another"),
+                    span("Reusing a result across jobs means writing it out and reading it back."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Finish the first job"),
+                    span("Its output becomes a durable input for later work."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Start the next calculation"),
+                    span("Read that intermediate result from storage before processing it again."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Now repeat this many times"),
+                    span("Iterative and interactive workloads make the repeated I/O especially costly."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "When one job needs another. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("25"),
+        ]),
+        ],
+        notes="Original source: Sections/Section 2 - Working with PySpark/2.1 - Getting to Know Spark.pptx, slides 7–9. This redraw preserves the original disk-versus-memory teaching contrast, but scopes it to reuse between conventional MapReduce jobs. The point is not that MapReduce lacks fault tolerance or only handles simple problems. Nor was Spark the first DAG execution system. Ask: if we repeatedly analyse the same intermediate data, must every reuse take this route? No historical benchmark is generalised into a universal speed claim. https://hadoop.apache.org/docs/r3.2.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf",
+    )

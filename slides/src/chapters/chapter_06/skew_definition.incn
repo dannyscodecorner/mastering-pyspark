@@ -1,0 +1,39 @@
+"""Skew definition slide."""
+
+from surface import Frame, NodeKind, Slide, attr, emphasis, group, heading, line_break, node, paragraph, span, text
+
+pub def slide_skew_definition() -> Slide:
+    return Slide(
+        slug="skew-definition",
+        title="Skew — a definition",
+        frame=Frame.Composed,
+        styles="slide dictionary-definition",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            group([
+            heading("skew", level=1),
+            paragraph([
+                span("/skjuː/"),
+                emphasis("adjective"),
+            ], style="id-pronunciation"),
+            paragraph([
+                text("placed or turned to one side;"),
+                line_break(),
+                text("asymmetric"),
+            ], style="id-definition"),
+            paragraph([
+                node(NodeKind.Link, content="The American Heritage Dictionary", attributes=[attr("href", "https://www.ahdictionary.com/word/search.html?q=skew"), attr("target", "_blank"), attr("rel", "noopener noreferrer")]),
+            ], style="id-source"),
+        ], style="id-entry"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("62"),
+        ]),
+        ],
+        notes="""Pause on the ordinary meaning of asymmetric. Connect it to the shuffle we just watched: what happens when one key accounts for much more of the input? On the next slide, follow that key into one overloaded partition and the task that finishes last. Here, data skew means uneven data or work across partitions. It does not imply incorrect data, and it is not a claim about a particular statistical skewness measure.
+
+Definition: The American Heritage Dictionary of the English Language, Fifth Edition, skew (adjective), first sense. https://www.ahdictionary.com/word/search.html?q=skew
+IPA pronunciation: Oxford Advanced Learner’s Dictionary, skew. https://www.oxfordlearnersdictionaries.com/definition/english/skew""",
+    )

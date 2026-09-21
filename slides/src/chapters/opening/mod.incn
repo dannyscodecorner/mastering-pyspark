@@ -1,0 +1,13 @@
+"""Teaching order for opening."""
+
+from surface import Chapter
+from chapters.opening.welcome import slide_welcome
+from chapters.opening.about_me import slide_about_me
+from chapters.opening.roadmap import slide_roadmap
+
+pub def opening_chapter() -> Chapter:
+    return Chapter(number="0", title="DCC / SPARK TRAINING", first_page=1, slides=[
+        slide_welcome(),
+        slide_about_me(),
+        slide_roadmap(),
+    ])

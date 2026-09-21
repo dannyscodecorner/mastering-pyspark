@@ -1,0 +1,35 @@
+"""Transformations and actions slide."""
+
+from surface import Frame, Slide, TeachingStep, code, heading
+from components import CodeExample, code_question
+
+pub def transformations_and_actions() -> Slide:
+    return Slide(
+        slug="transformations-actions",
+        title="Transformations and Actions",
+        frame=Frame.Lesson,
+        subtitle="Which of these asks Spark to produce a result?",
+        content=[
+            code_question(
+                left=CodeExample(code="""sales.filter(col("amount") > 20)
+sales.select("amount")
+sales.groupBy("category").count()""", answer="Transformations", explanation="Return a new DataFrame describing work."),
+                right=CodeExample(code="""sales.show()
+sales.count()
+sales.write.parquet("output/")""", answer="Actions", explanation="Request rows, a scalar, or written output."),
+            ),
+        ],
+        lesson_style="lazy-quiz",
+        steps=[
+            TeachingStep(label="Your prediction",
+                heading="Ask the room before revealing the labels",
+                explanation="Look at both count() calls. Do they return the same kind of thing?"),
+            TeachingStep(label="Transformations",
+                heading="GroupedData.count() builds an aggregate",
+                explanation="It returns a DataFrame. The aggregate is still a plan until a result is requested."),
+            TeachingStep(label="Actions",
+                heading="DataFrame.count() requests a number",
+                explanation="show(), count() and a batch write trigger the work their result requires."),
+        ],
+        notes="Based on original workshop slide 28. Give the audience time to classify the examples. Explain that transformations create new DataFrames; they do not mutate existing rows in place. DataFrame.count returns an integer, but groupBy(...).count returns a DataFrame. The receiver matters. An action computes its own dependency path, not every unrelated branch in the program. Batch write executes even though it does not bring all result rows to the driver. Repeating actions may repeat computation unless suitable persistence/reuse applies; lazy does not mean automatically cached. Example output path is illustrative; not actually written in this presentation. Avoid collect as the default example for large data. Source: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/dataframe.html",
+    )

@@ -1,0 +1,204 @@
+"""Join to aggregation slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_to_aggregation() -> Slide:
+    steps = [
+        TeachingStep(label="The joined rows",
+            heading="The join matched products. Our query also asks for category totals.",
+            explanation="Follow the same five joined sales from the shuffle example.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Another books product",
+            heading="Different products can belong to the same category.",
+            explanation="B1 and B2 both mean books, but their joined sales are on different workers.",
+            cue_key="", numbered=false),
+        TeachingStep(label="A new grouping key",
+            heading="Neither worker has the complete books total.",
+            explanation="Joining by product_id did not bring all books sales together by category.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Another exchange",
+            heading="This plan needs another exchange, now by category.",
+            explanation="Before that exchange, Spark can calculate partial totals locally.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-to-aggregation",
+        title="The join is only part of the query",
+        frame=Frame.Composed,
+        styles="slide lesson-slide aggregation-slide",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("The join is only part of the query", level=1),
+            group([
+            step_rail(steps),
+            group([
+                group([
+                    node(NodeKind.Preformatted, children=[
+                        code("enriched = sales.join(products, on=\"product_id\", how=\"left\")"),
+                    ], style="ag-join-code language-python"),
+                    node(NodeKind.Preformatted, children=[
+                        code("totals = enriched.groupBy(\"category\").agg(F.sum(\"amount\").alias(\"total\"))"),
+                    ], style="ag-group-code language-python"),
+                ], style="ag-code-lines"),
+            ], style="ag-query"),
+            group([
+                group([
+                    group([
+                        text("Joined rows: product_id / amount / category"),
+                    ], style="ag-workers-label"),
+                    group([
+                        heading("Worker A", level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ], style="sr-only"),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="25"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="15"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="10"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books"),
+                            ]),
+                        ], style="ag-data", attributes=[attr("aria-label", "Joined sales on Worker A")]),
+                    ], style="ag-worker"),
+                    group([
+                        heading("Worker B", level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ], style="sr-only"),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="40"),
+                                    node(NodeKind.Cell, content="games"),
+                                ], style="ag-games"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="M1"),
+                                    node(NodeKind.Cell, content="10"),
+                                    node(NodeKind.Cell, content="NULL"),
+                                ], style="ag-null"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B2"),
+                                    node(NodeKind.Cell, content="20"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="ag-books ag-new-sale"),
+                            ]),
+                        ], style="ag-data", attributes=[attr("aria-label", "Joined sales on Worker B")]),
+                    ], style="ag-worker"),
+                    group([
+                        heading("Worker C", level=2),
+                        prose("No joined sales", style="ag-empty"),
+                    ], style="ag-worker"),
+                ], style="ag-workers"),
+                group([
+                    group([
+                        span("BACK TO OUR QUERY", style="ag-kicker"),
+                        rich_heading([
+                            text("The join has enriched"),
+                            line_break(),
+                            text("the sales."),
+                        ], level=2),
+                        paragraph([
+                            text("We still need one total"),
+                            line_break(),
+                            text("for each "),
+                            code("category"),
+                            text("."),
+                        ]),
+                    ], style="ag-pause ag-pause-0"),
+                    group([
+                        span("ONE MORE SALE", style="ag-kicker"),
+                        heading("B2 is also a book.", level=2),
+                        paragraph([
+                            text("Extend the example with"),
+                            line_break(),
+                            strong("B2 / books / 20"),
+                            text("."),
+                            line_break(),
+                            text("Its join output is on Worker B."),
+                        ]),
+                    ], style="ag-pause ag-pause-1"),
+                    group([
+                        span("AUDIENCE PAUSE", style="ag-kicker"),
+                        rich_heading([
+                            text("Who can calculate the"),
+                            line_break(),
+                            text("complete books total?"),
+                        ], level=2),
+                        paragraph([
+                            text("Worker A has the B1 sales."),
+                            line_break(),
+                            text("Worker B has the B2 sale."),
+                        ]),
+                    ], style="ag-pause ag-pause-2"),
+                    group([
+                        prose("Simplified physical plan, read top to bottom"),
+                        group([
+                            text("Join on "),
+                            strong("product_id"),
+                        ], style="ag-plan-step"),
+                        group([
+                            text("Partial sum by "),
+                            strong("category"),
+                        ], style="ag-plan-step"),
+                        group([
+                            text("Exchange by "),
+                            strong("category"),
+                            span("The aggregation needs a different distribution."),
+                        ], style="ag-plan-step ag-plan-exchange"),
+                        group([
+                            text("Final sum by "),
+                            strong("category"),
+                        ], style="ag-plan-step"),
+                    ], style="ag-plan"),
+                ], style="ag-side"),
+            ], style="ag-intro-layout"),
+            paragraph([
+                strong("Extended example:"),
+                text(" the original five sales + B2 / books / 20. Worker placement is illustrative."),
+            ], style="ag-context-note"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson aggregation-lesson ag-intro", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("71"),
+        ]),
+        ],
+        notes="""Return to the opening chapter query after the join strategies and hints. Read the two operations separately: the join matches product_id, while groupBy asks for totals by category. Point 1 retains the exact five joined sales from the previous shuffle story, with the three B1 sales on A and G1/M1 on B. Worker C had only the unmatched X1 product, so its left join emitted no sales.
+
+Point 2 deliberately extends the example by ONE sale: s6, product_id B2, amount20; the product directory also has the unique entry B2/books. Show the resulting joined row on Worker B. Announce both facts, rather than silently changing the data. We now have six sales totalling120. This is a fresh illustrative input extension, not a claim that a completed job incrementally accepts another row. The physical join is not replayed here. Product-id hash partitions may contain several keys, so B2 can share the shown join partition with G1 and M1. The chosen hash assignment and worker placement are illustrative, not captured Spark output.
+
+Point 3 is the audience pause. All four books sales must contribute to one category total, but neither worker has them all. A product_id distribution is not sufficient to establish a category distribution. The tiny original example happened to place all its books on A because it had only one books product; the new B2 shows why this is not a general property.
+
+Point 4 gives a simplified data-flow order for the physical operators: join, partial category sum, exchange by category, final category sum. It is illustrative rather than verbatim explain output; real explain prints the root at the top, and will include the join's children, possible sorting, projections, AQE wrappers and attribute IDs. Depending on the chosen strategy and existing compatible distribution, exchanges elsewhere in the plan may differ. An action on totals requests the complete query. A DataFrame variable is not an automatic materialisation boundary. Transition: do we have to send every individual sale through this next exchange?
+
+Sources: https://spark.apache.org/docs/latest/sql-ref-syntax-qry-explain.html ; https://spark.apache.org/docs/latest/sql-performance-tuning.html""",
+    )

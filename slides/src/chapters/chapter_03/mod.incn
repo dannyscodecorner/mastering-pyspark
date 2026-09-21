@@ -1,0 +1,31 @@
+"""Teaching order for chapter 03."""
+
+from surface import Chapter
+from chapters.chapter_03.cover import slide_section_3
+from chapters.chapter_03.hadoop_mapreduce import slide_hadoop_mapreduce
+from chapters.chapter_03.spark_performance import slide_spark_performance
+from chapters.chapter_03.spark_speedup import slide_spark_speedup
+from chapters.chapter_03.rdd_prompt import slide_rdd_prompt
+from chapters.chapter_03.rdd_foundation import slide_rdd_foundation
+from chapters.chapter_03.dataframe_meaning import slide_dataframe_meaning
+from chapters.chapter_03.immutable_definition import slide_immutable_definition
+from chapters.chapter_03.immutability import slide_immutability
+from chapters.chapter_03.immutability_reference import slide_immutability_reference
+from chapters.chapter_03.api_overview import slide_api_overview
+from chapters.chapter_03.abstractions_recap import slide_abstractions_recap
+
+pub def chapter_03_chapter() -> Chapter:
+    return Chapter(number="3", title="Spark’s Core Abstractions", first_page=1, slides=[
+        slide_section_3(),
+        slide_hadoop_mapreduce(),
+        slide_spark_performance(),
+        slide_spark_speedup(),
+        slide_rdd_prompt(),
+        slide_rdd_foundation(),
+        slide_dataframe_meaning(),
+        slide_immutable_definition(),
+        slide_immutability(),
+        slide_immutability_reference(),
+        slide_api_overview(),
+        slide_abstractions_recap(),
+    ])

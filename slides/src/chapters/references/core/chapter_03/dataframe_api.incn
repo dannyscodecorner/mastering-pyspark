@@ -1,0 +1,68 @@
+"""Dataframe api slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, prose, span, text
+
+pub def slide_dataframe_api() -> Slide:
+    return Slide(
+        slug="dataframe-api",
+        title="DataFrame API",
+        frame=Frame.Composed,
+        styles="slide core-slide migrated",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("DataFrame API", level=1),
+            prose("Distributed rows, organised into named columns", style="subtitle"),
+            group([
+            group([
+                node(NodeKind.Table, children=[
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="category"),
+                            node(NodeKind.HeaderCell, content="amount"),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="25"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="40"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="15"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="music"),
+                            node(NodeKind.Cell, content="10"),
+                        ]),
+                    ]),
+                ], style="core-table"),
+                prose("A logical table view — no guaranteed row order.", style="small-note"),
+            ]),
+            group([
+                heading("The schema gives data meaning", level=2),
+                group([
+                    code("category"),
+                    span("string"),
+                ], style="schema-line"),
+                group([
+                    code("amount"),
+                    span("long"),
+                ], style="schema-line"),
+                prose("Column names, types and expressions give Spark information it can use to optimise the query.", style="core-prose"),
+            ]),
+        ], style="df-layout"),
+            code_block("sales.select(\"category\", \"amount\")"),
+            prose("SQL and the DataFrame API use the same Spark SQL engine.", style="takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("38"),
+        ]),
+        ],
+        notes="Use the same tuples as the RDD slide, now with named columns and types. Ask: what additional information does Spark have now? Schema may be supplied or inferred, depending on the source. A DataFrame is not a local pandas table and does not imply that all rows are in driver memory. Built-in expressions expose structure to the optimizer; do not say DataFrames are universally faster for every possible operation. Reading can do metadata/schema work even before a later action; the lazy section will explain the distinction.  Original workshop slides 15–21. Updated against https://spark.apache.org/docs/latest/rdd-programming-guide.html and https://spark.apache.org/docs/latest/sql-programming-guide.html . ",
+    )

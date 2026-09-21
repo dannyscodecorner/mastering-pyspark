@@ -1,0 +1,96 @@
+"""Streaming recap slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_streaming_recap() -> Slide:
+    return Slide(
+        slug="streaming-recap",
+        title="Structured Streaming: recap",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-chapter-recap ss-with-time",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Structured Streaming: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The main ideas from the Structured Streaming chapter", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-summary-topic"),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="DataFrame API", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        paragraph([
+                            code("readStream"),
+                            text(" and transformations describe the query."),
+                        ]),
+                        paragraph([
+                            code("writeStream.start()"),
+                            text(" begins processing and returns the running-query handle."),
+                        ]),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Execution", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        paragraph([
+                            strong("Micro-batch:"),
+                            text(" each batch processes a fixed set of input."),
+                        ]),
+                        paragraph([
+                            strong("Real-time:"),
+                            text(" running tasks can accept new records as they arrive."),
+                        ]),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Output", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        group([
+                            group([
+                                strong("Append"),
+                                span("New, final rows"),
+                            ]),
+                            group([
+                                strong("Update"),
+                                span("Changed rows"),
+                            ]),
+                            group([
+                                strong("Complete"),
+                                span("The whole result"),
+                            ]),
+                        ], style="ss-summary-modes"),
+                        prose("The sink determines where those rows go.", style="ss-summary-sink"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="State & time", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        prose("State carries results between batches. Event time places records in windows."),
+                        prose("A watermark lets eligible old windows close, trading lateness tolerance for retained state."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Recovery", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        prose("Reuse a durable checkpoint to restore progress and state on a compatible restart."),
+                        prose("Unfinished work may be replayed; the sink must handle retries."),
+                    ]),
+                ]),
+            ]),
+        ], style="ss-chapter-summary"),
+            prose("The query, execution mode, output mode and sink must be compatible.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("103"),
+        ]),
+        ],
+        notes="""We began with familiar DataFrame code. A growing input makes execution, emitted results and recovery explicit choices. Recall record C: a micro-batch fixes its input; Real-time tasks can accept later arrivals. Keep runtime-specific support qualified. Output mode selects rows; it does not guarantee delivery. Restart requires the same checkpoint and a compatible query. Unfinished work can replay. Use the handle returned by start() to monitor lastProgress or stop the run. Recall the late12:03 cat: arrival order does not determine its window. Under Append, finalization and state removal wait for watermark progress. Complete preserves aggregate groups. The delay is measured against event time, not wall-clock waiting. State-store implementation details remain outside this introduction.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html
+https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts""",
+    )

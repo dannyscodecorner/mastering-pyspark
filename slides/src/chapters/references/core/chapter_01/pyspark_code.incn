@@ -1,0 +1,30 @@
+"""Pyspark code slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, span, text
+
+pub def slide_pyspark_code() -> Slide:
+    return Slide(
+        slug="pyspark-code",
+        title="A PySpark application",
+        frame=Frame.Composed,
+        styles="slide migrated",
+        content=[
+            group([
+            text("01 / SPARK VS. PYTHON"),
+        ], style="eyebrow"),
+            heading("A PySpark application", level=1),
+            code_block("""from pyspark.sql import SparkSession
+
+spark = (SparkSession.builder
+    .appName("MyApp")
+    .getOrCreate())
+
+df = spark.read.parquet("data/")
+print(df.count())""", style="audience-code"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("06"),
+        ]),
+        ],
+        notes="Pause here and ask: “Who can explain this piece of code to me?” Let the group talk before explaining. Listen for what SparkSession does, what reading Parquet produces, when work actually starts, and where count and print execute. This is a conversation to gauge familiarity, not a test. The example assumes an available Spark runtime and a readable Parquet dataset at data/. Bridge: “We have seen the cluster. How does this Python program make use of it?” Move directly to the detailed PySpark diagram. Save the full discussion of laziness for the later section.",
+    )

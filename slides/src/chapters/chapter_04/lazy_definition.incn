@@ -1,0 +1,30 @@
+"""Lazy definition slide."""
+
+from surface import Frame, Slide, emphasis, group, heading, line_break, link, paragraph, span, text
+
+pub def lazy_definition() -> Slide:
+    return Slide(
+        slug="lazy-definition",
+        title="Lazy — a definition",
+        frame=Frame.Definition,
+        content=[
+            group([
+                heading("lazy", level=1),
+                paragraph([
+                    span("/ˈleɪzi/"),
+                    emphasis("adjective"),
+                ], style="id-pronunciation"),
+                paragraph([
+                    text("unwilling to work or be active;"),
+                    line_break(),
+                    text("doing as little as possible"),
+                ], style="id-definition"),
+                paragraph([
+                    link("Oxford Learner’s Dictionaries", "https://www.oxfordlearnersdictionaries.com/definition/english/lazy"),
+                ], style="id-source"),
+            ], style="id-entry"),
+        ],
+        notes="""Read the ordinary meaning, then pause. Suggested line: “In Spark, this is a compliment.” Continue to the filter, select and show example: transformations describe the work, and the action requests a result. The following slide explains the distinction using an existing DataFrame, including the qualification that analysis and input discovery may do work earlier.
+
+Definition and pronunciation: Oxford Advanced Learner’s Dictionary, lazy (adjective), first sense. https://www.oxfordlearnersdictionaries.com/definition/english/lazy""",
+    )

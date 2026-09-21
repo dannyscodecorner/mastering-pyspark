@@ -1,0 +1,475 @@
+"""Shuffle cost alternative slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_shuffle_cost_alternative() -> Slide:
+    steps = [
+        TeachingStep(label="Scattered inputs",
+            heading="A join task needs the relevant records from both DataFrames.",
+            explanation="Follow the same inputs from the previous slide, including B1/books on Worker C.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Prepare the blocks",
+            heading="The source tasks prepare blocks for the destination partitions.",
+            explanation="Both sides are partitioned, encoded and written as intermediate shuffle output.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Fetch & decode",
+            heading="Each destination fetches its contributions, then decodes the records.",
+            explanation="Watch all three B1 sales and B1/books arrive at partition 0.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Join locally",
+            heading="Now each task can join its corresponding sales and products.",
+            explanation="Five sales emerge: books 25, 15, 10 · games 40 · NULL 10.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Why it costs",
+            heading="Getting those inputs together added work across the cluster.",
+            explanation="More bytes mean more I/O. Uneven destinations can leave one task working long after the others.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="shuffle-cost-alternative",
+        title="The shuffle is work across the cluster",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide shuffle-cluster-slide",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("The shuffle is work across the cluster", level=1),
+            group([
+            step_rail(steps),
+            group([
+                code("sales.join(products, on=\"product_id\", how=\"left\")"),
+                span("Same 5 sales. Same 3 products."),
+            ], style="scb-context"),
+            group([
+                group([
+                    text("Input partitions"),
+                ], style="scb-column scb-column-input"),
+                group([
+                    text("Partition · encode · write"),
+                ], style="scb-column scb-column-write"),
+                group([
+                    span("Fetch · decode", style="scb-read-label"),
+                    span("Match the two inputs locally", style="scb-join-label"),
+                ], style="scb-column scb-column-read"),
+                group([
+                    heading("Worker A", level=2),
+                    group([
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="sales"),
+                                span("amount"),
+                            ], style="scb-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("25"),
+                            ], style="scb-record scb-B1", attributes=[attr("data-record", "s1"), attr("style", "--arrive:650ms")]),
+                            group([
+                                node(NodeKind.Bold, content="G1"),
+                                span("40"),
+                            ], style="scb-record scb-G1", attributes=[attr("data-record", "s2"), attr("style", "--arrive:3500ms")]),
+                        ], style="scb-table"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="products"),
+                                span("category"),
+                            ], style="scb-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="G1"),
+                                span("games"),
+                            ], style="scb-record scb-G1", attributes=[attr("data-record", "p2"), attr("style", "--arrive:3650ms")]),
+                        ], style="scb-table"),
+                    ], style="scb-inputs"),
+                    group([
+                        group([
+                            text("Local shuffle output"),
+                        ], style="scb-disk-label"),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("sales"),
+                            node(NodeKind.Bold, content="B1"),
+                            strong("→ P0"),
+                        ], style="scb-block scb-B1", attributes=[attr("data-block", "s1"), attr("style", "--write-delay:0ms")]),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("sales"),
+                            node(NodeKind.Bold, content="G1"),
+                            strong("→ P1"),
+                        ], style="scb-block scb-G1", attributes=[attr("data-block", "s2"), attr("style", "--write-delay:160ms")]),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("products"),
+                            node(NodeKind.Bold, content="G1"),
+                            strong("→ P1"),
+                        ], style="scb-block scb-G1", attributes=[attr("data-block", "p2"), attr("style", "--write-delay:320ms")]),
+                    ], style="scb-blocks"),
+                    group([
+                        group([
+                            text("Join partition 0"),
+                            span("Inputs arriving", style="scb-await"),
+                            span("Inputs ready", style="scb-ready"),
+                            span("3 joined rows", style="scb-output-count"),
+                        ], style="scb-partition"),
+                        group([
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="sales"),
+                                    span("amount"),
+                                ], style="scb-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("25"),
+                                ], style="scb-record scb-B1 scb-arrival", attributes=[attr("data-record", "s1"), attr("style", "--arrive:650ms")]),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("15"),
+                                ], style="scb-record scb-B1 scb-arrival", attributes=[attr("data-record", "s3"), attr("style", "--arrive:1200ms")]),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("10"),
+                                ], style="scb-record scb-B1 scb-arrival", attributes=[attr("data-record", "s5"), attr("style", "--arrive:2300ms")]),
+                            ], style="scb-table"),
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="products"),
+                                    span("category"),
+                                ], style="scb-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("books"),
+                                ], style="scb-record scb-B1 scb-arrival", attributes=[attr("data-record", "p1"), attr("style", "--arrive:2450ms")]),
+                            ], style="scb-table"),
+                        ], style="scb-collected"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("25"),
+                                strong("books"),
+                            ], style="scb-joined-row scb-B1", attributes=[attr("data-sale", "s1")]),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("15"),
+                                strong("books"),
+                            ], style="scb-joined-row scb-B1", attributes=[attr("data-sale", "s3")]),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("10"),
+                                strong("books"),
+                            ], style="scb-joined-row scb-B1", attributes=[attr("data-sale", "s5")]),
+                        ], style="scb-joined"),
+                    ], style="scb-destination", attributes=[attr("style", "--ready-delay:2600ms")]),
+                ], style="scb-worker", attributes=[attr("style", "--lane:0")]),
+                group([
+                    heading("Worker B", level=2),
+                    group([
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="sales"),
+                                span("amount"),
+                            ], style="scb-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("15"),
+                            ], style="scb-record scb-B1", attributes=[attr("data-record", "s3"), attr("style", "--arrive:1200ms")]),
+                            group([
+                                node(NodeKind.Bold, content="M1"),
+                                span("10"),
+                            ], style="scb-record scb-M1", attributes=[attr("data-record", "s4"), attr("style", "--arrive:4250ms")]),
+                        ], style="scb-table"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="products"),
+                                span("category"),
+                            ], style="scb-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="X1"),
+                                span("accessories"),
+                            ], style="scb-record scb-X1", attributes=[attr("data-record", "p3"), attr("style", "--arrive:4800ms")]),
+                        ], style="scb-table"),
+                    ], style="scb-inputs"),
+                    group([
+                        group([
+                            text("Local shuffle output"),
+                        ], style="scb-disk-label"),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("sales"),
+                            node(NodeKind.Bold, content="B1"),
+                            strong("→ P0"),
+                        ], style="scb-block scb-B1", attributes=[attr("data-block", "s3"), attr("style", "--write-delay:0ms")]),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("sales"),
+                            node(NodeKind.Bold, content="M1"),
+                            strong("→ P1"),
+                        ], style="scb-block scb-M1", attributes=[attr("data-block", "s4"), attr("style", "--write-delay:160ms")]),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("products"),
+                            node(NodeKind.Bold, content="X1"),
+                            strong("→ P2"),
+                        ], style="scb-block scb-X1", attributes=[attr("data-block", "p3"), attr("style", "--write-delay:320ms")]),
+                    ], style="scb-blocks"),
+                    group([
+                        group([
+                            text("Join partition 1"),
+                            span("Inputs arriving", style="scb-await"),
+                            span("Inputs ready", style="scb-ready"),
+                            span("2 joined rows", style="scb-output-count"),
+                        ], style="scb-partition"),
+                        group([
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="sales"),
+                                    span("amount"),
+                                ], style="scb-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="G1"),
+                                    span("40"),
+                                ], style="scb-record scb-G1 scb-arrival", attributes=[attr("data-record", "s2"), attr("style", "--arrive:3500ms")]),
+                                group([
+                                    node(NodeKind.Bold, content="M1"),
+                                    span("10"),
+                                ], style="scb-record scb-M1 scb-arrival", attributes=[attr("data-record", "s4"), attr("style", "--arrive:4250ms")]),
+                            ], style="scb-table"),
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="products"),
+                                    span("category"),
+                                ], style="scb-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="G1"),
+                                    span("games"),
+                                ], style="scb-record scb-G1 scb-arrival", attributes=[attr("data-record", "p2"), attr("style", "--arrive:3650ms")]),
+                            ], style="scb-table"),
+                        ], style="scb-collected"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="G1"),
+                                span("40"),
+                                strong("games"),
+                            ], style="scb-joined-row scb-G1", attributes=[attr("data-sale", "s2")]),
+                            group([
+                                node(NodeKind.Bold, content="M1"),
+                                span("10"),
+                                strong("NULL"),
+                            ], style="scb-joined-row scb-M1", attributes=[attr("data-sale", "s4")]),
+                        ], style="scb-joined"),
+                    ], style="scb-destination", attributes=[attr("style", "--ready-delay:4400ms")]),
+                ], style="scb-worker", attributes=[attr("style", "--lane:1")]),
+                group([
+                    heading("Worker C", level=2),
+                    group([
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="sales"),
+                                span("amount"),
+                            ], style="scb-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("10"),
+                            ], style="scb-record scb-B1", attributes=[attr("data-record", "s5"), attr("style", "--arrive:2300ms")]),
+                        ], style="scb-table"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="products"),
+                                span("category"),
+                            ], style="scb-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("books"),
+                            ], style="scb-record scb-B1", attributes=[attr("data-record", "p1"), attr("style", "--arrive:2450ms")]),
+                        ], style="scb-table"),
+                    ], style="scb-inputs"),
+                    group([
+                        group([
+                            text("Local shuffle output"),
+                        ], style="scb-disk-label"),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("sales"),
+                            node(NodeKind.Bold, content="B1"),
+                            strong("→ P0"),
+                        ], style="scb-block scb-B1", attributes=[attr("data-block", "s5"), attr("style", "--write-delay:0ms")]),
+                        group([
+                            span("", style="scb-file", attributes=[attr("aria-hidden", "true")]),
+                            span("products"),
+                            node(NodeKind.Bold, content="B1"),
+                            strong("→ P0"),
+                        ], style="scb-block scb-B1", attributes=[attr("data-block", "p1"), attr("style", "--write-delay:160ms")]),
+                    ], style="scb-blocks"),
+                    group([
+                        group([
+                            text("Join partition 2"),
+                            span("Inputs arriving", style="scb-await"),
+                            span("Inputs ready", style="scb-ready"),
+                            span("0 joined rows", style="scb-output-count"),
+                        ], style="scb-partition"),
+                        group([
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="sales"),
+                                    span("amount"),
+                                ], style="scb-table-head"),
+                                prose("No sales", style="scb-empty"),
+                            ], style="scb-table"),
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="products"),
+                                    span("category"),
+                                ], style="scb-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="X1"),
+                                    span("accessories"),
+                                ], style="scb-record scb-X1 scb-arrival", attributes=[attr("data-record", "p3"), attr("style", "--arrive:4800ms")]),
+                            ], style="scb-table"),
+                        ], style="scb-collected"),
+                        group([
+                            prose("No left rows → no output", style="scb-no-output"),
+                        ], style="scb-joined"),
+                    ], style="scb-destination", attributes=[attr("style", "--ready-delay:4950ms")]),
+                ], style="scb-worker", attributes=[attr("style", "--lane:2")]),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z")]),
+                        ], attributes=[attr("id", "scb-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "4"), attr("markerHeight", "4"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 57 H858 Q866 57 866 65 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-local scb-route-B1", attributes=[attr("d", "M734 57 H858 Q866 57 866 65 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 84 H746 Q754 84 754 92 V176 Q754 184 762 184 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-remote scb-route-G1", attributes=[attr("d", "M734 84 H746 Q754 84 754 92 V176 Q754 184 762 184 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 111 H770 Q778 111 778 119 V210 Q778 218 786 218 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-remote scb-route-G1", attributes=[attr("d", "M734 111 H770 Q778 111 778 119 V210 Q778 218 786 218 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 167 H784 Q792 167 792 159 V90 Q792 82 800 82 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-remote scb-route-B1", attributes=[attr("d", "M734 167 H784 Q792 167 792 159 V90 Q792 82 800 82 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 194 H846 Q854 194 854 201 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-local scb-route-M1", attributes=[attr("d", "M734 194 H846 Q854 194 854 201 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 221 H806 Q814 221 814 229 V292 Q814 300 822 300 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-remote scb-route-X1", attributes=[attr("d", "M734 221 H806 Q814 221 814 229 V292 Q814 300 822 300 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 277 H832 Q840 277 840 269 V108 Q840 100 848 100 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-remote scb-route-B1", attributes=[attr("d", "M734 277 H832 Q840 277 840 269 V108 Q840 100 848 100 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                    node(NodeKind.SvgPath, style="scb-route-mask", attributes=[attr("d", "M734 304 H852 Q860 304 860 296 V126 Q860 118 868 118 H894")]),
+                    node(NodeKind.SvgPath, style="scb-route scb-remote scb-route-B1", attributes=[attr("d", "M734 304 H852 Q860 304 860 296 V126 Q860 118 868 118 H894"), attr("marker-end", "url(#scb-arrow)")]),
+                ], style="scb-routes", attributes=[attr("viewBox", "0 0 1308 364"), attr("aria-hidden", "true"), attr("focusable", "false")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-B1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 57 H858 Q866 57 866 65 H894');--delay:0ms;--duration:650ms")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-G1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 84 H746 Q754 84 754 92 V176 Q754 184 762 184 H894');--delay:2650ms;--duration:850ms")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-G1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 111 H770 Q778 111 778 119 V210 Q778 218 786 218 H894');--delay:2800ms;--duration:850ms")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-B1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 167 H784 Q792 167 792 159 V90 Q792 82 800 82 H894');--delay:300ms;--duration:900ms")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-M1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 194 H846 Q854 194 854 201 H894');--delay:3700ms;--duration:550ms")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-X1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 221 H806 Q814 221 814 229 V292 Q814 300 822 300 H894');--delay:3950ms;--duration:850ms")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-B1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 277 H832 Q840 277 840 269 V108 Q840 100 848 100 H894');--delay:1300ms;--duration:1000ms")]),
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                    node(NodeKind.Italic),
+                ], style="scb-packet scb-B1", attributes=[attr("aria-hidden", "true"), attr("style", "offset-path:path('M734 304 H852 Q860 304 860 296 V126 Q860 118 868 118 H894');--delay:1450ms;--duration:1000ms")]),
+                group([
+                    span("THE SAME SHUFFLED JOIN"),
+                    rich_heading([
+                        text("Each worker has only"),
+                        line_break(),
+                        text("part of each input."),
+                    ], level=2),
+                    paragraph([
+                        text("To join by "),
+                        code("product_id"),
+                        text(", the matching"),
+                        line_break(),
+                        text("sales and products must come together."),
+                    ]),
+                ], style="scb-question"),
+                group([
+                    rich_heading([
+                        text("Both inputs need"),
+                        line_break(),
+                        text("shuffle output."),
+                    ], level=2),
+                    paragraph([
+                        text("The blocks are organised"),
+                        line_break(),
+                        text("by destination partition."),
+                    ]),
+                ], style="scb-prepare-note"),
+            ], style="scb-scene", attributes=[attr("role", "group"), attr("aria-label", "The same three workers prepare shuffle blocks from both inputs. Local and remote fetches bring corresponding sales and products to each join partition. Local joins produce five sales including the unmatched M1 sale with NULL category.")]),
+            group([
+                group([
+                    node(NodeKind.Bold, content="CPU"),
+                    node(NodeKind.Span, children=[
+                        text("Partition + encode"),
+                        span(" + decode", style="scb-decode-cost"),
+                    ]),
+                ], style="scb-cost scb-cost-cpu"),
+                group([
+                    node(NodeKind.Bold, content="DISK"),
+                    node(NodeKind.Span, children=[
+                        text("Write shuffle output"),
+                        span(" + read it", style="scb-decode-cost"),
+                    ]),
+                ], style="scb-cost scb-cost-disk"),
+                group([
+                    node(NodeKind.Bold, content="NETWORK"),
+                    span("Fetch remote blocks"),
+                ], style="scb-cost scb-cost-network"),
+                paragraph([
+                    text("Dashed paths stay on one worker."),
+                    line_break(),
+                    text("Solid paths cross the network."),
+                ], style="scb-legend"),
+            ], style="scb-resource-strip"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                node(NodeKind.Link, content="Reference close-up", style="scb-compare", attributes=[attr("href", "joins-reference.html#shuffle-cost")]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson shuffle-cluster", attributes=[attr("data-lesson", flag=true), attr("data-point", "4")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("61"),
+        ]),
+        ],
+        notes="""Main shuffle explanation, followed directly by skew. The earlier close-up is retained in joins-reference.html#shuffle-cost, linked beside Replay. The prior two-worker alternative remains in shuffle-cost-two-workers.html.
+
+One continuous scene follows the eight original input records from slide49. Worker A has sales B1/25, G1/40 and product G1/games; Worker B has sales B1/15, M1/10 and product X1/accessories; Worker C has sale B1/10 and product B1/books. Both DataFrames remain separately identifiable throughout. No product input has been silently pre-fetched.
+
+1. Begin with the existing mixed input partitions. “We can write the join in one line. Here is the data it actually has to work with.” Keep the three workers fixed.
+2. Source tasks assign records to destination partitions, encode them and write conventional worker-local shuffle output. Each file-shaped tile represents an illustrative block, labelled by its source DataFrame, key and destination. Real blocks batch many records and can contain several keys. Sales and products have separate exchanges; adjacent blocks do not mean those inputs have already been joined. This example happens to have one record in each shown source-input/destination combination. The source input remains visible because shuffle output is a copy.
+3. Destination tasks fetch the relevant blocks from contributing source locations and decode records. Begin with B1: local A/25, remote B/15 and remote C/10 plus C/books. Then show G1, M1 and X1. Dashed paths are local fetches; solid paths cross machines. Arrows show data responses, not the preceding fetch requests. Transfers are presented in an explanatory order, not actual Spark scheduling or measured timing. The diagram does not mean every record goes to every worker, nor that every destination fetches every source's entire output.
+4. Each task matches the separately assembled sales and products locally. Partition0 yields three B1/books sales with amounts25,15,10; partition1 yields G1/40/games and M1/10/NULL under the left join; partition2 has only X1/accessories and produces no sale. Result: five rows, total100. These are joined records, not grouped totals. Sorting or hash-table work for the specific join strategy is covered next. This reveal order is explanatory and is not a global barrier requiring all network transfers to complete before any joining can occur.
+5. Pull attention back to every worker and the resource strip. “We still have five sales, but to enrich them we have partitioned, encoded, written, fetched and decoded data from both inputs. At production scale that volume uses real CPU, storage and network capacity.” Larger shuffle volume means more processing and I/O; the drawing is not a benchmark or utilization measurement. Close by asking whether every destination receives a comparable amount of work. Next, skew explains the long tail. The following strategy slides explain alternatives.
+
+Scope: one illustrative shuffled equi-join with chosen task placement, not Spark's actual hash mapping or a claim every join shuffles. Local fetches do not cross the network. Compatible partitioning or broadcast can avoid the illustrated exchanges. Input caching does not eliminate a required shuffle; this intermediate output is not an HDFS/Parquet source reread. Partial aggregation can reduce shuffled records for suitable aggregates. Worker-local storage depicts the conventional shuffle; other shuffle implementations differ. DataFrame serialization here does not imply Python pickle.
+Sources: https://spark.apache.org/docs/latest/rdd-programming-guide.html#shuffle-operations ; https://spark.apache.org/docs/latest/sql-performance-tuning.html .""",
+    )

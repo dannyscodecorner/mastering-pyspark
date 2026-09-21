@@ -1,0 +1,282 @@
+"""Join multiplicity slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, prose, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_multiplicity() -> Slide:
+    steps = [
+        TeachingStep(label="The same report",
+            heading="We have six sales totalling 120. The report adds up.",
+            explanation="Books 70 includes the B1 sales worth 50 and the B2 sale worth 20.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Product history",
+            heading="Products now contains two versions of B1.",
+            explanation="Both satisfy the join condition. What will happen to the books total?",
+            cue_key="", numbered=false),
+        TeachingStep(label="Extra matches",
+            heading="Each B1 sale creates two joined rows.",
+            explanation="Three B1 sales become six pairs; B2, G1 and M1 bring the output to nine rows.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Inflated totals",
+            heading="Books rises from 70 to 120 without another sale.",
+            explanation="There are more matching pairs to process. Changing the join strategy would preserve those matches.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-multiplicity",
+        title="What if a product appears twice?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide aggregation-slide join-closing",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("What if a product appears twice?", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("enriched = sales.join(products, on=\"product_id\", how=\"left\")"),
+                ], style="language-python"),
+            ], style="jc-query"),
+            group([
+                group([
+                    heading("The same six sales", level=2),
+                    node(NodeKind.Table, children=[
+                        node(NodeKind.TableHead, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="product_id"),
+                                node(NodeKind.HeaderCell, content="amount"),
+                            ]),
+                        ]),
+                        node(NodeKind.TableBody, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="B1"),
+                                node(NodeKind.Cell, content="25"),
+                            ], style="jc-books jc-b1"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="B1"),
+                                node(NodeKind.Cell, content="15"),
+                            ], style="jc-books jc-b1"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="B1"),
+                                node(NodeKind.Cell, content="10"),
+                            ], style="jc-books jc-b1"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="B2"),
+                                node(NodeKind.Cell, content="20"),
+                            ], style="jc-books"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="G1"),
+                                node(NodeKind.Cell, content="40"),
+                            ], style="jc-games"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="M1"),
+                                node(NodeKind.Cell, content="10"),
+                            ], style="jc-null"),
+                        ]),
+                    ], style="jc-table "),
+                ]),
+                group([
+                    text("→"),
+                ], style="jc-arrow", attributes=[attr("aria-hidden", "true")]),
+                group([
+                    heading("Products", level=2),
+                    node(NodeKind.Table, children=[
+                        node(NodeKind.TableHead, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="product_id"),
+                                node(NodeKind.HeaderCell, content="category"),
+                                node(NodeKind.HeaderCell, content="is_current"),
+                            ]),
+                        ]),
+                        node(NodeKind.TableBody, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="B1"),
+                                node(NodeKind.Cell, content="books"),
+                                node(NodeKind.Cell, content="true"),
+                            ], style="jc-books jc-b1"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="B1"),
+                                node(NodeKind.Cell, content="books"),
+                                node(NodeKind.Cell, content="false"),
+                            ], style="jc-books jc-b1 jc-old"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="B2"),
+                                node(NodeKind.Cell, content="books"),
+                                node(NodeKind.Cell, content="true"),
+                            ], style="jc-books"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="G1"),
+                                node(NodeKind.Cell, content="games"),
+                                node(NodeKind.Cell, content="true"),
+                            ], style="jc-games"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.Cell, content="X1"),
+                                node(NodeKind.Cell, content="accessories"),
+                                node(NodeKind.Cell, content="true"),
+                            ], style="jc-extra"),
+                        ]),
+                    ], style="jc-table jc-products"),
+                    prose("One current record per product.", style="jc-small jc-state jc-p0"),
+                    paragraph([
+                        text("Now B1 also has an older version."),
+                        line_break(),
+                        text("The join still uses only "),
+                        code("product_id"),
+                        text("."),
+                    ], style="jc-small jc-after-1"),
+                ]),
+                group([
+                    text("→"),
+                ], style="jc-arrow", attributes=[attr("aria-hidden", "true")]),
+                group([
+                    group([
+                        heading("Category totals", level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="category"),
+                                    node(NodeKind.HeaderCell, content="total"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="books"),
+                                    node(NodeKind.Cell, content="70"),
+                                ], style="jc-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="games"),
+                                    node(NodeKind.Cell, content="40"),
+                                ], style="jc-games"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="NULL"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="jc-null"),
+                            ]),
+                        ], style="jc-table jc-totals"),
+                        paragraph([
+                            text("Six joined sales."),
+                            line_break(),
+                            text("The category totals add up to "),
+                            strong("120"),
+                            text("."),
+                        ], style="jc-output-note"),
+                    ], style="jc-state jc-p0"),
+                    group([
+                        heading("What happens to books?", level=2),
+                        paragraph([
+                            text("The sales have not changed."),
+                            line_break(),
+                            text("We still sold "),
+                            strong("70"),
+                            text(" in books."),
+                        ], style="jc-question"),
+                        paragraph([
+                            text("But every B1 sale can now match"),
+                            line_break(),
+                            strong("two product records"),
+                            text("."),
+                        ], style="jc-output-note"),
+                    ], style="jc-state jc-p1"),
+                    group([
+                        heading("Six rows from the B1 sales", level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="sale amount"),
+                                    node(NodeKind.HeaderCell, content="version"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="25"),
+                                    node(NodeKind.Cell, content="current"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="jc-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="25"),
+                                    node(NodeKind.Cell, content="old"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="jc-books jc-pair-old"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="15"),
+                                    node(NodeKind.Cell, content="current"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="jc-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="15"),
+                                    node(NodeKind.Cell, content="old"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="jc-books jc-pair-old"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="10"),
+                                    node(NodeKind.Cell, content="current"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="jc-books"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="10"),
+                                    node(NodeKind.Cell, content="old"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="jc-books jc-pair-old"),
+                            ]),
+                        ], style="jc-table jc-pairs"),
+                        prose("B2, G1 and unmatched M1 still add one row each.", style="jc-small"),
+                    ], style="jc-state jc-p2"),
+                    group([
+                        heading("Run the same aggregation", level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="category"),
+                                    node(NodeKind.HeaderCell, content="before"),
+                                    node(NodeKind.HeaderCell, content="now"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="books"),
+                                    node(NodeKind.Cell, content="70"),
+                                    node(NodeKind.Cell, content="120"),
+                                ], style="jc-books jc-inflated"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="games"),
+                                    node(NodeKind.Cell, content="40"),
+                                    node(NodeKind.Cell, content="40"),
+                                ], style="jc-games"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="NULL"),
+                                    node(NodeKind.Cell, content="10"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="jc-null"),
+                            ]),
+                        ], style="jc-table jc-totals"),
+                        paragraph([
+                            text("B1: 50 × 2 = 100; B2 adds 20."),
+                            line_break(),
+                            strong("Report total: 120 → 170"),
+                        ], style="jc-output-note"),
+                    ], style="jc-state jc-p3 jc-final"),
+                ], style="jc-output"),
+            ], style="jc-multiply-layout"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson aggregation-lesson jc-lesson jc-multiply", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("73"),
+        ]),
+        ],
+        notes="""Continue directly from “Local totals reduce what moves”, retaining all six sales including B2/20. Do not reset to the five-sale fixture. The known report totals are books70 (three B1 sales totaling50, plus B2/20), games40 and NULL10, summing to120. This slide introduces one explicit variation: the products dataset retains version history and includes a Boolean is_current field. It initially shows the four current product records; then reveal an older B1/books record with is_current=false. Nothing changes in sales or in the join expression.
+
+Pause with the product history visible. The join only compares product_id, so it matches both B1 versions. Every one of the three B1 sales is repeated in the joined output, giving six B1 pairs. B2, G1 and unmatched M1 each still produce one row: nine joined rows, totaling170. The same category SUM now reports books120, games40 and NULL10. Trace the extra50 explicitly; the aggregation has correctly summed the rows it received. NULL retention and B2 remain continuous with the preceding slide.
+
+This connects correctness with physical cost: extra matching pairs create more join output to process. Do not claim all nine rows must cross the next shuffle, because the preceding lesson showed partial aggregation. The exact shuffle volume depends on the plan, local repetition and state width. A different correct physical strategy must preserve the requested join semantics; broadcasting or AQE does not decide which product version the report should mean. Multiple matches can be intentional in other relationships. Here the report expects one product category per sale. Transition: which product record should this report actually use?
+Source: https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-join.html""",
+    )

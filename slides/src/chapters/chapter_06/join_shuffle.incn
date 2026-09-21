@@ -1,0 +1,302 @@
+"""Join shuffle slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_shuffle() -> Slide:
+    steps = [
+        TeachingStep(label="Scattered inputs",
+            heading="The code names two DataFrames. The workers each hold only a piece.",
+            explanation="Sales and products are split into partitions; the matching records may be elsewhere.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Find B1",
+            heading="Which worker has all three B1 sales and their product category?",
+            explanation="The sales are on all three workers. The matching product record is only on Worker C.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Bring B1 together",
+            heading="Bring the B1 sales and the B1 product record to one join task.",
+            explanation="Some input is local. The other pieces must be fetched from other workers.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Do it for every key",
+            heading="One source can feed several destinations. A destination can need several sources.",
+            explanation="That redistribution is the shuffle. What work is hidden inside these arrows?",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-shuffle",
+        title="Same key. Different places.",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide scatter-slide",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Same key. Different places.", level=1),
+            group([
+            step_rail(steps),
+            group([
+                code("sales.join(products, on=\"product_id\", how=\"left\")"),
+                span("Same five sales. Same product lookup."),
+            ], style="ss-context"),
+            group([
+                group([
+                    text("Input partitions "),
+                    span("key = product_id"),
+                ], style="ss-column-label ss-input-label"),
+                group([
+                    text("Inputs brought together by key"),
+                ], style="ss-column-label ss-output-label"),
+                group([
+                    group([
+                        text("Worker A"),
+                    ], style="ss-machine-name"),
+                    group([
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="sales"),
+                                span("amount"),
+                            ], style="ss-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("25"),
+                            ], style="ss-record ss-key-B1"),
+                            group([
+                                node(NodeKind.Bold, content="G1"),
+                                span("40"),
+                            ], style="ss-record ss-key-G1"),
+                        ], style="ss-table"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="products"),
+                                span("category"),
+                            ], style="ss-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="G1"),
+                                span("games"),
+                            ], style="ss-record ss-key-G1"),
+                        ], style="ss-table"),
+                    ], style="ss-inputs"),
+                    group([
+                        group([
+                            text("Join inputs · partition 0"),
+                        ], style="ss-destination-label"),
+                        group([
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="sales"),
+                                    span("amount"),
+                                ], style="ss-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("25"),
+                                ], style="ss-record ss-key-B1"),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("15"),
+                                ], style="ss-record ss-key-B1"),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("10"),
+                                ], style="ss-record ss-key-B1"),
+                            ], style="ss-table"),
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="products"),
+                                    span("category"),
+                                ], style="ss-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="B1"),
+                                    span("books"),
+                                ], style="ss-record ss-key-B1"),
+                            ], style="ss-table"),
+                        ], style="ss-partition-inputs"),
+                    ], style="ss-destination ss-destination-A"),
+                ], style="ss-machine ss-machine-A", attributes=[attr("style", "--lane:0")]),
+                group([
+                    group([
+                        text("Worker B"),
+                    ], style="ss-machine-name"),
+                    group([
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="sales"),
+                                span("amount"),
+                            ], style="ss-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("15"),
+                            ], style="ss-record ss-key-B1"),
+                            group([
+                                node(NodeKind.Bold, content="M1"),
+                                span("10"),
+                            ], style="ss-record ss-key-M1"),
+                        ], style="ss-table"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="products"),
+                                span("category"),
+                            ], style="ss-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="X1"),
+                                span("accessories"),
+                            ], style="ss-record ss-key-X1"),
+                        ], style="ss-table"),
+                    ], style="ss-inputs"),
+                    group([
+                        group([
+                            text("Join inputs · partition 1"),
+                        ], style="ss-destination-label"),
+                        group([
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="sales"),
+                                    span("amount"),
+                                ], style="ss-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="G1"),
+                                    span("40"),
+                                ], style="ss-record ss-key-G1"),
+                                group([
+                                    node(NodeKind.Bold, content="M1"),
+                                    span("10"),
+                                ], style="ss-record ss-key-M1"),
+                            ], style="ss-table"),
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="products"),
+                                    span("category"),
+                                ], style="ss-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="G1"),
+                                    span("games"),
+                                ], style="ss-record ss-key-G1"),
+                            ], style="ss-table"),
+                        ], style="ss-partition-inputs"),
+                    ], style="ss-destination ss-destination-B"),
+                ], style="ss-machine ss-machine-B", attributes=[attr("style", "--lane:1")]),
+                group([
+                    group([
+                        text("Worker C"),
+                    ], style="ss-machine-name"),
+                    group([
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="sales"),
+                                span("amount"),
+                            ], style="ss-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("10"),
+                            ], style="ss-record ss-key-B1"),
+                        ], style="ss-table"),
+                        group([
+                            group([
+                                node(NodeKind.Bold, content="products"),
+                                span("category"),
+                            ], style="ss-table-head"),
+                            group([
+                                node(NodeKind.Bold, content="B1"),
+                                span("books"),
+                            ], style="ss-record ss-key-B1"),
+                        ], style="ss-table"),
+                    ], style="ss-inputs"),
+                    group([
+                        group([
+                            text("Join inputs · partition 2"),
+                        ], style="ss-destination-label"),
+                        group([
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="sales"),
+                                    span("amount"),
+                                ], style="ss-table-head"),
+                                prose("No sales", style="ss-empty"),
+                            ], style="ss-table"),
+                            group([
+                                group([
+                                    node(NodeKind.Bold, content="products"),
+                                    span("category"),
+                                ], style="ss-table-head"),
+                                group([
+                                    node(NodeKind.Bold, content="X1"),
+                                    span("accessories"),
+                                ], style="ss-record ss-key-X1"),
+                            ], style="ss-table"),
+                        ], style="ss-partition-inputs"),
+                    ], style="ss-destination ss-destination-C"),
+                ], style="ss-machine ss-machine-C", attributes=[attr("style", "--lane:2")]),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10 Z")]),
+                        ], attributes=[attr("id", "ss-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10 Z")]),
+                        ], attributes=[attr("id", "ss-arrow-muted"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, style="ss-route ss-route-local", attributes=[attr("pathLength", "1"), attr("d", "M550 86 H872")]),
+                        node(NodeKind.SvgPath, style="ss-route", attributes=[attr("pathLength", "1"), attr("d", "M550 192 H694 Q702 192 702 184 V110 Q702 102 710 102 H872")]),
+                        node(NodeKind.SvgPath, style="ss-route", attributes=[attr("pathLength", "1"), attr("d", "M550 298 H742 Q750 298 750 290 V126 Q750 118 758 118 H872")]),
+                        node(NodeKind.SvgText, content="local", attributes=[attr("x", "608"), attr("y", "71")]),
+                        node(NodeKind.SvgText, content="remote", attributes=[attr("x", "765"), attr("y", "147")]),
+                    ], style="ss-b1-routes"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, style="ss-route ss-route-muted", attributes=[attr("pathLength", "1"), attr("d", "M550 108 H622 Q630 108 630 116 V208 Q630 216 638 216 H872")]),
+                        node(NodeKind.SvgPath, style="ss-route ss-route-muted", attributes=[attr("pathLength", "1"), attr("d", "M550 210 H650 Q658 210 658 218 V320 Q658 328 666 328 H872")]),
+                        node(NodeKind.SvgPath, style="ss-route ss-route-muted", attributes=[attr("pathLength", "1"), attr("d", "M550 232 H872")]),
+                    ], style="ss-other-routes"),
+                ], style="ss-routes", attributes=[attr("viewBox", "0 0 1308 352"), attr("aria-hidden", "true"), attr("focusable", "false")]),
+                group([
+                    span("THE DISTRIBUTED PROBLEM"),
+                    rich_heading([
+                        text("The matching records"),
+                        line_break(),
+                        text("are spread across workers."),
+                    ], level=2),
+                    paragraph([
+                        text("A join task needs the relevant records"),
+                        line_break(),
+                        text("from "),
+                        strong("both inputs"),
+                        text("."),
+                    ]),
+                ], style="ss-question ss-question-start"),
+                group([
+                    span("FOLLOW ONE KEY"),
+                    rich_heading([
+                        text("Who can join all three"),
+                        line_break(),
+                        text("B1 sales locally?"),
+                    ], level=2),
+                    paragraph([
+                        text("Find the three B1 sales"),
+                        line_break(),
+                        text("and the B1 product record."),
+                    ]),
+                ], style="ss-question ss-question-b1"),
+            ], style="ss-scene", attributes=[attr("role", "group"), attr("aria-label", "Three workers with scattered sales and products. A shuffle brings records with the same product ID into compatible join partitions.")]),
+            group([
+                text("Shuffled join · illustrative placement · several keys can share a partition"),
+            ], style="ss-footnote"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson scatter-walk", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("60"),
+        ]),
+        ],
+        notes="""Open after the familiar join and aggregate syntax: “The code is simple. But our data is distributed.” Read the three fixed worker lanes and the two inputs in each lane. This is the same five sales: B1 amounts 25,15,10; G1 amount40; M1 amount10. Products: B1 books, G1 games, X1 accessories. No new dataset is introduced.
+
+Point 1: data is already spread out; each small table depicts an input partition. Point 2 is an audience pause: “Who can complete all the B1 matches using only the records already here?” No worker has all three B1 sales and the product record. Give them time to locate the four B1 records. Point 3: choose one destination join task; it reads the local B1 sale and fetches the remaining B1 sales/product input from other workers. Point 4: reveal other keys, with G1 and M1 sharing one partition, and X1 alone in another. Keep sales and products separate until the local join operator matches them. X1 has no sales, so produces no row in this left join. This slide shows redistribution, not an aggregate or joined result. End on: “Those arrows look cheap on a slide. What actually happens inside one?”
+
+This is an illustrative shuffled equi-join, with one shown executor per worker and chosen task placement, not Spark's actual hash assignment or fixed scheduling. Real executors run many tasks. Compatible input partitioning can remove exchanges, and broadcast changes the movement pattern; these are upcoming strategies. A shuffle copies intermediate data rather than deleting source records. It does not send every row to every worker. A destination reads only its own blocks from contributing sources. These costs also occur in distributed databases.
+
+Visual inspiration: Meenakshi Syamkumar, UW-Madison CS544, Spark Internals and Performance, pages35–37: https://ms.sites.cs.wisc.edu/cs544/s24/lec/25-spark/slides.pdf#page=35 . Dependencies: Zaharia et al., RDD paper, Figure4: https://people.eecs.berkeley.edu/~prabal/teaching/resources/eecs582/zaharia12spark.pdf#page=7 . Spark shuffle documentation: https://spark.apache.org/docs/latest/rdd-programming-guide.html#shuffle-operations""",
+    )

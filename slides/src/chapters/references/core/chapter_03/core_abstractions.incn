@@ -1,0 +1,41 @@
+"""Core abstractions slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, node, prose, span, strong, text
+
+pub def slide_core_abstractions() -> Slide:
+    return Slide(
+        slug="core-abstractions",
+        title="Spark’s Data APIs",
+        frame=Frame.Composed,
+        styles="slide core-slide migrated",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Spark’s Data APIs", level=1),
+            prose("Three interfaces to distributed data", style="subtitle"),
+            group([
+            group([
+                strong("RDD"),
+                span("Elements + functions"),
+                prose("You describe operations on individual elements."),
+            ]),
+            group([
+                strong("DataFrame"),
+                span("Rows + schema + expressions"),
+                prose("Spark can reason about columns and the query."),
+            ]),
+            group([
+                strong("Dataset[T]"),
+                span("Typed objects + Spark SQL"),
+                prose("Scala and Java add a typed object interface."),
+            ]),
+        ], style="api-rows"),
+            prose("For this course, we will mainly work with DataFrames.", style="takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("35"),
+        ]),
+        ],
+        notes="Use the same three abstractions as the original API overview. Recall their evolution from the history: RDDs came first, DataFrames arrived in 1.3, typed Datasets in 1.6, and the APIs were unified in 2.0. This is not a claim that RDDs were introduced in Spark 1.0. Say: these are different ways to describe distributed data. Explain RDDs, place Datasets, then spend our time on DataFrames.  Original workshop slides 15–21. Updated against https://spark.apache.org/docs/latest/rdd-programming-guide.html and https://spark.apache.org/docs/latest/sql-programming-guide.html . ",
+    )

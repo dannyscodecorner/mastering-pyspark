@@ -1,0 +1,63 @@
+"""Teaching order for chapter 07."""
+
+from surface import Chapter
+from chapters.chapter_07.cover import slide_section_7
+from chapters.chapter_07.streaming_model import slide_streaming_model
+from chapters.chapter_07.streaming_conversion import slide_streaming_conversion
+from chapters.chapter_07.streaming_sql import slide_streaming_sql
+from chapters.chapter_07.streaming_unbounded import slide_streaming_unbounded
+from chapters.chapter_07.streaming_first_query import slide_streaming_first_query
+from chapters.chapter_07.streaming_execution_modes import slide_streaming_execution_modes
+from chapters.chapter_07.streaming_programming_model import slide_streaming_programming_model
+from chapters.chapter_07.streaming_microbatch_triggers import slide_streaming_microbatch_triggers
+from chapters.chapter_07.streaming_real_time import slide_streaming_real_time
+from chapters.chapter_07.streaming_arrival_comparison import slide_streaming_arrival_comparison
+from chapters.chapter_07.streaming_output_modes import slide_streaming_output_modes
+from chapters.chapter_07.streaming_complete import slide_streaming_complete
+from chapters.chapter_07.streaming_append import slide_streaming_append
+from chapters.chapter_07.streaming_update import slide_streaming_update
+from chapters.chapter_07.streaming_word_count import slide_streaming_word_count
+from chapters.chapter_07.streaming_state import slide_streaming_state
+from chapters.chapter_07.streaming_event_time import slide_streaming_event_time
+from chapters.chapter_07.streaming_watermarks import slide_streaming_watermarks
+from chapters.chapter_07.streaming_output_compatibility import slide_streaming_output_compatibility
+from chapters.chapter_07.streaming_output_recap import slide_streaming_output_recap
+from chapters.chapter_07.streaming_sources import slide_streaming_sources
+from chapters.chapter_07.streaming_sinks import slide_streaming_sinks
+from chapters.chapter_07.streaming_start import slide_streaming_start
+from chapters.chapter_07.streaming_checkpointing import slide_streaming_checkpointing
+from chapters.chapter_07.streaming_checkpoint_recovery import slide_streaming_checkpoint_recovery
+from chapters.chapter_07.streaming_operation import slide_streaming_operation
+from chapters.chapter_07.streaming_recap import slide_streaming_recap
+
+pub def chapter_07_chapter() -> Chapter:
+    return Chapter(number="7", title="07 / STRUCTURED STREAMING", first_page=1, slides=[
+        slide_section_7(),
+        slide_streaming_model(),
+        slide_streaming_conversion(),
+        slide_streaming_sql(),
+        slide_streaming_unbounded(),
+        slide_streaming_first_query(),
+        slide_streaming_execution_modes(),
+        slide_streaming_programming_model(),
+        slide_streaming_microbatch_triggers(),
+        slide_streaming_real_time(),
+        slide_streaming_arrival_comparison(),
+        slide_streaming_output_modes(),
+        slide_streaming_complete(),
+        slide_streaming_append(),
+        slide_streaming_update(),
+        slide_streaming_word_count(),
+        slide_streaming_state(),
+        slide_streaming_event_time(),
+        slide_streaming_watermarks(),
+        slide_streaming_output_compatibility(),
+        slide_streaming_output_recap(),
+        slide_streaming_sources(),
+        slide_streaming_sinks(),
+        slide_streaming_start(),
+        slide_streaming_checkpointing(),
+        slide_streaming_checkpoint_recovery(),
+        slide_streaming_operation(),
+        slide_streaming_recap(),
+    ])

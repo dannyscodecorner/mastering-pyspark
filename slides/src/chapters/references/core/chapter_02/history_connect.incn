@@ -1,0 +1,132 @@
+"""History connect slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_history_connect() -> Slide:
+    return Slide(
+        slug="history-connect",
+        title="2023 — Spark Connect",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey spark-era",
+        attributes=[attr("data-history-index", "9")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era focal"),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(-1728px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("10 / 12", style="history-stop-count"),
+            prose("Spark 3.4 · 2023", style="history-kicker"),
+            heading("Spark Connect", level=1),
+            node(NodeKind.Figure, children=[
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgTitle, content="Spark Connect", attributes=[attr("id", "hist-9-title")]),
+                    node(NodeKind.SvgDescription, content="Spark Connect separates a remote client from the Spark server, exchanging plans and results.", attributes=[attr("id", "hist-9-desc")]),
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L10 5L0 10"), attr("fill", "#54797d")]),
+                        ], attributes=[attr("id", "hj-arrow-9"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgGroup, children=[
+                            node(NodeKind.SvgRectangle, style="hj-node teal", attributes=[attr("x", "20"), attr("y", "68"), attr("width", "265"), attr("height", "155"), attr("rx", "8")]),
+                            node(NodeKind.SvgText, content="Python client", style="hj-node-title", attributes=[attr("x", "152.5"), attr("y", "140.5"), attr("text-anchor", "middle")]),
+                            node(NodeKind.SvgText, content="Your application", style="hj-node-sub", attributes=[attr("x", "152.5"), attr("y", "170.5"), attr("text-anchor", "middle")]),
+                        ]),
+                        node(NodeKind.SvgPath, style="hj-arrow", attributes=[attr("d", "M285 112 H550")]),
+                        node(NodeKind.SvgText, content="Query plans", style="hj-label", attributes=[attr("x", "329"), attr("y", "93")]),
+                        node(NodeKind.SvgPath, style="hj-arrow", attributes=[attr("d", "M550 187 H285")]),
+                        node(NodeKind.SvgText, content="Results", style="hj-label", attributes=[attr("x", "342"), attr("y", "218")]),
+                        node(NodeKind.SvgGroup, children=[
+                            node(NodeKind.SvgRectangle, style="hj-node spark", attributes=[attr("x", "550"), attr("y", "68"), attr("width", "280"), attr("height", "155"), attr("rx", "8")]),
+                            node(NodeKind.SvgText, content="Spark server", style="hj-node-title", attributes=[attr("x", "690.0"), attr("y", "140.5"), attr("text-anchor", "middle")]),
+                            node(NodeKind.SvgText, content="Driver and execution", style="hj-node-sub", attributes=[attr("x", "690.0"), attr("y", "170.5"), attr("text-anchor", "middle")]),
+                        ]),
+                    ], attributes=[attr("style", "--hj-marker:url(#hj-arrow-9)")]),
+                ], attributes=[attr("viewBox", "0 0 850 290"), attr("role", "img"), attr("aria-labelledby", "hist-9-title hist-9-desc")]),
+            ], style="history-visual"),
+            prose("A remote client can send a query plan to Spark. The classic local Py4J picture is no longer the only connection model.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("19"),
+        ]),
+        ],
+        notes="""2023 — Spark Connect.
+
+Spark 3.4 introduces Spark Connect and its Python client. The client sends unresolved logical plans using a protocol rather than directly accessing driver JVM objects through Py4J. Do not imply classic PySpark disappears. This is the historical introduction; keep the detailed architecture comparison in its own section.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://spark.apache.org/releases/spark-release-3-0-0.html
+https://spark.apache.org/releases/spark-release-3-2-0.html
+https://spark.apache.org/releases/spark-release-3-4-0.html
+https://spark.apache.org/releases/spark-release-4-0-0.html
+https://spark.apache.org/releases/spark-release-4-2-0.html
+https://spark.apache.org/history""",
+    )

@@ -1,0 +1,104 @@
+"""Repeated actions slide."""
+
+from surface import Attribute, Frame, NodeKind, Slide, Surface, TeachingStep, code, code_block, group, heading, line_break, paragraph, row, span, text
+
+pub def repeated_actions() -> Slide:
+    return Slide(
+        slug="actions-repeat",
+        title="What happens when we ask again?",
+        frame=Frame.ActionDetail,
+        subtitle="The same books DataFrame, with no persistence requested.",
+        content=[
+            group([
+                group([
+                    span("Action"),
+                    span("Work that can be repeated"),
+                    span("Python return"),
+                    span("Side effect"),
+                ], style="rr-head"),
+                group([
+                    code_block("books.show(5)"),
+                    group([
+                        span("Read sales"),
+                        Surface(kind=NodeKind.Bold, content="→", attributes=[Attribute(name="aria-hidden", value="true")]),
+                        span("Filter books"),
+                    ], style="rr-work"),
+                    group([
+                        code("None"),
+                    ], style="rr-result"),
+                    group([
+                        text("Displays rows"),
+                    ], style="rr-effect"),
+                ], style="rr-row rr-first"),
+                group([
+                    code_block("number_of_books = books.count()"),
+                    group([
+                        span("Read sales"),
+                        Surface(kind=NodeKind.Bold, content="→", attributes=[Attribute(name="aria-hidden", value="true")]),
+                        span("Filter books"),
+                    ], style="rr-work"),
+                    group([
+                        code("2"),
+                    ], style="rr-result"),
+                    group([
+                        span("—", attributes=[Attribute(name="aria-hidden", value="true")]),
+                        span("No displayed rows or written files", style="sr-only"),
+                    ], style="rr-effect"),
+                ], style="rr-row rr-second"),
+                group([
+                    code_block("books.write.parquet(\"output/books\")"),
+                    group([
+                        span("Read sales"),
+                        Surface(kind=NodeKind.Bold, content="→", attributes=[Attribute(name="aria-hidden", value="true")]),
+                        span("Filter books"),
+                    ], style="rr-work"),
+                    group([
+                        code("None"),
+                    ], style="rr-result"),
+                    group([
+                        text("Writes Parquet files"),
+                    ], style="rr-effect"),
+                ], style="rr-row rr-third"),
+                group([
+                    group([
+                        span("For reuse, before the actions"),
+                        code("books.cache()"),
+                    ]),
+                    paragraph([
+                        text("Store partitions as they are computed."),
+                        line_break(),
+                        text("Release them afterwards with "),
+                        code("books.unpersist()"),
+                        text("."),
+                    ]),
+                ], style="rr-reuse"),
+            ], style="rr-layout"),
+        ],
+        lesson_style="action-repeat",
+        steps=[
+            TeachingStep(label="Show",
+                heading="Displaying a preview does not cache the DataFrame.",
+                explanation="The books variable still describes the query."),
+            TeachingStep(label="Then count",
+                heading="Counting can require the read and filter again.",
+                explanation="The previous preview did not request a reusable copy of all the books rows."),
+            TeachingStep(label="Then write",
+                heading="The write is another request for work.",
+                explanation="The plan can differ for each action. Reusing the variable does not guarantee reuse of computed rows."),
+            TeachingStep(label="Reusing work",
+                heading="Persistence is a separate choice.",
+                explanation="As we saw earlier, cached partitions can support later actions. Use it when the reuse is worth the storage."),
+        ],
+        notes="""Ask: We already displayed the books. Will count reuse that output? There has been no cache or persist request in this example. A Python reference to a DataFrame retains the query description, not an automatic materialised copy of the result. Reveal each successive request at the presenter's pace. Read and filter blocks indicate possible repeated upstream work, not exact physical plans, measured I/O or one whole scan per action. show can stop after enough rows, count can prune columns or benefit from source-specific optimisations, and the engine or storage layers may reuse some work. Say can repeat, not always rereads every byte. An action only requests its dependency path, not every unrelated transformation in the program. One action is not a guarantee of one job.
+
+Python return values are separate from visible side effects. On successful completion, show returns None and displays rows; write.parquet returns None and writes files. DataFrame.count returns the integer 2 in this example. The side-effect column refers to displayed rows or written output, not a claim that executing count has no internal effects on Spark.
+
+The final point is a callback to the earlier persistence material, not an instruction to cache every DataFrame. If repeated reuse justifies the cost, call books.cache() or a suitable persist() before the actions. That requests persistence; the cache is populated as partitions are computed. A limited show need not populate all partitions. Later actions can reuse retained partitions and compute any that are still missing. Cache blocks can be evicted or lost, causing recomputation, and storage/serialization costs affect the tradeoff. unpersist when done. The write example is illustrative and is not executed; use a fresh destination in a live demonstration.
+
+Return to Why wait? after this practical consequence. Lazy evaluation lets Spark optimise the requested work. Section 05 follows that request into the actual planning and execution mechanics.
+https://spark.apache.org/docs/4.2.0/sql-performance-tuning.html#caching-data
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.cache.html
+https://spark.apache.org/docs/4.2.0/rdd-programming-guide.html#rdd-persistence
+https://spark.apache.org/docs/4.2.0/api/python/_modules/pyspark/sql/dataframe.html#DataFrame.show
+https://spark.apache.org/docs/4.2.0/api/python/_modules/pyspark/sql/readwriter.html#DataFrameWriter.parquet""",
+    )

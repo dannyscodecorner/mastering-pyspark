@@ -1,0 +1,165 @@
+"""Join nested loop slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, node, prose, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_nested_loop() -> Slide:
+    steps = [
+        TeachingStep(label="Range condition",
+            heading="An equality-key lookup cannot answer this range condition directly.",
+            explanation="Each task has the broadcast bands and tests candidate rows against its sales.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Test amount 25",
+            heading="For amount 25, only the Medium band matches.",
+            explanation="The task evaluates the range condition against all three candidate bands.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Test amount 40",
+            heading="For amount 40, only the High band matches.",
+            explanation="The lower bound is inclusive and the upper bound is exclusive.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Count the comparisons",
+            heading="Broadcasting the candidates does not remove the pair comparisons.",
+            explanation="For this example, two sales need six tests. Large inputs can make candidate-pair work expensive.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-nested-loop",
+        title="Broadcast nested-loop joins",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-mechanics ",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Broadcast nested-loop joins", level=1),
+            group([
+            step_rail(steps),
+            group([
+                code("sales.amount >= bands.lower AND sales.amount < bands.upper"),
+                span("A new condition and a new lookup"),
+            ], style="jm-query jm-condition"),
+            group([
+                node(NodeKind.Aside, children=[
+                    heading("Amount bands", level=2),
+                    prose("Broadcast all three candidate rows."),
+                    node(NodeKind.Table, children=[
+                        node(NodeKind.TableHead, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="Band"),
+                                node(NodeKind.HeaderCell, content="lower ≤ amount < upper"),
+                            ]),
+                        ]),
+                        node(NodeKind.TableBody, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="Low"),
+                                node(NodeKind.Cell, content="0 ≤ amount < 20"),
+                            ]),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="Medium"),
+                                node(NodeKind.Cell, content="20 ≤ amount < 40"),
+                            ]),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="High"),
+                                node(NodeKind.Cell, content="40 ≤ amount < 60"),
+                            ]),
+                        ]),
+                    ], style="jm-bands"),
+                    group([
+                        heading("Worker A’s sales", level=3),
+                        group([
+                            span("B1"),
+                            span("25"),
+                        ], style="jm-record jm-books "),
+                        group([
+                            span("G1"),
+                            span("40"),
+                        ], style="jm-record jm-games "),
+                    ], style="jm-loop-source"),
+                ], style="jm-loop-input"),
+                group([
+                    group([
+                        heading("Inside Worker A’s join task", level=2),
+                        span("Test the range condition for each candidate"),
+                    ], style="jm-task-heading"),
+                    node(NodeKind.Table, children=[
+                        node(NodeKind.TableHead, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="Sale amount"),
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Low "),
+                                    node(NodeKind.Small, content="0–20"),
+                                ]),
+                                node(NodeKind.HeaderCell, children=[
+                                    text("Medium "),
+                                    node(NodeKind.Small, content="20–40"),
+                                ]),
+                                node(NodeKind.HeaderCell, children=[
+                                    text("High "),
+                                    node(NodeKind.Small, content="40–60"),
+                                ]),
+                            ]),
+                        ]),
+                        node(NodeKind.TableBody, children=[
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="25"),
+                                node(NodeKind.Cell, children=[
+                                    span("✕", style="jm-after-1"),
+                                ]),
+                                node(NodeKind.Cell, children=[
+                                    span("✓", style="jm-after-1"),
+                                ], style="jm-match-cell"),
+                                node(NodeKind.Cell, children=[
+                                    span("✕", style="jm-after-1"),
+                                ]),
+                            ], style="jm-test-25"),
+                            node(NodeKind.Row, children=[
+                                node(NodeKind.HeaderCell, content="40"),
+                                node(NodeKind.Cell, children=[
+                                    span("✕", style="jm-after-2"),
+                                ]),
+                                node(NodeKind.Cell, children=[
+                                    span("✕", style="jm-after-2"),
+                                ]),
+                                node(NodeKind.Cell, children=[
+                                    span("✓", style="jm-after-2"),
+                                ], style="jm-match-cell"),
+                            ], style="jm-test-40"),
+                        ]),
+                    ], style="jm-candidate-grid"),
+                    group([
+                        heading("Joined rows", level=3),
+                        group([
+                            span("B1"),
+                            span("25"),
+                            span("Medium"),
+                        ], style="jm-record jm-books jm-after-1"),
+                        group([
+                            span("G1"),
+                            span("40"),
+                            span("High"),
+                        ], style="jm-record jm-games jm-after-2"),
+                    ], style="jm-loop-out"),
+                    group([
+                        strong("2 sales × 3 bands = 6 tests"),
+                        span("Two pairs satisfy the condition."),
+                    ], style="jm-cost-line jm-after-3"),
+                ], style="jm-comparison-area"),
+            ], style="jm-loop-layout"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson jm-lesson jm-loop", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("68"),
+        ]),
+        ],
+        notes="""Make the condition change explicit. We are leaving the product equality join and assigning each sale to an amount band. The small bands input is new and fully shown: Low [0,20), Medium [20,40), High [40,60). Use a left join with bands as the right broadcast side. Focus on Worker A's existing B1/25 and G1/40 rows. A BroadcastNestedLoopJoin can test 25 against all three bands and 40 against all three, giving six condition evaluations and two output rows in this displayed task. Since the example is a left join with potential multiple matching bands, finding one match is not a general reason to stop. Other join types can short-circuit, and exact implementation costs vary. The remaining sales in other tasks would match Low; we have not silently removed them from the whole dataset.
+
+Equality hash lookup needs an equality key; this range-only predicate has none. An equality join plus a residual range predicate can still use an equality-key strategy. BroadcastNestedLoopJoin is one supported plan for non-equi joins and can also serve as a fallback for some equi joins. Do not claim every non-equi join chooses this operator, or that a broadcast hint automatically gives BroadcastHashJoin. The displayed 2×3 count is toy candidate-pair arithmetic, not a benchmark. Range structures and domain-specific optimisations are outside this introduction. The copied side still costs network and memory. Full source relation preparation is analogous to the preceding broadcast slide, except the broadcast data is used for pair tests instead of a key hash probe.
+Sources: https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/SparkStrategies.scala ; https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/joins/BroadcastNestedLoopJoinExec.scala""",
+    )

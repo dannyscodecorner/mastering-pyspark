@@ -1,0 +1,55 @@
+"""Streaming start slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, paragraph, prose, span, text
+
+pub def slide_streaming_start() -> Slide:
+    return Slide(
+        slug="streaming-start",
+        title="Configuring the streaming query",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-code-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Configuring the streaming query", level=1),
+            group([
+            group([
+                code_block("""checkpoint_path = "checkpoints/word-counts"
+query = (
+    counts.writeStream
+    .outputMode("complete")
+    .format("memory")
+    .queryName("word_counts")
+    .trigger(processingTime="5 seconds")
+    .option("checkpointLocation", checkpoint_path)
+    .start()
+)""", style="language-python"),
+            ]),
+            group([
+                heading("Return to the word-count example", level=2),
+                paragraph([
+                    code("writeStream"),
+                    text(" configures the output."),
+                ]),
+                paragraph([
+                    code("start()"),
+                    text(" starts processing and returns a "),
+                    code("StreamingQuery"),
+                    text("."),
+                ]),
+                prose("The memory sink and local checkpoint path are for this demonstration.", style="ss-small"),
+            ], style="ss-start-copy"),
+        ], style="ss-start-grid"),
+            group([
+            heading("Read the current result", level=2),
+            code_block("spark.table(\"word_counts\").orderBy(\"word\").show()", style="language-python"),
+            prose("The table contains the latest completed batch’s word counts."),
+        ], style="ss-result-read"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("99"),
+        ]),
+        ],
+        notes="We already started a minimal console query. Stop that run with query.stop() before starting this separate classroom demonstration. Return to the original unwindowed counts DataFrame; window_counts belonged to the separate timestamped example. Now collect the choices just explained: sink, output mode, trigger and checkpoint. Original corpus: Section 8, 8.3 recording around07:00 and11:00. Keep the writer → start → inspect result progression. queryName names the memory table in this example; it is not universally required for every query/sink. Memory output is deliberately small and is not a durable production destination. Configure checkpointLocation before start(). This local path persists progress and aggregation state for the demonstration; in a cluster, choose durable shared storage accessible after application replacement. The following slides explain what is saved and how a compatible query resumes. In Complete mode, a restarted memory query can recreate its full result table, but that does not make driver memory durable. The five-second trigger is an interval, not a promise to finish every five seconds. Use separate arriving files to reproduce the three moments; placing all files in the input directory before start may process them together. A driver-side spark.table read inspects results, not execution metrics. Use query.lastProgress for progress. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )

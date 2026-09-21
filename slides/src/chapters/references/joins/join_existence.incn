@@ -1,0 +1,173 @@
+"""Join existence slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, node, prose, span, text
+from components import step_rail, step_cues
+
+pub def slide_join_existence() -> Slide:
+    steps = [
+        TeachingStep(label="Keep matches",
+            heading="Semi answers “is there a match?”",
+            explanation="Keep the matching sales, without adding product columns or multiplying them by right-side duplicates.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Find missing",
+            heading="Anti answers “which sales have no match?”",
+            explanation="This is a useful reconciliation check before trusting an enrichment join.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-existence",
+        title="Sometimes we only need to know: does it match?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide",
+        content=[
+            group([
+            text("06 / JOINS · MATCHING ROWS, MOVING DATA"),
+        ], style="eyebrow"),
+            heading("Sometimes we only need to know: does it match?", level=1),
+            group([
+            step_rail(steps),
+            group([
+                group([
+                    group([
+                        heading("sales", level=2),
+                        prose("The same five amounts · total 100", style="join-label"),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="sale"),
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s1"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="25"),
+                                ], style="key-B1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s2"),
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="40"),
+                                ], style="key-G1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s3"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="15"),
+                                ], style="key-B1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s4"),
+                                    node(NodeKind.Cell, content="M1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="key-M1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s5"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="key-B1"),
+                            ]),
+                        ], style="join-table"),
+                    ], style="join-panel"),
+                    group([
+                        heading("products", level=2),
+                        prose("One row per product_id", style="join-label"),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="key-B1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="games"),
+                                ], style="key-G1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="X1"),
+                                    node(NodeKind.Cell, content="accessories"),
+                                ], style="key-X1"),
+                            ]),
+                        ], style="join-table"),
+                    ], style="join-panel"),
+                    group([
+                        heading("Sales only", level=2),
+                        group([
+                            node(NodeKind.Table, children=[
+                                node(NodeKind.TableHead, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.HeaderCell, content="sale"),
+                                        node(NodeKind.HeaderCell, content="id"),
+                                        node(NodeKind.HeaderCell, content="amount"),
+                                    ]),
+                                ]),
+                                node(NodeKind.TableBody, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s1"),
+                                        node(NodeKind.Cell, content="B1"),
+                                        node(NodeKind.Cell, content="25"),
+                                    ], style="key-B1"),
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s2"),
+                                        node(NodeKind.Cell, content="G1"),
+                                        node(NodeKind.Cell, content="40"),
+                                    ], style="key-G1"),
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s3"),
+                                        node(NodeKind.Cell, content="B1"),
+                                        node(NodeKind.Cell, content="15"),
+                                    ], style="key-B1"),
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s5"),
+                                        node(NodeKind.Cell, content="B1"),
+                                        node(NodeKind.Cell, content="10"),
+                                    ], style="key-B1"),
+                                ]),
+                            ], style="join-table"),
+                            prose("4 known-product sales", style="join-stat"),
+                        ], style="join-state j0"),
+                        group([
+                            node(NodeKind.Table, children=[
+                                node(NodeKind.TableHead, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.HeaderCell, content="sale"),
+                                        node(NodeKind.HeaderCell, content="id"),
+                                        node(NodeKind.HeaderCell, content="amount"),
+                                    ]),
+                                ]),
+                                node(NodeKind.TableBody, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s4"),
+                                        node(NodeKind.Cell, content="M1"),
+                                        node(NodeKind.Cell, content="10"),
+                                    ], style="key-M1"),
+                                ]),
+                            ], style="join-table"),
+                            prose("1 unmatched sale", style="join-stat"),
+                        ], style="join-state j1"),
+                    ], style="join-panel"),
+                ], style="join-three"),
+                group([
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"left_semi\")", style="join-state j0"),
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"left_anti\")", style="join-state j1"),
+                ], style="join-code-strip"),
+            ], style="joins-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson joins-lesson join-existence", attributes=[attr("data-lesson", flag=true), attr("data-point", "1")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("4"),
+        ]),
+        ],
+        notes="Semi and anti return only the left columns. Semi preserves left-side duplicates, but matching duplicates on the right do not multiply the output. Anti is useful for coverage checks. Null keys do not match under ordinary equality; a null left key is retained by anti for this ordinary equi-join. Do not equate this mechanically with SQL NOT IN and its null semantics. Source: https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-join.html",
+    )

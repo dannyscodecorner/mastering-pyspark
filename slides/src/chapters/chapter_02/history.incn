@@ -1,0 +1,116 @@
+"""History slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, image, node, prose, span, text
+
+pub def slide_history() -> Slide:
+    return Slide(
+        slug="history",
+        title="2003 / 2004 — Google’s papers",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey ",
+        attributes=[attr("data-history-index", "0")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  focal"),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(234px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("01 / 12", style="history-stop-count"),
+            prose("Distributed storage and computation", style="history-kicker"),
+            heading("Google’s papers", level=1),
+            node(NodeKind.Figure, children=[
+                group([
+                    node(NodeKind.Link, children=[
+                        image("assets/history/gfs.png", "First page of the Google File System paper"),
+                        span("2003 · The Google File System"),
+                    ], style="real-paper gfs-page", attributes=[attr("href", "assets/history/gfs.pdf"), attr("target", "_blank"), attr("aria-label", "Open the Google File System paper")]),
+                    node(NodeKind.Link, children=[
+                        image("assets/history/mapreduce.png", "First page of the MapReduce paper"),
+                        span("2004 · MapReduce"),
+                    ], style="real-paper mr-page", attributes=[attr("href", "assets/history/mapreduce.pdf"), attr("target", "_blank"), attr("aria-label", "Open the MapReduce paper")]),
+                ], style="real-paper-spread"),
+            ], style="history-visual"),
+            prose("Google File System describes distributed storage; MapReduce describes processing across machines. These are two different responsibilities.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("12"),
+        ]),
+        ],
+        notes="""Visual assets: see assets/history/CREDITS.md. Official logos identify the projects, not sponsorship. The Berkeley photo was taken in 2013 and illustrates the location, not the founding event. 2003 / 2004 — Google’s papers.
+
+Begin with the cluster vocabulary they now know. Large datasets need both somewhere to live and a way to divide the work. GFS (2003) and MapReduce (2004) helped establish this approach. MapReduce handles distribution and failures so programmers can focus on map and reduce functions.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://research.google/pubs/the-google-file-system/
+https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/
+https://svn.apache.org/repos/asf/hadoop/common/tags/release-0.2.0/site/index.html
+https://spark.apache.org/history
+https://www.usenix.org/conference/hotcloud-10/spark-cluster-computing-working-sets""",
+    )

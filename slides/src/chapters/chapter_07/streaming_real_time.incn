@@ -1,0 +1,82 @@
+"""Streaming real time slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, prose, span, strong, text
+
+pub def slide_streaming_real_time() -> Slide:
+    return Slide(
+        slug="streaming-real-time",
+        title="Real-time mode",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-realtime-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Real-time mode", level=1),
+            prose("Long-running tasks process records as they arrive.", style="ss-realtime-lead"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Processing records throughout a long-running batch", attributes=[attr("id", "ss-rt-title")]),
+                node(NodeKind.SvgDescription, content="A stateless Kafka example reads, transforms and writes records throughout one long-running batch. The time line ends at the progress checkpoint boundary. The example duration of five minutes governs that boundary, not a five-minute wait before each record is processed. The three operations may be fused into a single task.", attributes=[attr("id", "ss-rt-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#67747b")]),
+                    ], attributes=[attr("id", "ss-rt-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgText, content="During one long-running batch", style="ss-rt-heading", attributes=[attr("x", "24"), attr("y", "27")]),
+                node(NodeKind.SvgText, content="Example: stateless Kafka → Kafka", style="ss-rt-small", attributes=[attr("x", "1284"), attr("y", "27"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgPath, style="ss-rt-connector", attributes=[attr("d", "M304 99H482")]),
+                node(NodeKind.SvgPath, style="ss-rt-connector", attributes=[attr("d", "M824 99H1002")]),
+                node(NodeKind.SvgRectangle, style="ss-rt-endpoint", attributes=[attr("x", "24"), attr("y", "56"), attr("width", "280"), attr("height", "88"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Read records", style="ss-rt-node", attributes=[attr("x", "164"), attr("y", "94"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Kafka input topic", style="ss-rt-small", attributes=[attr("x", "164"), attr("y", "122"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-rt-transform", attributes=[attr("x", "484"), attr("y", "56"), attr("width", "340"), attr("height", "88"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Transform records", style="ss-rt-node", attributes=[attr("x", "654"), attr("y", "94"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="select · filter", style="ss-rt-small", attributes=[attr("x", "654"), attr("y", "122"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-rt-endpoint", attributes=[attr("x", "1004"), attr("y", "56"), attr("width", "280"), attr("height", "88"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Write records", style="ss-rt-node", attributes=[attr("x", "1144"), attr("y", "94"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Kafka output topic", style="ss-rt-small", attributes=[attr("x", "1144"), attr("y", "122"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgLine, style="ss-rt-timeline", attributes=[attr("x1", "24"), attr("y1", "184"), attr("x2", "1284"), attr("y2", "184")]),
+                node(NodeKind.SvgLine, style="ss-rt-tick", attributes=[attr("x1", "24"), attr("y1", "174"), attr("x2", "24"), attr("y2", "194")]),
+                node(NodeKind.SvgCircle, style="ss-rt-checkpoint", attributes=[attr("cx", "1284"), attr("cy", "184"), attr("r", "6")]),
+                node(NodeKind.SvgText, content="Batch starts", style="ss-rt-small", attributes=[attr("x", "24"), attr("y", "224")]),
+                node(NodeKind.SvgText, content="Records are processed throughout", style="ss-rt-small", attributes=[attr("x", "654"), attr("y", "224"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Checkpoint progress", style="ss-rt-boundary", attributes=[attr("x", "1284"), attr("y", "224"), attr("text-anchor", "end")]),
+            ], attributes=[attr("viewBox", "0 0 1308 248"), attr("role", "img"), attr("aria-labelledby", "ss-rt-title ss-rt-desc")]),
+        ], style="ss-realtime-diagram"),
+            group([
+            group([
+                prose("Writer settings · PySpark 4.2+", style="ss-realtime-code-label"),
+                node(NodeKind.Preformatted, children=[
+                    code(""".outputMode("update")
+.trigger(realTime="5 minutes")"""),
+                ], style="language-python"),
+            ]),
+            paragraph([
+                strong("Five minutes is the batch duration."),
+                line_break(),
+                text("It controls the progress checkpoint boundary. Records can reach the sink during that interval."),
+            ]),
+        ], style="ss-realtime-config"),
+            paragraph([
+            text("Enough task slots must be available for the running query."),
+            line_break(),
+            span("Supported operators and connectors depend on the Spark version and runtime."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("85"),
+        ]),
+        ],
+        notes="""What if waiting for a new record to be included in the next micro-batch is too slow? Real-time mode uses long-running tasks that keep accepting records through the running pipeline. This reduces repeated batch-planning and task-launch overhead. Use a stateless Kafka-to-Kafka query here rather than implying the earlier word count is supported in every Real-time runtime.
+
+Follow one record from read, through select or filter, to a Kafka write. These are operations, not three guaranteed Spark stages or separate executors; they may be fused into one task. The diagram is a schematic of ongoing processing, not a measured latency trace. A filter can discard a record. A record can be written before the batch ends. Micro-batch sinks can also emit while processing a batch; the distinction here is that a newly arriving input record can enter the running Real-time query without waiting for the next bounded micro-batch.
+
+The shown PySpark settings are a fragment applied to a compatible writer before start, with Kafka and checkpointLocation configured. realTime is exposed in PySpark 4.2. The example's five minutes is the long-running batch duration used for progress checkpointing. It is not a five-minute per-record delay or a latency guarantee. Shorter durations checkpoint more often; longer durations can mean more replay after failure. Sink delivery guarantees still matter, and Kafka writes can be repeated after recovery.
+
+Long-running execution requires enough concurrent task slots. When a supported plan has multiple pipelined stages, they need capacity together. Source, operator and sink support depends on version and runtime. The current references require Update output mode and exclude foreachBatch; output modes follow next. The Apache Real-time guide linked below is in-progress documentation and includes future version support: it says stateless support is available from 4.1, with stateful aggregation and other operators beginning in 4.3. Do not present those future sections as Apache Spark 4.2 capabilities or apply Databricks' broader operator matrix to every runtime. Continuous Processing from Spark 2.3 is a different, older experimental engine.
+
+Transition: follow the same arriving record through micro-batch and Real-time execution on the next slide. Then return to our micro-batch word count to compare what Complete, Append and Update send to the sink.
+
+Sources (checked 20 September 2026): PySpark 4.2 trigger API, https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html ; released API addition, https://spark.apache.org/releases/spark-release-4-2-0.html ; Apache in-progress architecture and version notes, https://apache.github.io/spark/streaming/real-time-mode.html ; Databricks architecture, https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts ; runtime-specific support, https://docs.databricks.com/aws/en/structured-streaming/real-time/reference""",
+    )

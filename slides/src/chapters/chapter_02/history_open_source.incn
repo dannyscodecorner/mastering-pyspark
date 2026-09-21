@@ -1,0 +1,127 @@
+"""History open source slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, text
+
+pub def slide_history_open_source() -> Slide:
+    return Slide(
+        slug="history-open-source",
+        title="2010 — Spark goes open source",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey spark-era",
+        attributes=[attr("data-history-index", "3")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era focal"),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(-420px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("04 / 12", style="history-stop-count"),
+            prose("From research to a shared project", style="history-kicker"),
+            heading("Spark goes open source", level=1),
+            node(NodeKind.Figure, children=[
+                group([
+                    node(NodeKind.Link, children=[
+                        image("assets/history/spark-paper.png", "Spark: Cluster Computing with Working Sets, original 2010 paper"),
+                    ], style="spark-research-page", attributes=[attr("href", "assets/history/spark-paper.pdf"), attr("target", "_blank"), attr("aria-label", "Open the original Spark research paper")]),
+                    group([
+                        span("HOTCLOUD ’10", style="archive-tag"),
+                        rich_heading([
+                            text("Cluster Computing"),
+                            line_break(),
+                            text("with Working Sets"),
+                        ], level=2),
+                        paragraph([
+                            text("The ideas are published."),
+                            line_break(),
+                            text("The code is open."),
+                            line_break(),
+                            text("Others can build on it."),
+                        ]),
+                        image("assets/history/spark.png", "Apache Spark", style="open-source-spark"),
+                    ]),
+                ], style="open-source-story"),
+            ], style="history-visual"),
+            prose("Spark combines distributed execution with data reuse, including keeping working data in memory.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("15"),
+        ]),
+        ],
+        notes="""Visual assets: see assets/history/CREDITS.md. Official logos identify the projects, not sponsorship. The Berkeley photo was taken in 2013 and illustrates the location, not the founding event. 2010 — Spark goes open source.
+
+The 2010 paper explains the working-set motivation. Memory reuse is a capability, not a requirement that every dataset fits in RAM; Spark still reads, writes, shuffles and spills. This connects to the cache boxes just introduced. Transition: the research system becomes an Apache project and develops higher-level APIs.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://research.google/pubs/the-google-file-system/
+https://research.google/pubs/mapreduce-simplified-data-processing-on-large-clusters/
+https://svn.apache.org/repos/asf/hadoop/common/tags/release-0.2.0/site/index.html
+https://spark.apache.org/history
+https://www.usenix.org/conference/hotcloud-10/spark-cluster-computing-working-sets""",
+    )

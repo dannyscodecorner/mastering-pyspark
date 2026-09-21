@@ -1,0 +1,152 @@
+"""Execution demo slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_execution_demo() -> Slide:
+    return Slide(
+        slug="execution-demo",
+        title="Spark Applications",
+        frame=Frame.Composed,
+        styles="slide migrated",
+        content=[
+            group([
+            text("01 / SPARK VS. PYTHON"),
+        ], style="eyebrow"),
+            heading("Spark Applications", level=1),
+            prose("Independent sets of processes, coordinated by a driver.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Spark Applications", attributes=[attr("id", "applications-title")]),
+                node(NodeKind.SvgDescription, content="One application has a driver and its own executor processes on worker nodes; the cluster manager allocates resources, executors run tasks and can cache data, and shuffle data travels between executors.", attributes=[attr("id", "applications-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L10 5L0 10"), attr("fill", "#257f86")]),
+                    ], attributes=[attr("id", "ap-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto-start-reverse")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="ap-line ap-resource", attributes=[attr("d", "M320 214 H442"), attr("marker-start", "url(#ap-arrow)")]),
+                    node(NodeKind.SvgText, content="Resources", style="ap-label", attributes=[attr("x", "336"), attr("y", "190")]),
+                    node(NodeKind.SvgPath, style="ap-line ap-resource", attributes=[attr("d", "M682 182 H756 Q764 182 764 174 V131 Q764 123 772 123 H866")]),
+                    node(NodeKind.SvgPath, style="ap-line ap-resource", attributes=[attr("d", "M682 254 H756 Q764 254 764 262 V307 Q764 315 772 315  H866")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "The driver requests resources from the cluster manager")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="ap-driver", attributes=[attr("x", "16"), attr("y", "119"), attr("width", "304"), attr("height", "202"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Driver", style="ap-heading", attributes=[attr("x", "38"), attr("y", "154")]),
+                    node(NodeKind.SvgRectangle, style="ap-code", attributes=[attr("x", "36"), attr("y", "174"), attr("width", "264"), attr("height", "53"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Your application code", style="ap-body", attributes=[attr("x", "55"), attr("y", "208")]),
+                    node(NodeKind.SvgRectangle, style="ap-session", attributes=[attr("x", "36"), attr("y", "242"), attr("width", "264"), attr("height", "54"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="SparkSession", style="ap-body", attributes=[attr("x", "55"), attr("y", "276")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "The driver runs the application and holds its SparkSession")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="ap-manager", attributes=[attr("x", "444"), attr("y", "147"), attr("width", "238"), attr("height", "143"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Cluster manager", style="ap-heading", attributes=[attr("x", "462"), attr("y", "184")]),
+                    node(NodeKind.SvgText, content="Allocates resources", style="ap-body", attributes=[attr("x", "462"), attr("y", "225")]),
+                    node(NodeKind.SvgText, content="across applications", style="ap-body", attributes=[attr("x", "462"), attr("y", "257")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "The cluster manager allocates resources across applications")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="ap-worker", attributes=[attr("x", "868"), attr("y", "8"), attr("width", "330"), attr("height", "174"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Worker node A", style="ap-heading", attributes=[attr("x", "888"), attr("y", "39")]),
+                    node(NodeKind.SvgRectangle, style="ap-executor", attributes=[attr("x", "884"), attr("y", "50"), attr("width", "298"), attr("height", "115"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Executor", style="ap-heading", attributes=[attr("x", "900"), attr("y", "81")]),
+                    node(NodeKind.SvgRectangle, style="ap-worker", attributes=[attr("x", "868"), attr("y", "238"), attr("width", "330"), attr("height", "174"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Worker node B", style="ap-heading", attributes=[attr("x", "888"), attr("y", "269")]),
+                    node(NodeKind.SvgRectangle, style="ap-executor", attributes=[attr("x", "884"), attr("y", "280"), attr("width", "298"), attr("height", "115"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Executor", style="ap-heading", attributes=[attr("x", "900"), attr("y", "311")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Each application has its own executors on worker nodes")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="ap-task", attributes=[attr("x", "901"), attr("y", "120"), attr("width", "112"), attr("height", "35"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Task", style="ap-body", attributes=[attr("x", "917"), attr("y", "145")]),
+                    node(NodeKind.SvgRectangle, style="ap-task", attributes=[attr("x", "1049"), attr("y", "120"), attr("width", "112"), attr("height", "35"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Task", style="ap-body", attributes=[attr("x", "1065"), attr("y", "145")]),
+                    node(NodeKind.SvgRectangle, style="ap-task", attributes=[attr("x", "901"), attr("y", "350"), attr("width", "112"), attr("height", "35"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Task", style="ap-body", attributes=[attr("x", "917"), attr("y", "375")]),
+                    node(NodeKind.SvgRectangle, style="ap-task", attributes=[attr("x", "1049"), attr("y", "350"), attr("width", "112"), attr("height", "35"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Task", style="ap-body", attributes=[attr("x", "1065"), attr("y", "375")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "4"), attr("aria-label", "Tasks run inside each executor")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="ap-cache", attributes=[attr("x", "1064"), attr("y", "60"), attr("width", "102"), attr("height", "36"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Cache", style="ap-body", attributes=[attr("x", "1077"), attr("y", "85")]),
+                    node(NodeKind.SvgRectangle, style="ap-cache", attributes=[attr("x", "1064"), attr("y", "290"), attr("width", "102"), attr("height", "36"), attr("rx", "7")]),
+                    node(NodeKind.SvgText, content="Cache", style="ap-body", attributes=[attr("x", "1077"), attr("y", "315")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "5"), attr("aria-label", "Executors can retain cached data for reuse")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="ap-line ap-shuffle", attributes=[attr("d", "M1182 105 H1232 Q1240 105 1240 113 V335 Q1240 343 1232 343 H1182"), attr("marker-start", "url(#ap-arrow)")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "1205"), attr("y", "184"), attr("width", "83"), attr("height", "51"), attr("fill", "#fafaf8")]),
+                    node(NodeKind.SvgText, content="Shuffle", style="ap-label", attributes=[attr("x", "1210"), attr("y", "204")]),
+                    node(NodeKind.SvgText, content="data", style="ap-label", attributes=[attr("x", "1210"), attr("y", "227")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "6"), attr("aria-label", "Shuffle moves data between executors")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="ap-line", attributes=[attr("d", "M320 145 H356 Q364 145 364 137 V63 Q364 55 372 55 H884")]),
+                    node(NodeKind.SvgPath, style="ap-line", attributes=[attr("d", "M320 292 H356 Q364 292 364 300 V363 Q364 371 372 371 H884")]),
+                    node(NodeKind.SvgText, content="Schedule tasks", style="ap-label", attributes=[attr("x", "488"), attr("y", "42")]),
+                    node(NodeKind.SvgText, content="Schedule tasks", style="ap-label", attributes=[attr("x", "488"), attr("y", "400")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "4"), attr("aria-label", "The driver schedules tasks directly on executors")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="ap-line ap-return", attributes=[attr("d", "M884 87 H402 Q394 87 394 95 V157 Q394 165 386 165 H320")]),
+                    node(NodeKind.SvgPath, style="ap-line ap-return", attributes=[attr("d", "M884 339 H402 Q394 339 394 331 V280 Q394 272 386 272 H320")]),
+                    node(NodeKind.SvgText, content="Results and status", style="ap-label", attributes=[attr("x", "490"), attr("y", "113")]),
+                    node(NodeKind.SvgText, content="Results and status", style="ap-label", attributes=[attr("x", "490"), attr("y", "326")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "7"), attr("aria-label", "Executors report task results and status to the driver")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgCircle, style="ap-token ap-token-4", attributes=[attr("r", "5"), attr("style", "offset-path:path('M320 145 H356 Q364 145 364 137 V63 Q364 55 372 55 H884')")]),
+                    node(NodeKind.SvgCircle, style="ap-token ap-token-4", attributes=[attr("r", "5"), attr("style", "offset-path:path('M320 292 H356 Q364 292 364 300 V363 Q364 371 372 371 H884')")]),
+                    node(NodeKind.SvgCircle, style="ap-token ap-token-6", attributes=[attr("r", "5"), attr("style", "offset-path:path('M1182 105 H1232 Q1240 105 1240 113 V335 Q1240 343 1232 343 H1182')")]),
+                    node(NodeKind.SvgCircle, style="ap-token ap-token-7", attributes=[attr("r", "5"), attr("style", "offset-path:path('M884 87 H402 Q394 87 394 95 V157 Q394 165 386 165 H320')")]),
+                    node(NodeKind.SvgCircle, style="ap-token ap-token-7", attributes=[attr("r", "5"), attr("style", "offset-path:path('M884 339 H402 Q394 339 394 331 V280 Q394 272 386 272 H320')")]),
+                ], attributes=[attr("aria-hidden", "true"), attr("data-motion-decorative", flag=true)]),
+            ], attributes=[attr("viewBox", "0 0 1308 420"), attr("role", "img"), attr("aria-labelledby", "applications-title applications-desc")]),
+            group([
+                paragraph([
+                    strong("One application, several processes"),
+                    span("A driver coordinates its own executors. Worker nodes and the cluster manager are shared infrastructure."),
+                ], style="ap-cue ap-cue-0"),
+                paragraph([
+                    strong("1 · The driver"),
+                    span("Your application creates a SparkSession. The driver coordinates the work for this application."),
+                ], style="ap-cue ap-cue-1"),
+                paragraph([
+                    strong("2 · Request resources"),
+                    span("The cluster manager allocates resources so executor processes can be launched."),
+                ], style="ap-cue ap-cue-2"),
+                paragraph([
+                    strong("3 · An application’s own executors"),
+                    span("Each application gets its own executors. A worker node can host processes from different applications."),
+                ], style="ap-cue ap-cue-3"),
+                paragraph([
+                    strong("4 · Run tasks"),
+                    span("The driver schedules tasks directly on executors; the cluster manager does not schedule these tasks."),
+                ], style="ap-cue ap-cue-4"),
+                paragraph([
+                    strong("5 · Keep data for reuse"),
+                    span("Executors can cache data in memory or on disk. Caching is optional—not a copy of every input."),
+                ], style="ap-cue ap-cue-5"),
+                paragraph([
+                    strong("6 · Exchange data"),
+                    span("Some operations need data from other partitions. Shuffle transfers that data between executors."),
+                ], style="ap-cue ap-cue-6"),
+                paragraph([
+                    strong("7 · Report back"),
+                    span("Executors return task results and status to the driver. Bulk shuffle data takes a different route."),
+                ], style="ap-cue ap-cue-7"),
+            ], style="ap-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("data-motion-action", "play"), attr("aria-pressed", "false")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("data-motion-action", "pause"), attr("aria-pressed", "true")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("7", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 7"),
+                ], attributes=[attr("data-motion-status-visible", flag=true), attr("aria-hidden", "true")]),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("role", "group"), attr("aria-label", "Application diagram steps")]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="application-walkthrough", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "7"), attr("data-step-current", "7"), attr("data-frame", "static"), attr("data-static-frame", "complete"), attr("tabindex", "0")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("8"),
+        ]),
+        ],
+        notes="Follow directly after the Python/Py4J/JVM explanation. “Those processes together form one Spark application.” First identify the driver and its SparkSession; this is a logical application view, with the Python/JVM split explained on the previous slide. Then request resources, acquire application-specific executors, and schedule tasks directly. A worker node is a machine; an executor is a process. Each application has its own executors; the cluster manager is infrastructure shared across applications. The two task boxes illustrate concurrent work, not a fixed task count. Cache is optional, may be in memory or on disk, and belongs to the executor. Introduce shuffle only as data moving between executors; explain stages, exchanges and shuffle mechanics later. Finally contrast task results/status returning to the driver with bulk shuffle data moving between executors. Do not imply every query shuffles or caches. Exact executor launch/status mechanisms differ by cluster manager; resource lines show relationships rather than a literal protocol. Driver placement depends on deploy mode. Source: workshop slide 11 and supplied original/redraw. https://spark.apache.org/docs/4.2.0/cluster-overview.html .",
+    )

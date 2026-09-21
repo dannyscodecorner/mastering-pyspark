@@ -1,0 +1,39 @@
+"""Teaching order for chapter 02."""
+
+from surface import Chapter
+from chapters.chapter_02.cover import slide_history_intro
+from chapters.chapter_02.hadoop_prompt import slide_hadoop_prompt
+from chapters.chapter_02.history import slide_history
+from chapters.chapter_02.history_hadoop import slide_history_hadoop
+from chapters.chapter_02.history_spark_begins import slide_history_spark_begins
+from chapters.chapter_02.history_open_source import slide_history_open_source
+from chapters.chapter_02.history_apache import slide_history_apache
+from chapters.chapter_02.history_1 import slide_history_1
+from chapters.chapter_02.history_dataframes import slide_history_dataframes
+from chapters.chapter_02.history_2 import slide_history_2
+from chapters.chapter_02.history_modern import slide_history_modern
+from chapters.chapter_02.history_connect import slide_history_connect
+from chapters.chapter_02.history_4 import slide_history_4
+from chapters.chapter_02.history_current import slide_history_current
+from chapters.chapter_02.spark_components import slide_spark_components
+from chapters.chapter_02.spark_history_recap import slide_spark_history_recap
+
+pub def chapter_02_chapter() -> Chapter:
+    return Chapter(number="2", title="02 / INTRODUCING SPARK", first_page=1, slides=[
+        slide_history_intro(),
+        slide_hadoop_prompt(),
+        slide_history(),
+        slide_history_hadoop(),
+        slide_history_spark_begins(),
+        slide_history_open_source(),
+        slide_history_apache(),
+        slide_history_1(),
+        slide_history_dataframes(),
+        slide_history_2(),
+        slide_history_modern(),
+        slide_history_connect(),
+        slide_history_4(),
+        slide_history_current(),
+        slide_spark_components(),
+        slide_spark_history_recap(),
+    ])

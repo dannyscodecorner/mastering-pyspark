@@ -1,0 +1,25 @@
+"""Hadoop prompt slide."""
+
+from surface import Frame, NodeKind, Slide, group, heading, image, node, span, text
+
+pub def slide_hadoop_prompt() -> Slide:
+    return Slide(
+        slug="hadoop-prompt",
+        title="Hadoop",
+        frame=Frame.Composed,
+        styles="slide lesson-slide logo-prompt",
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            heading("Hadoop", level=1),
+            group([
+            image("assets/history/hadoop-elephant-reference.png", "Hadoop elephant"),
+        ], style="hadoop-elephant-crop"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("11"),
+        ]),
+        ],
+        notes="Open the history chapter with the elephant alone. Ask: Who recognises this? Who has worked with Hadoop? What problem was it trying to solve? Let the audience answer before starting the timeline. Distinguish the Hadoop ecosystem, HDFS storage and MapReduce processing verbally if needed, without teaching the full mechanics yet. Transition: To understand where Hadoop came from, let’s go back to the Google papers in 2003 and 2004. The detailed MapReduce walkthrough remains at the beginning of chapter 03, where it explains why reuse and RDDs matter.",
+    )

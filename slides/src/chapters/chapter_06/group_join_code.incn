@@ -1,0 +1,53 @@
+"""Group join code slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, paragraph, span, strong, text
+
+pub def slide_group_join_code() -> Slide:
+    return Slide(
+        slug="group-join-code",
+        title="The code is simple",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-code-slide",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("The code is simple", level=1),
+            group([
+            group([
+                heading("Start with the two inputs", level=2),
+                code_block("""sales = spark.read.parquet("data/sales")
+products = spark.read.parquet("data/products")"""),
+            ]),
+            group([
+                heading("Join, group, then aggregate", level=2),
+                code_block("""from pyspark.sql import functions as F
+
+enriched = sales.join(
+    products, on="product_id", how="left"
+)
+
+totals = (
+    enriched
+    .groupBy("category")
+    .agg(F.sum("amount").alias("total"))
+)
+totals.show()"""),
+            ]),
+        ], style="join-code-grid"),
+            paragraph([
+            text("Result: "),
+            strong("books 50"),
+            text(" · "),
+            strong("games 40"),
+            text(" · "),
+            strong("NULL 10"),
+            span("M1 stays in the left join; its missing category forms the NULL group."),
+        ], style="join-code-result"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("57"),
+        ]),
+        ],
+        notes="Open the chapter with familiar syntax. Read two Parquet inputs, join on product_id, group by category and sum amount. Pause: the request takes only a few lines — what does Spark have to do to execute it across partitions? Establish the question before discussing movement, strategies or skew. Assume an existing SparkSession named spark. The product lookup has unique product_id values. No output ordering is guaranteed without orderBy. groupBy defines grouping keys; agg supplies the calculation. show is the action. A name-based equi-join emits one product_id column. This uses five sales from the joins example. X1 has no sale and does not appear in this left join. NULL category collects the unmatched M1 amount. The illustrative Parquet paths contain the same five sales and three products used throughout this chapter. Ask which operations may require records to move. Do not infer a physical strategy solely from this code; inspect the plan.",
+    )

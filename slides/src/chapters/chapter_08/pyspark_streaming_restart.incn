@@ -1,0 +1,69 @@
+"""Pyspark streaming restart slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code_block, group, heading, node, prose, span, text
+
+pub def slide_pyspark_streaming_restart() -> Slide:
+    return Slide(
+        slug="pyspark-streaming-restart",
+        title="Exercise 7 · Resume from a checkpoint",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 7 · Resume from a checkpoint", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Stop the running query after file 02."),
+                    node(NodeKind.ListItem, content="Restart the same writer with the same checkpoint and unchanged inputs."),
+                    node(NodeKind.ListItem, content="Publish file 03, compare with the batch report, then stop the query."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Expected category report", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="category", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="sales", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="total", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="50.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="40.00"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="unmapped"),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="10.00"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                prose("Earlier arrivals must not be counted again.", style="ho-note"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""query.stop()
+query = writer.start()
+publish_arrival(DATA_ROOT, INCOMING, 3)"""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("113"),
+        ]),
+        ],
+        notes="Ask for a prediction before running the restart. Do not rerun the Setup cell: that would create a new incoming directory and checkpoint. Keep the static lookup unchanged. The remaining cells call processAllAvailable, compare the full report and stop in finally. This demonstrates an orderly restart, not a mid-batch crash. The checkpoint retains aggregate state and source progress; the Complete-mode memory sink can reconstruct the report but is still a debugging sink, not durable external output.",
+    )

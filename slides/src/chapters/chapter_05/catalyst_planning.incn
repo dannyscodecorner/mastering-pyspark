@@ -1,0 +1,195 @@
+"""Catalyst planning slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, group, heading, image, line_break, node, paragraph, prose, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_catalyst_planning() -> Slide:
+    steps = [
+        TeachingStep(label="Unresolved",
+            heading="Spark captures what you asked for.",
+            explanation="The relation and column names still need to be resolved.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Analysed",
+            heading="Names now refer to real columns and types.",
+            explanation="The same logical plan is now bound to the source schema.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Optimised",
+            heading="Same result. A narrower planned read.",
+            explanation="Unused columns are pruned from the request, not deleted from the source.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Physical",
+            heading="Spark chooses operators — including where data must move.",
+            explanation="One logical aggregation becomes partial aggregation, an exchange and final aggregation.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="catalyst-planning",
+        title="Catalyst",
+        frame=Frame.Composed,
+        styles="slide lesson-slide execution-content",
+        content=[
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            heading("Catalyst", level=1),
+            prose("From what you ask for to how Spark executes it.", style="subtitle"),
+            group([
+            step_rail(steps),
+            group([
+                group([
+                    node(NodeKind.Header, children=[
+                        span("WHAT YOU WANT"),
+                        heading("Logical plan", level=2),
+                    ]),
+                    group([
+                        group([
+                            image("assets/catalyst/chart-no-axes-column-increasing.svg", ""),
+                            group([
+                                strong("Aggregate"),
+                                code("SUM(amount) BY category"),
+                            ]),
+                        ], style="cp-node cp-aggregate "),
+                        image("assets/catalyst/arrow-up.svg", "feeds into", style="cp-arrow"),
+                        group([
+                            image("assets/catalyst/filter.svg", ""),
+                            group([
+                                strong("Filter"),
+                                code("amount > 0"),
+                            ]),
+                        ], style="cp-node cp-filter "),
+                        image("assets/catalyst/arrow-up.svg", "feeds into", style="cp-arrow"),
+                        group([
+                            image("assets/catalyst/database.svg", ""),
+                            group([
+                                strong("Source"),
+                                code("sales"),
+                            ]),
+                        ], style="cp-node cp-source "),
+                    ], style="cp-logical-chain"),
+                    group([
+                        strong("Source schema · sales"),
+                        group([
+                            node(NodeKind.Span, children=[
+                                text("category"),
+                                node(NodeKind.Small, content="string"),
+                            ]),
+                            node(NodeKind.Span, children=[
+                                text("amount"),
+                                node(NodeKind.Small, content="long"),
+                            ]),
+                            node(NodeKind.Span, children=[
+                                text("store"),
+                                node(NodeKind.Small, content="string"),
+                            ], style="cp-unused"),
+                            node(NodeKind.Span, children=[
+                                text("timestamp"),
+                                node(NodeKind.Small, content="timestamp"),
+                            ], style="cp-unused"),
+                        ], style="cp-columns"),
+                    ], style="cp-schema"),
+                ], style="cp-logical"),
+                group([
+                    span("RESOLVE THE REQUEST", style="exec-label"),
+                    heading("Names become columns.", level=2),
+                    paragraph([
+                        text("Spark resolves "),
+                        code("category"),
+                        text(" and "),
+                        code("amount"),
+                        text(" against the schema of "),
+                        code("sales"),
+                        text(", giving each column reference a known type."),
+                    ]),
+                    paragraph([
+                        text("The aggregate now has"),
+                        line_break(),
+                        text("known inputs and types."),
+                    ], style="cp-insight-end"),
+                ], style="cp-insight cp-resolve"),
+                group([
+                    span("KEEP ONLY WHAT IS NEEDED", style="exec-label"),
+                    heading("Two columns are enough.", level=2),
+                    paragraph([
+                        text("This query uses "),
+                        code("category"),
+                        line_break(),
+                        text("and "),
+                        code("amount"),
+                        text("."),
+                    ]),
+                    paragraph([
+                        text("Plan a narrower Parquet read."),
+                        line_break(),
+                        text("Same result, less data to read."),
+                    ], style="cp-insight-end"),
+                    node(NodeKind.Small, content="Illustrative source includes two extra columns."),
+                ], style="cp-insight cp-prune"),
+                group([
+                    node(NodeKind.Header, children=[
+                        span("HOW SPARK CAN DO IT"),
+                        heading("Physical plan", level=2),
+                    ]),
+                    group([
+                        group([
+                            image("assets/catalyst/chart-no-axes-column-increasing.svg", ""),
+                            group([
+                                strong("Final aggregate"),
+                                code("SUM(amount) BY category"),
+                            ]),
+                        ], style="cp-node cp-aggregate "),
+                        image("assets/catalyst/arrow-up.svg", "feeds into", style="cp-arrow"),
+                        group([
+                            image("assets/catalyst/shuffle.svg", ""),
+                            group([
+                                strong("Exchange"),
+                                code("by category · shuffle boundary"),
+                            ]),
+                        ], style="cp-node cp-exchange "),
+                        image("assets/catalyst/arrow-up.svg", "feeds into", style="cp-arrow"),
+                        group([
+                            image("assets/catalyst/chart-no-axes-column-increasing.svg", ""),
+                            group([
+                                strong("Partial aggregate"),
+                                code("SUM(amount) BY category"),
+                            ]),
+                        ], style="cp-node cp-aggregate "),
+                        image("assets/catalyst/arrow-up.svg", "feeds into", style="cp-arrow"),
+                        group([
+                            image("assets/catalyst/filter.svg", ""),
+                            group([
+                                strong("Filter"),
+                                code("amount > 0"),
+                            ]),
+                        ], style="cp-node cp-filter "),
+                        image("assets/catalyst/arrow-up.svg", "feeds into", style="cp-arrow"),
+                        group([
+                            image("assets/catalyst/database.svg", ""),
+                            group([
+                                strong("Scan parquet"),
+                                code("category, amount"),
+                            ]),
+                        ], style="cp-node cp-source "),
+                    ], style="cp-physical-chain"),
+                    group([
+                        text("Distributed"),
+                        line_break(),
+                        text("aggregation"),
+                    ], style="cp-bracket"),
+                ], style="cp-physical"),
+            ], style="cp-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("Simplified illustrative plan", style="cp-disclaimer"),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson catalyst-continuous", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("49"),
+        ]),
+        ],
+        notes="Continuous four-step narration. Keep the same logical tree in view, and pause at each step. Unresolved: capture the request. Analysed: resolve the relation and attributes against the source schema and validate expressions. Optimised: assume the Parquet file includes store and timestamp as well as the two columns shown on slide38; only category and amount are required. The crossed-out schema columns mean omitted from the planned scan, not deleted from the file or absent from its schema. The diagram compresses projection pruning and source-read planning; a real logical plan may include explicit Project nodes, inferred null predicates and other details. Do not present this as literal explain output or a promise that the whole original schema would otherwise be read. Physical: reveal the executable chain only now. Read bottom-up. The brace is correspondence, not an execution edge. Partial aggregation reduces data before the exchange; Exchange repartitions by category before final aggregation. This example assumes a required exchange; existing distribution can change the physical plan. Still planning, not executing rows; no timings claim. Transition: how does this plan become jobs, stages and tasks? Sources: https://github.com/apache/spark/blob/master/sql/catalyst/src/main/scala/org/apache/spark/sql/catalyst/optimizer/Optimizer.scala and https://github.com/apache/spark/blob/master/sql/core/src/main/scala/org/apache/spark/sql/execution/datasources/parquet/ParquetReadSupport.scala . Icons: Lucide, ISC licence.",
+    )

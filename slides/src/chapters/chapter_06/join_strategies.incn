@@ -1,0 +1,71 @@
+"""Join strategies slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, node, paragraph, prose, span, text
+
+pub def slide_join_strategies() -> Slide:
+    return Slide(
+        slug="join-strategies",
+        title="How Spark executes a join",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-mechanics jm-overview",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("How Spark executes a join", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                code("sales.join(products, on=\"product_id\", how=\"left\")"),
+            ], style="language-python"),
+            paragraph([
+                code("how=\"left\""),
+                text(" defines which rows to keep. Spark still has to choose an execution strategy."),
+            ]),
+        ], style="jm-overview-request"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Physical strategy"),
+                    node(NodeKind.HeaderCell, content="How it matches rows"),
+                    node(NodeKind.HeaderCell, content="Where the work comes from"),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Sort-merge join"),
+                    node(NodeKind.Cell, content="Order each partition’s inputs, then merge equal keys."),
+                    node(NodeKind.Cell, content="Required shuffles and local sorting."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Shuffled hash join"),
+                    node(NodeKind.Cell, content="Build and probe a lookup per join partition."),
+                    node(NodeKind.Cell, content="Required shuffles and task memory."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Broadcast hash join"),
+                    node(NodeKind.Cell, content="Probe a complete broadcast lookup."),
+                    node(NodeKind.Cell, content="Distributing the lookup and holding it in memory."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Broadcast nested-loop join"),
+                    node(NodeKind.Cell, content="Test rows against broadcast candidates."),
+                    node(NodeKind.Cell, content="Many pair comparisons, even after broadcasting."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Cartesian product"),
+                    node(NodeKind.Cell, content="Process each pair of input partitions."),
+                    node(NodeKind.Cell, content="Repeated input reads and many candidate pairs."),
+                ]),
+            ]),
+        ], style="jm-overview-table"),
+            prose("The condition and join type limit the choices. Spark also considers statistics, hints and input layout. AQE can revise eligible plans.", style="jm-overview-foot"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("64"),
+        ]),
+        ],
+        notes="""Pivot immediately after skew: “We have chosen the join type in our SQL or DataFrame code. Now we are looking at the mechanics Spark can choose to execute it.” Keep the logical operation and the physical operator distinct. These are alternatives, not five consecutive phases. The first three detailed slides use the same left equality join; the later two explicitly change the condition to explain candidate-pair execution.
+
+Walk down the list before entering any animation. Sort-merge and shuffled hash need compatible distributions, with exchanges when the current layout does not provide them. They differ in local matching. Broadcast hash changes the distribution requirement by making a complete build-side lookup available at participating executors. Nested-loop and Cartesian are distinct ways of processing candidate pairs. CartesianProduct also has the name shuffle-and-replicate nested loop; do not equate that name with the earlier hash-by-key shuffle. This is an introductory list of Spark SQL physical join families, not a decision tree or a ranked speed comparison. Broadcast applicability and build side depend on the logical join type. Non-equality conditions can use nested-loop strategies, but an equality join with an additional residual condition is still eligible for equality-key strategies. Existing storage partitioning can avoid an exchange without becoming a new local matching algorithm. Statistics can be inaccurate and AQE can revise eligible strategies. There is no fixed file-size rule or promise that all five apply to a left join.
+Sources: https://spark.apache.org/docs/latest/sql-performance-tuning.html ; https://github.com/apache/spark/blob/v3.5.6/sql/core/src/main/scala/org/apache/spark/sql/execution/SparkStrategies.scala""",
+    )

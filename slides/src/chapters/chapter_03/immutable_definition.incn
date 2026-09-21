@@ -1,0 +1,38 @@
+"""Immutable definition slide."""
+
+from surface import Frame, NodeKind, Slide, attr, emphasis, group, heading, line_break, node, paragraph, span, text
+
+pub def slide_immutable_definition() -> Slide:
+    return Slide(
+        slug="immutable-definition",
+        title="Immutable — a definition",
+        frame=Frame.Composed,
+        styles="slide immutable-definition",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            group([
+            heading("immutable", level=1),
+            paragraph([
+                span("/ɪˈmjuːtəbl/"),
+                emphasis("adjective"),
+            ], style="id-pronunciation"),
+            paragraph([
+                text("that cannot be changed;"),
+                line_break(),
+                text("that will never change"),
+            ], style="id-definition"),
+            paragraph([
+                node(NodeKind.Link, content="Oxford Learner’s Dictionaries", attributes=[attr("href", "https://www.oxfordlearnersdictionaries.com/definition/english/immutable"), attr("target", "_blank"), attr("rel", "noopener noreferrer")]),
+            ], style="id-source"),
+        ], style="id-entry"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("33"),
+        ]),
+        ],
+        notes="""Adapted from the dictionary opening in the original corpus: Section 2, 2.4 Spark Dataframes, slide 8. Danny requested the adjective immutable here; the original slide used the noun immutability. Pause on the meaning of the word before explaining why this property matters in Spark. The following slide introduces sharing, reuse and recovery; the next demonstrates a transformation and Python reassignment. Keep the technical explanation on those slides.
+
+Definition and pronunciation: Oxford Advanced Learner’s Dictionary, immutable (adjective), checked 21 September 2026. https://www.oxfordlearnersdictionaries.com/definition/english/immutable""",
+    )

@@ -1,0 +1,173 @@
+"""Streaming word count slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, span, strong, text
+
+pub def slide_streaming_word_count() -> Slide:
+    return Slide(
+        slug="streaming-word-count",
+        title="What the word-count query sends",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-example",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("What the word-count query sends", level=1),
+            group([
+            group([
+                strong("The same running count"),
+                span("Micro-batch execution"),
+            ]),
+            node(NodeKind.Preformatted, children=[
+                code("words.groupBy(\"word\").count()"),
+            ], style="language-python"),
+        ], style="ss-incremental-query"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Actual rows emitted to the sink by Complete and Update after each batch", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, attributes=[attr("style", "width:220px")]),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.Cell),
+                    node(NodeKind.HeaderCell, content="Batch 1", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 2", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 3", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="New input", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("cat dog"),
+                            line_break(),
+                            text("dog dog"),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        code("owl cat"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("dog"),
+                            line_break(),
+                            text("owl"),
+                        ]),
+                    ]),
+                ], style="ss-output-input"),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Complete"),
+                        span("All current counts"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="4"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Update"),
+                        span("Only updated counts"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="4"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                ]),
+            ]),
+        ], style="ss-output-example-table"),
+            paragraph([
+            text("In Batch 3, Complete sends cat 2 again. Update sends only dog 4 and owl 2."),
+            line_break(),
+            span("Append is not supported for this unwindowed running count."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("91"),
+        ]),
+        ],
+        notes="""Keep the original corpus's cat/dog/owl data from section 8.2 slide 11 and the already-explained running counts on the earlier incremental-count slide. This time the table shows rows emitted to the sink, not stored state or accumulated output. Each output-mode row represents a separate run of the same query.
+
+Batch 1 creates cat 1 and dog 3; both modes emit both rows. Batch 2 changes cat to 2 and creates owl 1. Complete also repeats dog 3; Update leaves dog out. Batch 3 changes dog to 4 and owl to 2. Complete repeats cat 2; Update leaves cat out. Update sends the new counts, not increments of one. No owl row exists before Batch 2. Row order is illustrative, not a Spark ordering guarantee.
+
+The unwindowed count has no final value while input keeps arriving, so Append is invalid for this query. Use a compatible sink for each mode; the later memory-sink demonstration deliberately chooses Complete. Mode definitions: https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+
+Original input figures remain in assets/streaming/original-word-count.png; the logical data is preserved in this editable table.""",
+    )

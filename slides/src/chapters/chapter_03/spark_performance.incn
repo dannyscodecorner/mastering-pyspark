@@ -1,0 +1,94 @@
+"""Spark performance slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, line_break, node, prose, rich_heading, span, strong, text
+
+pub def slide_spark_performance() -> Slide:
+    return Slide(
+        slug="spark-performance",
+        title="Hadoop worked, but it was slow",
+        frame=Frame.Composed,
+        styles="slide lesson-slide",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Hadoop worked, but it was slow", level=1),
+            prose("Run another calculation on the same data.", style="subtitle"),
+            group([
+            node(NodeKind.OrderedList, children=[
+                node(NodeKind.ListItem, content="Read the data"),
+                node(NodeKind.ListItem, content="Use it again"),
+                node(NodeKind.ListItem, content="Keep it in memory"),
+            ], style="lesson-rail"),
+            group([
+                group([
+                    span(""),
+                    node(NodeKind.Bold, content="FIRST CALCULATION"),
+                    node(NodeKind.Bold, content="SECOND CALCULATION"),
+                    node(NodeKind.Bold, content="THIRD CALCULATION"),
+                ], style="reuse-head"),
+                group([
+                    rich_heading([
+                        text("Hadoop"),
+                        line_break(),
+                        text("MapReduce"),
+                    ], level=2),
+                    group([
+                        span("Read from disk", style="disk-read"),
+                        span("Compute", style="work-step"),
+                    ]),
+                    group([
+                        span("Read again", style="disk-read"),
+                        span("Compute", style="work-step"),
+                    ], style="repeat-step"),
+                    group([
+                        span("Read again", style="disk-read"),
+                        span("Compute", style="work-step"),
+                    ], style="repeat-step"),
+                ], style="reuse-row"),
+                group([
+                    heading("Spark", level=2),
+                    group([
+                        span("Read from disk", style="disk-read"),
+                        span("Compute", style="work-step"),
+                        span("Persist in memory", style="memory-store"),
+                    ]),
+                    group([
+                        span("Reuse from memory", style="memory-reuse"),
+                        span("Compute", style="work-step"),
+                    ], style="warm-step"),
+                    group([
+                        span("Reuse from memory", style="memory-reuse"),
+                        span("Compute", style="work-step"),
+                    ], style="warm-step"),
+                ], style="reuse-row spark-reuse"),
+                prose("Same reusable working set · persisted partitions fit and remain in memory · schematic, not a timing chart", style="reuse-assumption"),
+            ], style="reuse-board"),
+            group([
+                node(NodeKind.Paragraph, children=[
+                    strong("Both start by reading the data"),
+                    text("The first load still has a cost. Spark does not make the underlying disk faster."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("What if we need that same data again?"),
+                    text("Separate MapReduce jobs read their input again. What could Spark avoid?"),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("Read once. Reuse in memory."),
+                    text("With persistence, later calculations can skip rereading and rebuilding the same working set."),
+                ], attributes=[attr("data-cue", flag=true)]),
+            ], style="lesson-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson reuse-comparison", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("28"),
+        ]),
+        ],
+        notes="The comparison is repeated calculations over a reusable working set, not every Hadoop or Spark workload. First show both reading from disk: we are not claiming Spark disk reads are inherently faster, nor asserting identical measured I/O speeds. Advance to Hadoop reading again, then pause: What could Spark do differently? Reveal persistence and the two memory reuse steps. Once computed and retained, Spark can avoid rereading and recomputing these partitions. This is the in-memory story behind the historical performance gains; no numeric speedup is asserted. Hadoop/OS caching can also affect physical disk I/O. Spark still uses disk for initial input and may use it for shuffle, spill, persistence or recovery. Reuse here assumes explicitly persisted partitions fit and remain in memory. Transition: how can distributed data be retained and recovered safely? That leads to RDDs. Source: https://spark.apache.org/docs/0.7.0/scala-programming-guide.html#rdd-persistence",
+    )

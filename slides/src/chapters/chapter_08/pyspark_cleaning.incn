@@ -1,0 +1,80 @@
+"""Pyspark cleaning slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, code_block, group, heading, node, paragraph, span, text
+
+pub def slide_pyspark_cleaning() -> Slide:
+    return Slide(
+        slug="pyspark-cleaning",
+        title="Exercise 2 · Clean the keys",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 2 · Clean the keys", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, children=[
+                        text("Import "),
+                        code("pyspark.sql.functions"),
+                        text(" as "),
+                        code("F"),
+                        text("."),
+                    ]),
+                    node(NodeKind.ListItem, content="Trim and uppercase product keys on both sides."),
+                    node(NodeKind.ListItem, content="Trim and lowercase the product categories. Put the key expression in a reusable helper."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Expected normalized values", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="Input", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Clean value", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, children=[
+                                code("\" b1 \""),
+                            ]),
+                            node(NodeKind.Cell, content="B1"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, children=[
+                                code("\"g1\""),
+                            ]),
+                            node(NodeKind.Cell, content="G1"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, children=[
+                                code("\" Books \""),
+                            ]),
+                            node(NodeKind.Cell, content="books"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                paragraph([
+                    code("F"),
+                    text(" is an alias for the functions module."),
+                ], style="ho-note"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""from pyspark.sql import functions as F
+
+key = F.upper(F.trim(F.col("product_id")))"""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("108"),
+        ]),
+        ],
+        notes="Callback: you have seen functions as F earlier; now use it. F.col refers to a column; F.lit creates a literal expression, which we use later for unmapped. Use select and withColumn to apply the expressions. A Python helper returning Column constructs an expression on the driver; Spark evaluates its built-in operations. This differs from a Python UDF, whose custom code executes on values in Python workers. The lesson includes that explanation; the pipeline needs no UDF. Apply this normalization policy to the provided ASCII keys, without claiming it suits every business identifier. https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/functions.html",
+    )

@@ -1,0 +1,61 @@
+"""Pyspark inputs slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code_block, group, heading, node, prose, span, text
+
+pub def slide_pyspark_inputs() -> Slide:
+    return Slide(
+        slug="pyspark-inputs",
+        title="Exercise 1 · Inspect the inputs",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 1 · Inspect the inputs", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Load the sales and product Parquet files."),
+                    node(NodeKind.ListItem, content="Inspect both schemas and their rows."),
+                    node(NodeKind.ListItem, content="Find values that need cleaning before the join."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Prepared input sizes", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="Input", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Rows", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Sales"),
+                            node(NodeKind.Cell, content="8"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Products"),
+                            node(NodeKind.Cell, content="3"),
+                        ]),
+                    ]),
+                ], style="ho-table"),
+                prose("Amounts and timestamps are stored as strings. Keys and categories have inconsistent case and spaces.", style="ho-note"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""raw = spark.read.parquet(spark_path(DATA_ROOT / "sales.parquet"))
+raw_products = spark.read.parquet(spark_path(DATA_ROOT / "products.parquet"))
+raw.printSchema(); raw.orderBy("sale_id").show(truncate=False)"""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("107"),
+        ]),
+        ],
+        notes="Ask participants to inspect the raw input before explaining the problems. The prepared sales file has eight rows: five valid sales and three deliberately invalid records. The product lookup has three rows, including X1 with no sale. Parquet provides a schema, but that does not establish valid business values. Reuse the prepared files; do not introduce createDataFrame syntax. Both amounts and timestamps are strings here by design.",
+    )

@@ -1,0 +1,175 @@
+"""Adaptive execution slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, group, heading, line_break, node, paragraph, prose, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_adaptive_execution() -> Slide:
+    steps = [
+        TeachingStep(label="Two tasks planned",
+            heading="Before executing Stage B: two tasks are planned.",
+            explanation="One task would read each shuffle partition, as on the previous slide.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Measure actual output",
+            heading="Now Spark has evidence the initial plan did not have.",
+            explanation="For this illustration, the output is small enough to read together.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Adapt the next stage",
+            heading="Same result. Fewer small tasks to schedule.",
+            explanation="AQE can coalesce the reads of neighbouring shuffle partitions into one task.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="adaptive-execution",
+        title="Adaptive Query Execution",
+        frame=Frame.Composed,
+        styles="slide lesson-slide execution-content aqe-story-slide",
+        content=[
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            heading("The plan can adapt as Spark learns", level=1),
+            prose("Adaptive Query Execution (AQE) · the same shuffle, less downstream work.", style="subtitle"),
+            group([
+            step_rail(steps),
+            group([
+                group([
+                    node(NodeKind.Span, children=[
+                        text("Stage A "),
+                        node(NodeKind.Bold, content="completed"),
+                    ]),
+                    span("→"),
+                    node(NodeKind.Span, children=[
+                        text("Shuffle output "),
+                        node(NodeKind.Bold, content="available"),
+                    ]),
+                    span("→"),
+                    node(NodeKind.Span, children=[
+                        text("Stage B "),
+                        node(NodeKind.Bold, content="can still adapt"),
+                    ], style="aq-context-next"),
+                ], style="aq-context"),
+                group([
+                    heading("The same shuffle partitions", level=2),
+                    group([
+                        node(NodeKind.Header, content="Shuffle partition 0"),
+                        group([
+                            node(NodeKind.Span, children=[
+                                text("books "),
+                                node(NodeKind.Bold, content="40"),
+                            ]),
+                            node(NodeKind.Span, children=[
+                                text("books "),
+                                node(NodeKind.Bold, content="10"),
+                            ]),
+                        ]),
+                    ], style="aq-part aq-books"),
+                    group([
+                        node(NodeKind.Header, content="Shuffle partition 1"),
+                        group([
+                            node(NodeKind.Span, children=[
+                                text("games "),
+                                node(NodeKind.Bold, content="40"),
+                            ]),
+                            node(NodeKind.Span, children=[
+                                text("music "),
+                                node(NodeKind.Bold, content="10"),
+                            ]),
+                        ]),
+                    ], style="aq-part aq-other"),
+                    prose("The completed shuffle stays in place.", style="aq-source-note"),
+                ], style="aq-source"),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("style", "fill:#54788f;stroke:none")]),
+                        ], attributes=[attr("id", "aq-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M420 147 H856"), attr("style", "fill:none;stroke:#54788f;stroke-width:2.5"), attr("marker-end", "url(#aq-arrow)")]),
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M420 265 H856"), attr("style", "fill:none;stroke:#54788f;stroke-width:2.5"), attr("marker-end", "url(#aq-arrow)")]),
+                    ], style="aq-two-links"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M420 147 C680 147 690 207 856 207"), attr("style", "fill:none;stroke:#54788f;stroke-width:2.5"), attr("marker-end", "url(#aq-arrow)")]),
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M420 265 C680 265 690 207 856 207"), attr("style", "fill:none;stroke:#54788f;stroke-width:2.5"), attr("marker-end", "url(#aq-arrow)")]),
+                    ], style="aq-one-links"),
+                ], style="aq-links", attributes=[attr("viewBox", "0 0 1308 365"), attr("aria-hidden", "true")]),
+                group([
+                    span("RUNTIME EVIDENCE", style="aq-observation-label"),
+                    heading("Both are small.", level=2),
+                    paragraph([
+                        text("Spark now knows the"),
+                        line_break(),
+                        text("actual shuffle-output sizes."),
+                    ]),
+                    group([
+                        span("P0"),
+                        node(NodeKind.Italic, children=[
+                            node(NodeKind.Bold),
+                        ]),
+                    ], style="aq-meter"),
+                    group([
+                        span("P1"),
+                        node(NodeKind.Italic, children=[
+                            node(NodeKind.Bold),
+                        ]),
+                    ], style="aq-meter"),
+                    node(NodeKind.Small, content="Size illustration · not measured bytes"),
+                ], style="aq-observation"),
+                group([
+                    heading("Stage B · initial plan", level=2),
+                    group([
+                        strong("Task 3"),
+                        node(NodeKind.Span, children=[
+                            text("Read partition 0"),
+                            line_break(),
+                            text("Final aggregate"),
+                        ]),
+                    ], style="aq-reader"),
+                    group([
+                        strong("Task 4"),
+                        node(NodeKind.Span, children=[
+                            text("Read partition 1"),
+                            line_break(),
+                            text("Final aggregate"),
+                        ]),
+                    ], style="aq-reader"),
+                ], style="aq-planned"),
+                group([
+                    heading("Stage B · adapted plan", level=2),
+                    group([
+                        span("ONE DOWNSTREAM TASK", style="aq-one-badge"),
+                        heading("Read both partitions", level=3),
+                        prose("Final aggregate, by category"),
+                        group([
+                            node(NodeKind.Span, children=[
+                                text("books "),
+                                node(NodeKind.Bold, content="50"),
+                            ]),
+                            node(NodeKind.Span, children=[
+                                text("games "),
+                                node(NodeKind.Bold, content="40"),
+                            ]),
+                            node(NodeKind.Span, children=[
+                                text("music "),
+                                node(NodeKind.Bold, content="10"),
+                            ]),
+                        ], style="aq-results"),
+                    ], style="aq-combined"),
+                ], style="aq-adapted"),
+            ], style="aq-story-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("Illustrative choice · depends on sizes and configuration", style="aq-scope"),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson aqe-story", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("53"),
+        ]),
+        ],
+        notes="Continue the initial two-task plan from “Why shuffle?”, pausing before Stage B executes. The exact same partial totals remain: partition 0 has books 40 and books 10; partition 1 has games 40 and music 10. Ask: do these tiny outputs really need two separate tasks? Reveal runtime evidence, then adaptation. AQE uses actual map-output size statistics, not the sales amounts and not simply the displayed row count. The small bars illustrate size without claiming a measured benchmark. Post-shuffle coalescing lets one downstream task read a contiguous range of original shuffle partitions; it does not rerun or undo the completed shuffle. For this example it then aggregates by category, yielding books 50, games 40, music 10. The same keys still meet; different keys remain distinct. The 2-to-1 choice is illustrative and depends on configuration, target sizes, minimum parallelism and plan constraints. This is fewer tasks, not fewer worker machines: distinguish from Glue autoscaling later. AQE can also change eligible join strategies and mitigate skewed joins; these are other applications of the same runtime-feedback principle, not claims about this aggregation example. Source: https://spark.apache.org/docs/latest/sql-performance-tuning.html#adaptive-query-execution",
+    )

@@ -1,0 +1,74 @@
+"""Pyspark setup slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_pyspark_setup() -> Slide:
+    return Slide(
+        slug="pyspark-setup",
+        title="Set up the lab",
+        frame=Frame.Composed,
+        styles="slide ho-lesson",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Set up the lab", level=1),
+            group([
+            group([
+                heading("In the VS Code terminal", level=2),
+                paragraph([
+                    text("Open the extracted "),
+                    code("chapter08"),
+                    text(" folder."),
+                ]),
+                node(NodeKind.Preformatted, children=[
+                    node(NodeKind.Code, content="""java -version
+uv sync --locked
+uv run --locked check_setup.py""", style="language-text"),
+                ]),
+                prose("Java 21 · Python 3.12 · PySpark 4.2.0", style="ho-note"),
+                paragraph([
+                    text("Look for: "),
+                    strong("Setup check passed"),
+                ], style="ho-setup-pass"),
+            ]),
+            group([
+                heading("Work through the exercise cells", level=2),
+                prose("Add the optional interactive dependencies:"),
+                node(NodeKind.Preformatted, children=[
+                    node(NodeKind.Code, content="uv sync --locked --group notebook", style="language-text"),
+                ]),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Enable VS Code’s Python and Jupyter extensions."),
+                    node(NodeKind.ListItem, children=[
+                        text("Open "),
+                        code("hands_on.py"),
+                        text(" and select the project’s "),
+                        code(".venv"),
+                        text(" kernel."),
+                    ]),
+                    node(NodeKind.ListItem, children=[
+                        text("Run its "),
+                        strong("Setup"),
+                        text(" cell to create "),
+                        code("spark"),
+                        text("."),
+                    ]),
+                ], style="ho-steps"),
+                paragraph([
+                    code("hands-on.ipynb"),
+                    text(" contains the same exercises."),
+                ], style="ho-note"),
+            ]),
+        ], style="ho-workgrid ho-setup-grid"),
+            paragraph([
+            text("Course repository: "),
+            node(NodeKind.Link, content="dannyscodecorner/mastering-pyspark", attributes=[attr("href", "https://github.com/dannyscodecorner/mastering-pyspark"), attr("target", "_blank"), attr("rel", "noopener")]),
+        ], style="ho-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("106"),
+        ]),
+        ],
+        notes="Walk through the existing uv project, rather than installing a separate Spark distribution or using Docker. Run the setup check before class wherever possible; show what success looks like here. Its check includes file writes and checkpoint restart, not just launching Spark. For cell-by-cell work, the optional notebook dependency group supplies ipykernel; the Python and Jupyter extensions supply Run Cell in VS Code. Select the project .venv as the Interactive window kernel; do not use another system Python. The script can also run end to end with uv run --locked hands_on.py, but that executes the complete worked reference. During class, run the Setup cell and then one numbered exercise at a time. The local helper starts Spark with two threads, UTC and two shuffle partitions for this tiny fixture. On native Windows, follow README requirements for the matching Hadoop components and validate on an attendee machine. Danny will bring a spare MacBook prepared with the same project as a classroom fallback. https://docs.astral.sh/uv/guides/projects/ https://code.visualstudio.com/docs/python/jupyter-support-py https://spark.apache.org/docs/4.2.0/index.html",
+    )

@@ -1,0 +1,135 @@
+"""History 2 slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, image, node, prose, span, text
+
+pub def slide_history_2() -> Slide:
+    return Slide(
+        slug="history-2",
+        title="2016 — Spark 2.0",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey spark-era",
+        attributes=[attr("data-history-index", "7")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era focal"),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(-1292px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("08 / 12", style="history-stop-count"),
+            prose("A common entry point", style="history-kicker"),
+            heading("Spark 2.0", level=1),
+            node(NodeKind.Figure, children=[
+                group([
+                    image("assets/history/spark.png", "Apache Spark", style="history-project-logo"),
+                    node(NodeKind.Svg, children=[
+                        node(NodeKind.SvgTitle, content="Spark 2.0", attributes=[attr("id", "hist-7-title")]),
+                        node(NodeKind.SvgDescription, content="SparkSession provides a common entry point; structured APIs support batch and streaming.", attributes=[attr("id", "hist-7-desc")]),
+                        node(NodeKind.SvgDefinitions, children=[
+                            node(NodeKind.SvgMarker, children=[
+                                node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L10 5L0 10"), attr("fill", "#54797d")]),
+                            ], attributes=[attr("id", "hj-arrow-7"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                        ]),
+                        node(NodeKind.SvgGroup, children=[
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node spark", attributes=[attr("x", "20"), attr("y", "35"), attr("width", "810"), attr("height", "68"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="SparkSession", style="hj-node-title", attributes=[attr("x", "425.0"), attr("y", "76.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgPath, style="hj-arrow", attributes=[attr("d", "M220 103 V165")]),
+                            node(NodeKind.SvgPath, style="hj-arrow", attributes=[attr("d", "M630 103 V165")]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node teal", attributes=[attr("x", "20"), attr("y", "165"), attr("width", "380"), attr("height", "88"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="DataFrames / SQL", style="hj-node-title", attributes=[attr("x", "210.0"), attr("y", "204.0"), attr("text-anchor", "middle")]),
+                                node(NodeKind.SvgText, content="Describe structured computations", style="hj-node-sub", attributes=[attr("x", "210.0"), attr("y", "234.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node teal", attributes=[attr("x", "450"), attr("y", "165"), attr("width", "380"), attr("height", "88"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="Structured Streaming", style="hj-node-title", attributes=[attr("x", "640.0"), attr("y", "204.0"), attr("text-anchor", "middle")]),
+                                node(NodeKind.SvgText, content="Same structured approach", style="hj-node-sub", attributes=[attr("x", "640.0"), attr("y", "234.0"), attr("text-anchor", "middle")]),
+                            ]),
+                        ], attributes=[attr("style", "--hj-marker:url(#hj-arrow-7)")]),
+                    ], attributes=[attr("viewBox", "0 0 850 290"), attr("role", "img"), attr("aria-labelledby", "hist-7-title hist-7-desc")]),
+                ], style="release-history-art"),
+            ], style="history-visual"),
+            prose("SparkSession becomes the common entry point; Structured Streaming brings streaming into the structured APIs.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("17"),
+        ]),
+        ],
+        notes="""Visual assets: see assets/history/CREDITS.md. Official logos identify the projects, not sponsorship. The Berkeley photo was taken in 2013 and illustrates the location, not the founding event. 2016 — Spark 2.0.
+
+Point back to SparkSession in our code example. Spark 2.0 unifies the DataFrame/Dataset APIs and introduces Structured Streaming as experimental; it is not the birth of all Spark streaming. Earlier Spark Streaming uses DStreams. Whole-stage code generation also advances SQL execution. We will cover streaming and query planning later. Transition: the next generation also changes execution decisions at runtime and how clients connect. Catalyst and Tungsten predate Spark 2.0; 2.0 builds on them and introduces whole-stage code generation. Do not label 2016 as their birth.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://spark.apache.org/history
+https://spark.apache.org/releases/spark-release-1-0-0.html
+https://spark.apache.org/releases/spark-release-1-3-0.html
+https://spark.apache.org/releases/spark-release-2-0-0.html""",
+    )

@@ -1,0 +1,54 @@
+"""Pyspark write slide."""
+
+from surface import Frame, NodeKind, Slide, code_block, group, heading, node, span, text
+
+pub def slide_pyspark_write() -> Slide:
+    return Slide(
+        slug="pyspark-write",
+        title="Exercise 5 · Save and check the report",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([
+            text("08 / WORKING WITH PYSPARK"),
+        ], style="eyebrow"),
+            heading("Exercise 5 · Save and check the report", level=1),
+            group([
+            group([
+                heading("Your task", level=2),
+                node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, content="Check accepted/rejected counts and all category totals."),
+                    node(NodeKind.ListItem, content="Write the report and rejected rows to new Parquet paths."),
+                    node(NodeKind.ListItem, content="Read the saved report back and compare it with the expected result."),
+                ], style="ho-steps"),
+            ]),
+            group([
+                heading("Check your result", level=2),
+                node(NodeKind.DefinitionList, children=[
+                    group([
+                        node(NodeKind.Term, content="Every input accounted for"),
+                        node(NodeKind.Definition, content="8 input = 5 accepted + 3 rejected"),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="No sales multiplied by the join"),
+                        node(NodeKind.Definition, content="5 accepted sales · total 100.00"),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="The saved report agrees"),
+                        node(NodeKind.Definition, content="The same three category rows and totals"),
+                    ]),
+                ], style="ho-key-points"),
+            ]),
+        ], style="ho-workgrid"),
+            group([
+            heading("Code to work with", level=2),
+            code_block("""report.write.mode("errorifexists").parquet(spark_path(RUN_ROOT / "report"))
+saved = spark.read.parquet(spark_path(RUN_ROOT / "report"))"""),
+        ], style="ho-hint"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("111"),
+        ]),
+        ],
+        notes="Use the existing fresh RUN_ROOT. Write the rejected DataFrame separately as well. The worked reference checks exact Decimal totals and full category rows, not just row counts. Repeated actions are intentionally simple on a tiny fixture; recall that they can request repeated work. The write returns None to Python; its side effect is the Parquet output. Keep previously created outputs intact.",
+    )

@@ -1,0 +1,84 @@
+"""Join hints slide."""
+
+from surface import Frame, NodeKind, Slide, TeachingStep, attr, code, code_block, group, heading, node, prose, span, text
+from components import step_rail, step_cues
+
+pub def slide_join_hints() -> Slide:
+    steps = [
+        TeachingStep(label="Make the request",
+            heading="A broadcast hint does not prove that broadcasting is safe.",
+            explanation="The files here are prepared example inputs with the schemas shown earlier.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Inspect the plan",
+            heading="explain() lets us inspect the planned strategy.",
+            explanation="This excerpt illustrates what to look for. It is not a measured run or a timing claim.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Check the outcome",
+            heading="A plan is evidence about planning, not a performance measurement.",
+            explanation="Compare the executed behaviour and results; we will use the Spark UI in the Glue section.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-hints",
+        title="Join hints",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide",
+        content=[
+            group([
+            text("06 / GROUPING, JOINING & AGGREGATING"),
+        ], style="eyebrow"),
+            heading("Join hints", level=1),
+            group([
+            step_rail(steps),
+            group([
+                group([
+                    group([
+                        code_block("""from pyspark.sql import functions as F
+
+sales = spark.read.parquet("data/sales.parquet")
+products = spark.read.parquet("data/products.parquet")
+
+enriched = sales.join(
+    F.broadcast(products),
+    on="product_id",
+    how="left",
+)
+enriched.explain(mode="formatted")""", style="language-python"),
+                    ]),
+                    group([
+                        group([
+                            heading("A hint is a request.", level=2),
+                            prose("Use it when you have evidence the chosen strategy is unsuitable."),
+                            prose("Check lookup size, key uniqueness and executor memory first."),
+                        ], style="join-state j0"),
+                        group([
+                            heading("Read what Spark planned.", level=2),
+                            node(NodeKind.Preformatted, content="""BroadcastHashJoin
+  LeftOuter · BuildRight
+  BroadcastExchange""", style="join-plan"),
+                            node(NodeKind.Small, content="Illustrative excerpt, not captured output"),
+                            prose("Compare SortMergeJoin, ShuffledHashJoin and BroadcastHashJoin; inspect their exchanges and build side."),
+                        ], style="join-state j1"),
+                        group([
+                            heading("Then check execution.", level=2),
+                            prose("AQE may revise eligible choices when runtime evidence arrives."),
+                            prose("Confirm output correctness and actual behaviour before keeping the hint."),
+                        ], style="join-state j2"),
+                    ]),
+                ], style="join-code-layout"),
+            ], style="joins-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson joins-lesson join-hints", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("70"),
+        ]),
+        ],
+        notes="File fixtures defined in joins-example.py beside the deck; requires a configured SparkSession. Hint priority and applicability vary; Spark may not support a hinted strategy for a given join type. BROADCAST can override the automatic size threshold but cannot remove memory constraints. Do not teach hints as stronger than correctness or statistics. Static explain can show an initial adaptive plan; final executed plan may differ. The sample physical-plan labels are schematic rather than literal guaranteed output. Manual repartition can introduce avoidable work. Source: https://spark.apache.org/docs/latest/sql-performance-tuning.html",
+    )

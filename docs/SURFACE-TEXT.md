@@ -34,4 +34,4 @@ INCAN_HOME="$PWD/.build/incan-home" CARGO_TARGET_DIR="$PWD/.build/cargo" incan t
 
 For a broader differential check, run `python3 tools/check_dedent.py` with Python 3.14. It compiles the actual Incan helper and compares its output with Python's implementation across mixed prefixes, every Python whitespace character, Unicode content, CRLF, long input and seeded random cases. Each result is also checked for idempotence. The comparison uses an isolated temporary native build beneath `.build/` and leaves the authored files untouched.
 
-Then run `python3 tools/course.py build` and `python3 tools/course.py verify`. The first migrated example is `slide_pyspark_code` in `chapter_01.incn`; its rendered code is unchanged.
+Then run `python3 tools/course.py build` and `python3 tools/course.py verify`. The first migrated example is `slide_pyspark_code` in `slides/src/chapters/chapter_01/pyspark_code.incn`; its rendered code is unchanged.

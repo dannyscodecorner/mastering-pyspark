@@ -1,0 +1,113 @@
+"""Streaming checkpoint recovery slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_streaming_checkpoint_recovery() -> Slide:
+    return Slide(
+        slug="streaming-checkpoint-recovery",
+        title="Restarting from a checkpoint",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-checkpoint-recovery",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Restarting from a checkpoint", level=1),
+            prose("The same word count · micro-batch execution", style="ss-checkpoint-scope"),
+            group([
+            group([
+                heading("Saved after Batch 2", level=2),
+                prose("Last committed state", style="ss-recovery-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Word counts saved after Batch 2", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="count", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="3"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="1"),
+                        ]),
+                    ]),
+                ], style="ss-recovery-state"),
+                prose("Files 01.txt and 02.txt processed", style="ss-recovery-input-note"),
+            ], style="ss-recovery-saved"),
+            group([
+                text("→"),
+            ], style="ss-recovery-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Batch 3 interrupted", level=2),
+                prose("Commit not recorded", style="ss-recovery-label"),
+                group([
+                    code("dog"),
+                    code("owl"),
+                ], style="ss-recovery-records"),
+                prose("Input from 03.txt", style="ss-recovery-input-note"),
+            ], style="ss-recovery-interrupted"),
+            group([
+                text("→"),
+            ], style="ss-recovery-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Restart and replay Batch 3", level=2),
+                prose("Reuse the same checkpoint", style="ss-recovery-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Recovered counts and counts after replaying Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Restored", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="After replay", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="4"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                    ]),
+                ], style="ss-recovery-result"),
+                prose("Continue from the recovered counts", style="ss-recovery-input-note"),
+            ], style="ss-recovery-resumed"),
+        ], style="ss-recovery-flow"),
+            paragraph([
+            text("An unfinished batch can run again."),
+            line_break(),
+            span("The source must support replay, and the sink must handle retries correctly."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("101"),
+        ]),
+        ],
+        notes="""A concrete failure scenario using the same prepared word-count files. Batch 2 has committed. Its input progress and state are recoverable: cat 2, dog 3, owl 1. Batch 3 selects file 03.txt, containing dog and owl, but the application is interrupted before completion is recorded. On restart with the same compatible query and checkpoint, Spark recovers the committed state and replays the unfinished batch. The recovered state plus that input produces cat 2, dog 4, owl 2. It does not start the counts at zero or add the same failed batch twice to the committed aggregation. The displayed batch numbers are teaching labels; actual batch IDs are normally zero-based.
+
+This is an ordering example, not a time scale or a promise that recovery is instant. Internally, offset, commit and state-store logs participate in recovery; partially written files are not equivalent to a committed batch. New executors can load saved state. Keep the required source data available: checkpointing cannot restore Kafka records that retention removed or input files that were deleted.
+
+The sink caveat matters. If output was written before the failure but completion was not recorded, a retry may write again. Exactly-once external effects require a compatible replayable source and a sink with the necessary transactional or idempotent behaviour; checkpointing alone is not a universal exactly-once guarantee. Kafka output is at-least-once, and custom foreachBatch writers need their own retry/deduplication design. The classroom memory sink is for inspecting small results; in Complete mode it can recreate its full table after restarting, but it is not a durable external destination. A normal stop/restart is also supported, without needing to simulate a crash.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#recovering-from-failures-with-checkpointing
+https://spark.apache.org/docs/4.2.0/streaming/getting-started.html#fault-tolerance-semantics
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-sinks""",
+    )

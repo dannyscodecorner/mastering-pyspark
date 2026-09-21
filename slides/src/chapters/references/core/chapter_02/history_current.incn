@@ -1,0 +1,137 @@
+"""History current slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, image, node, prose, span, text
+
+pub def slide_history_current() -> Slide:
+    return Slide(
+        slug="history-current",
+        title="2026 — Spark 4.2",
+        frame=Frame.Composed,
+        styles="slide migrated history-journey spark-era",
+        attributes=[attr("data-history-index", "11")],
+        content=[
+            group([
+            text("02 / INTRODUCING SPARK"),
+        ], style="eyebrow"),
+            group([
+            group([
+                group([
+                    span("2003/04", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Google’s papers", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2006", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Hadoop", style="history-rail-name"),
+                ], style="history-stop  "),
+                group([
+                    span("2009", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark begins", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2010", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Open source", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2013", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Apache", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2014", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 1.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2015", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("DataFrames", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2016", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 2.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2020/21", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 3.x", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2023", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Connect", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2025", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.0", style="history-rail-name"),
+                ], style="history-stop spark-era "),
+                group([
+                    span("2026", style="history-rail-year"),
+                    span("", style="history-rail-dot"),
+                    span("Spark 4.2", style="history-rail-name"),
+                ], style="history-stop spark-era focal"),
+            ], style="history-track", attributes=[attr("style", "transform:translateY(-2164px)")]),
+        ], style="history-rail", attributes=[attr("aria-hidden", "true")]),
+            group([
+            span("12 / 12", style="history-stop-count"),
+            prose("The current generation · 2026", style="history-kicker"),
+            heading("Spark 4.2", level=1),
+            node(NodeKind.Figure, children=[
+                group([
+                    image("assets/history/spark.png", "Apache Spark", style="history-project-logo"),
+                    node(NodeKind.Svg, children=[
+                        node(NodeKind.SvgTitle, content="Spark 4.2", attributes=[attr("id", "hist-11-title")]),
+                        node(NodeKind.SvgDescription, content="Spark 4.2 develops Python, SQL and Connect while retaining the core distributed execution model.", attributes=[attr("id", "hist-11-desc")]),
+                        node(NodeKind.SvgDefinitions, children=[
+                            node(NodeKind.SvgMarker, children=[
+                                node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L10 5L0 10"), attr("fill", "#54797d")]),
+                            ], attributes=[attr("id", "hj-arrow-11"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                        ]),
+                        node(NodeKind.SvgGroup, children=[
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node spark", attributes=[attr("x", "20"), attr("y", "55"), attr("width", "245"), attr("height", "160"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="Python + Arrow", style="hj-node-title", attributes=[attr("x", "142.5"), attr("y", "130.0"), attr("text-anchor", "middle")]),
+                                node(NodeKind.SvgText, content="New default paths", style="hj-node-sub", attributes=[attr("x", "142.5"), attr("y", "160.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node teal", attributes=[attr("x", "302"), attr("y", "55"), attr("width", "245"), attr("height", "160"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="SQL + data", style="hj-node-title", attributes=[attr("x", "424.5"), attr("y", "130.0"), attr("text-anchor", "middle")]),
+                                node(NodeKind.SvgText, content="Geospatial and CDC", style="hj-node-sub", attributes=[attr("x", "424.5"), attr("y", "160.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgGroup, children=[
+                                node(NodeKind.SvgRectangle, style="hj-node teal", attributes=[attr("x", "584"), attr("y", "55"), attr("width", "245"), attr("height", "160"), attr("rx", "8")]),
+                                node(NodeKind.SvgText, content="Connect", style="hj-node-title", attributes=[attr("x", "706.5"), attr("y", "130.0"), attr("text-anchor", "middle")]),
+                                node(NodeKind.SvgText, content="Continued development", style="hj-node-sub", attributes=[attr("x", "706.5"), attr("y", "160.0"), attr("text-anchor", "middle")]),
+                            ]),
+                            node(NodeKind.SvgText, content="Still: distributed data, operations, and an execution engine.", style="hj-label", attributes=[attr("x", "20"), attr("y", "265")]),
+                        ], attributes=[attr("style", "--hj-marker:url(#hj-arrow-11)")]),
+                    ], attributes=[attr("viewBox", "0 0 850 290"), attr("role", "img"), attr("aria-labelledby", "hist-11-title hist-11-desc")]),
+                ], style="release-history-art"),
+            ], style="history-visual"),
+            prose("Spark 4.2 extends SQL and data-source support, and enables Arrow-based Python execution paths by default.", style="history-backstory"),
+        ], style="history-scene"),
+            prose("Chronological milestones · spacing not to scale", style="history-scale-note"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("21"),
+        ]),
+        ],
+        notes="""Visual assets: see assets/history/CREDITS.md. Official logos identify the projects, not sponsorship. The Berkeley photo was taken in 2013 and illustrates the location, not the founding event. 2026 — Spark 4.2.
+
+Verified on 18 September 2026: the Apache project lists Spark 4.2.0 as released on 14 July 2026. Release highlights include Arrow-optimized Python UDFs and Arrow-based PySpark IPC enabled by default, geospatial types and CDC APIs. These are context, not extra topics to teach in depth today. Arrow reduces some transfer overhead; it does not erase process boundaries or make every Python operation free. End the history with the enduring ideas: distributed data, operations and execution. That leads into core abstractions, with Connect and execution details covered separately.
+
+Advance once to travel to the next milestone. The rail uses milestone spacing, not a proportional elapsed-time scale.
+
+Sources (checked 2026-09-18):
+https://spark.apache.org/releases/spark-release-3-0-0.html
+https://spark.apache.org/releases/spark-release-3-2-0.html
+https://spark.apache.org/releases/spark-release-3-4-0.html
+https://spark.apache.org/releases/spark-release-4-0-0.html
+https://spark.apache.org/releases/spark-release-4-2-0.html
+https://spark.apache.org/history""",
+    )

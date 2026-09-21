@@ -1,0 +1,34 @@
+"""Welcome slide."""
+
+from surface import Frame, NodeKind, Slide, emphasis, group, image, line_break, node, prose, rich_heading, span, text
+
+pub def slide_welcome() -> Slide:
+    return Slide(
+        slug="welcome",
+        title="Mastering PySpark",
+        frame=Frame.Composed,
+        styles="slide dark",
+        content=[
+            group([
+            text("DCC / SPARK TRAINING"),
+        ], style="eyebrow"),
+            group([
+            group([
+                prose("A WORKSHOP", style="kicker"),
+                rich_heading([
+                    text("Mastering"),
+                    line_break(),
+                    emphasis("PySpark"),
+                ], level=1),
+                prose("Big Data Analytics with PySpark", style="lead"),
+                prose("Danny Meijer", style="byline"),
+            ]),
+            image("assets/dcc-logo.svg", "Danny’s Code Corner logo"),
+        ], style="cover"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("01"),
+        ]),
+        ],
+        notes="Welcome. This is a presentation skeleton with sample layouts, not the migrated course.",
+    )

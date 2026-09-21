@@ -1,0 +1,91 @@
+"""Rdd reuse slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_rdd_reuse() -> Slide:
+    return Slide(
+        slug="rdd-reuse",
+        title="Reuse a result. Recover a partition.",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Reuse a result. Recover a partition.", level=1),
+            prose("Persistence can avoid repeated work; lineage provides a route to recomputation.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Reuse a result. Recover a partition.", attributes=[attr("id", "rdd-reuse-title")]),
+                node(NodeKind.SvgDescription, content="Persistence can avoid repeated work; lineage provides a route to recomputation.", attributes=[attr("id", "rdd-reuse-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "rdd-reuse-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "40"), attr("width", "344"), attr("height", "290"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Source partitions", style="trial-title", attributes=[attr("x", "30"), attr("y", "80")]),
+                    node(NodeKind.SvgText, content="P0: books 25 · games 40", style="trial-note", attributes=[attr("x", "30"), attr("y", "122")]),
+                    node(NodeKind.SvgText, content="P1: books 15 · music 10", style="trial-note", attributes=[attr("x", "30"), attr("y", "156")]),
+                    node(NodeKind.SvgText, content="Recoverable input", style="trial-note", attributes=[attr("x", "30"), attr("y", "190")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "454"), attr("y", "40"), attr("width", "390"), attr("height", "290"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Filtered RDD", style="trial-title", attributes=[attr("x", "476"), attr("y", "80")]),
+                    node(NodeKind.SvgText, content="P0: books 25 · games 40", style="trial-note recovery-partition", attributes=[attr("x", "476"), attr("y", "122")]),
+                    node(NodeKind.SvgText, content="P1: no matching records", style="trial-note", attributes=[attr("x", "476"), attr("y", "156")]),
+                    node(NodeKind.SvgText, content="Optionally persist for reuse", style="trial-note", attributes=[attr("x", "476"), attr("y", "190")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M352 188H454"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                    node(NodeKind.SvgText, content="> 20", style="trial-code", attributes=[attr("x", "363"), attr("y", "160")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "Persist a useful intermediate result after computing it")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "930"), attr("y", "40"), attr("width", "368"), attr("height", "125"), attr("rx", "12"), attr("fill", "#fae8e3"), attr("stroke", "#bd725d"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Partition P0 lost", style="trial-title", attributes=[attr("x", "952"), attr("y", "80")]),
+                    node(NodeKind.SvgText, content="Its stored result is unavailable.", style="trial-note", attributes=[attr("x", "952"), attr("y", "122")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "A persisted partition becomes unavailable")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "930"), attr("y", "200"), attr("width", "368"), attr("height", "164"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Recompute P0", style="trial-title", attributes=[attr("x", "952"), attr("y", "240")]),
+                    node(NodeKind.SvgText, content="Read source P0 again", style="trial-note", attributes=[attr("x", "952"), attr("y", "282")]),
+                    node(NodeKind.SvgText, content="Apply the same filter", style="trial-note", attributes=[attr("x", "952"), attr("y", "316")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M174 330V372H1114V364"), attr("fill", "none"), attr("stroke", "#286faf"), attr("stroke-width", "3")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Rebuild P0 from its source and filter")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "rdd-reuse-title rdd-reuse-desc")]),
+            group([
+                paragraph([
+                    strong("Reuse a result. Recover a partition."),
+                    span("Persistence can avoid repeated work; lineage provides a route to recomputation."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Reuse an intermediate RDD"),
+                    span("After an action computes it, persisted partitions can serve later calculations."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Lose one stored partition"),
+                    span("Keeping data in memory does not make failures disappear."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Recompute the missing partition"),
+                    span("For this narrow filter, source partition P0 is enough to rebuild filtered P0."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Reuse a result. Recover a partition.. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("27"),
+        ]),
+        ],
+        notes="Explain why the combination mattered historically: general reusable distributed data plus recovery without writing every intermediate result to durable storage. Step 1 depicts an RDD after materialisation by an action. persist alone does not execute. Persisted data may use memory or disk according to storage level and may be evicted. This simple narrow dependency allows recovery from one source partition; shuffle dependencies can require broader recomputation. In step 2 the old P0 row is crossed out; step 3 restores it to show recovery. Source remains available. Not a promise that every failure is recoverable. https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf",
+    )

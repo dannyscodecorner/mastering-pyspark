@@ -1,0 +1,75 @@
+"""Operations slide."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_operations() -> Slide:
+    return Slide(
+        slug="operations",
+        title="An action requests a result",
+        frame=Frame.Composed,
+        styles="slide lesson-slide execution-content",
+        content=[
+            group([
+            text("05 / FROM QUERY TO EXECUTION"),
+        ], style="eyebrow"),
+            heading("An action requests a result", level=1),
+            prose("Now ask for the total sales in each category.", style="subtitle"),
+            group([
+            code_block("""from pyspark.sql import functions as F
+
+sales = spark.read.parquet("data/sales.parquet")
+
+totals = (
+    sales
+    .filter(F.col("amount") > 0)
+    .groupBy("category")
+    .agg(F.sum("amount").alias("total"))
+)
+
+totals.show()"""),
+            group([
+                heading("The sales DataFrame", level=2),
+                paragraph([
+                    text("Read from "),
+                    code("data/sales.parquet"),
+                    line_break(),
+                    text("using our existing SparkSession."),
+                ]),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.Cell, content="books"),
+                        node(NodeKind.Cell, content="25"),
+                    ]),
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.Cell, content="games"),
+                        node(NodeKind.Cell, content="40"),
+                    ]),
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.Cell, content="books"),
+                        node(NodeKind.Cell, content="15"),
+                    ]),
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.Cell, content="music"),
+                        node(NodeKind.Cell, content="10"),
+                    ]),
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.Cell, content="books"),
+                        node(NodeKind.Cell, content="10"),
+                    ]),
+                ]),
+                paragraph([
+                    text("What must happen before"),
+                    line_break(),
+                    code("show()"),
+                    text(" can print totals?"),
+                ]),
+            ]),
+        ], style="exec-query"),
+            prose("The action requests execution of the work its result depends on.", style="exec-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("48"),
+        ]),
+        ],
+        notes="Return to section 04. The code explicitly reads sales from data/sales.parquet using the existing SparkSession named spark. Extend the earlier four sales records with one more books sale of 10. This five-row example makes both local aggregation and cross-partition aggregation visible, with category string and amount numeric. The relative path is an example, not a bundled lab file. Parquet matches the later Scan parquet outline. Ask the room to predict the work: read, filter, combine matching categories, return results. Do not execute unrelated branches. One action is not a guarantee of one Spark job: show can launch multiple jobs and AQE can materialise query stages. Analysis/planning and source metadata work may already have occurred before show. This is a conceptual journey, not a strict timing contract. Expected totals books50 games40 music10, order unspecified.",
+    )

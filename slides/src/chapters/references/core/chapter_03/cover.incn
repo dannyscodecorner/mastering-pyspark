@@ -1,0 +1,22 @@
+"""Cover slide."""
+
+from surface import Frame, Slide, group, heading, image, prose
+
+pub def slide_section_3() -> Slide:
+    return Slide(
+        slug="section-3",
+        title="Spark’s Core Abstractions",
+        frame=Frame.Composed,
+        styles="slide core-intro-art",
+        content=[
+            image("assets/core-abstractions-intro.png", "Illustrated numbered tiles, a table, and typed record cards represent RDD, DataFrame and Dataset against a dark charcoal background.", style="core-intro-image"),
+            group([
+            prose("03 / Spark’s Core Abstractions"),
+            heading("Spark’s Core Abstractions", level=1),
+            prose("Putting data into perspective"),
+            prose("RDD · DataFrame · Dataset"),
+            prose("Danny’s Code Corner"),
+        ], style="sr-only"),
+        ],
+        notes="We have seen how Spark evolved and how its processes work together. Now look at the data interfaces: a collection of elements, a table with named columns, and typed objects. These illustrations introduce the three APIs; they are not a required conversion pipeline. The next slides follow the original workshop’s explanation. Artwork combines the tactile objects from option 2 with the dark palette from option 1.",
+    )

@@ -1,0 +1,91 @@
+"""Immutability reference slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, code_block, group, heading, node, paragraph, span, strong, text
+
+pub def slide_immutability_reference() -> Slide:
+    return Slide(
+        slug="immutability-reference",
+        title="df = df.select(…)",
+        frame=Frame.Composed,
+        styles="slide core-slide migrated",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("df = df.select(…)", level=1),
+            group([
+            code_block("df = df.select(\"amount\")"),
+        ], style="reference-code"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Rebinding a Python name", attributes=[attr("id", "immutable-reference-title")]),
+                node(NodeKind.SvgDescription, content="The right-hand side creates a new DataFrame; assignment changes what df refers to.", attributes=[attr("id", "immutable-reference-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "immutable-reference-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "12"), attr("y", "66"), attr("width", "270"), attr("height", "100"), attr("rx", "6"), attr("fill", "#e8f3ef"), attr("stroke", "#60998d"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Python name", style="core-svg-note", attributes=[attr("x", "36"), attr("y", "106")]),
+                    node(NodeKind.SvgText, content="df", style="core-svg-heading", attributes=[attr("x", "36"), attr("y", "143")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "410"), attr("y", "20"), attr("width", "360"), attr("height", "260"), attr("rx", "6"), attr("fill", "#e8f0f7"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="DataFrame A", style="core-svg-heading", attributes=[attr("x", "434"), attr("y", "63")]),
+                    node(NodeKind.SvgText, content="category   amount", style="core-svg-code", attributes=[attr("x", "434"), attr("y", "115")]),
+                    node(NodeKind.SvgText, content="Original description", attributes=[attr("x", "434"), attr("y", "164"), attr("class", "")]),
+                    node(NodeKind.SvgPath, style="old-reference", attributes=[attr("d", "M282 110H404"), attr("stroke", "#286faf"), attr("stroke-width", "3"), attr("marker-end", "url(#immutable-reference-arrow)")]),
+                    node(NodeKind.SvgText, content="1 · before assignment", style="core-svg-note", attributes=[attr("x", "22"), attr("y", "218")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "Initially df refers to DataFrame A")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M770 170H894"), attr("stroke", "#286faf"), attr("stroke-width", "3"), attr("marker-end", "url(#immutable-reference-arrow)")]),
+                    node(NodeKind.SvgText, content="select", style="core-svg-note", attributes=[attr("x", "790"), attr("y", "143")]),
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "900"), attr("y", "20"), attr("width", "396"), attr("height", "260"), attr("rx", "6"), attr("fill", "#e8f3ef"), attr("stroke", "#60998d"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="DataFrame B", style="core-svg-heading", attributes=[attr("x", "924"), attr("y", "63")]),
+                    node(NodeKind.SvgText, content="amount", style="core-svg-code", attributes=[attr("x", "924"), attr("y", "115")]),
+                    node(NodeKind.SvgText, content="Projection of A", attributes=[attr("x", "924"), attr("y", "164"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="A remains unchanged", style="core-svg-note", attributes=[attr("x", "924"), attr("y", "213")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "select returns a new DataFrame description")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M145 166V312Q145 320 153 320H1090Q1098 320 1098 312V286"), attr("fill", "none"), attr("stroke", "#257f86"), attr("stroke-width", "3"), attr("marker-end", "url(#immutable-reference-arrow)")]),
+                    node(NodeKind.SvgText, content="3 · df now refers to B", style="core-svg-note", attributes=[attr("x", "344"), attr("y", "306")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "Assignment rebinds df to DataFrame B")]),
+            ], attributes=[attr("viewBox", "0 0 1308 350"), attr("role", "img"), attr("aria-labelledby", "immutable-reference-title immutable-reference-desc")]),
+            group([
+                paragraph([
+                    strong("Rebinding a Python name"),
+                    span("The right-hand side creates a new DataFrame; assignment changes what df refers to."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · Start with df"),
+                    span("Before this statement, df refers to the original DataFrame A."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Evaluate the right-hand side"),
+                    span("df.select(\"amount\") returns a new DataFrame B, derived from A."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Assign the result"),
+                    span("The name df now refers to B. A was not modified, and no full data copy is implied."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Rebinding a Python name. Use previous and next point to step through the explanation.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("41"),
+        ]),
+        ],
+        notes="Original workshop slide 21, preserving its reference/identity explanation. Read the statement right to left. The old arrow becomes dashed to show a previous binding, not two simultaneous current bindings. A and B are teaching labels, not Spark IDs. We deliberately do not use df.rdd.id() to establish DataFrame identity: it exposes an implementation detail, is not a reliable abstraction for this lesson, and is unavailable in Connect. Once rebound, no separate Python name for A is retained in this snippet; B still describes a projection derived from its input plan. Ask: have we actually processed the rows yet? This bridges directly to Lazy Pandas. Reference: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.select.html  Original workshop slides 15–21. Updated against https://spark.apache.org/docs/latest/rdd-programming-guide.html and https://spark.apache.org/docs/latest/sql-programming-guide.html . ",
+    )

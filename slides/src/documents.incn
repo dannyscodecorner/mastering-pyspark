@@ -1,26 +1,26 @@
 """Compose the three native-generated browser documents."""
 
 from html_target import render_chapters
-from opening import opening_chapter
-from chapter_01 import chapter_01_chapter
-from chapter_02 import chapter_02_chapter
-from chapter_03 import chapter_03_chapter
-from chapter_04 import chapter as lazy_chapter
-from chapter_05 import chapter_05_chapter
-from chapter_06 import chapter_06_chapter
-from chapter_07 import chapter_07_chapter
-from chapter_08 import chapter_08_chapter
-from chapter_09 import chapter_09_chapter
-from closing import closing_chapter
-from core_reference_00 import core_reference_00_chapter
-from core_reference_01 import core_reference_01_chapter
-from core_reference_02 import core_reference_02_chapter
-from core_reference_03 import core_reference_03_chapter
-from core_reference_04 import core_reference_04_chapter
-from core_reference_05 import core_reference_05_chapter
-from core_reference_06 import core_reference_06_chapter
-from core_reference_07 import core_reference_07_chapter
-from joins_reference_00 import joins_reference_00_chapter
+from chapters.opening import opening_chapter
+from chapters.chapter_01 import chapter_01_chapter
+from chapters.chapter_02 import chapter_02_chapter
+from chapters.chapter_03 import chapter_03_chapter
+from chapters.chapter_04 import chapter as lazy_chapter
+from chapters.chapter_05 import chapter_05_chapter
+from chapters.chapter_06 import chapter_06_chapter
+from chapters.chapter_07 import chapter_07_chapter
+from chapters.chapter_08 import chapter_08_chapter
+from chapters.chapter_09 import chapter_09_chapter
+from chapters.closing import closing_chapter
+from chapters.references.core.chapter_00 import core_reference_00_chapter
+from chapters.references.core.chapter_01 import core_reference_01_chapter
+from chapters.references.core.chapter_02 import core_reference_02_chapter
+from chapters.references.core.chapter_03 import core_reference_03_chapter
+from chapters.references.core.chapter_04 import core_reference_04_chapter
+from chapters.references.core.chapter_05 import core_reference_05_chapter
+from chapters.references.core.chapter_06 import core_reference_06_chapter
+from chapters.references.core.chapter_07 import core_reference_07_chapter
+from chapters.references.joins import joins_reference_00_chapter
 
 pub def main_document() -> str:
     chapters = [

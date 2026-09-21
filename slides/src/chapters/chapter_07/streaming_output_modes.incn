@@ -1,0 +1,90 @@
+"""Streaming output modes slide."""
+
+from surface import Frame, NodeKind, Slide, attr, code, group, heading, line_break, node, paragraph, span, text
+
+pub def slide_streaming_output_modes() -> Slide:
+    return Slide(
+        slug="streaming-output-modes",
+        title="Streaming output modes",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-overview",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming output modes", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The three output modes, shown for micro-batch execution", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, attributes=[attr("style", "width:240px")]),
+                node(NodeKind.Column, attributes=[attr("style", "width:524px")]),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Mode", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Rows sent to the sink", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, children=[
+                        text("Setting on "),
+                        code("writeStream"),
+                    ], attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Complete", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("The full current result,"),
+                        line_break(),
+                        text("including unchanged groups."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".outputMode(\"complete\")"),
+                        ], style="language-python"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Append"),
+                        span("The default"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("New final rows that the query"),
+                        line_break(),
+                        text("will not revise later."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".outputMode(\"append\")"),
+                        ], style="language-python"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Update", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="New or updated result rows."),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".outputMode(\"update\")"),
+                        ], style="language-python"),
+                    ]),
+                ]),
+            ]),
+        ], style="ss-output-mode-table"),
+            paragraph([
+            text("Execution mode controls how the query runs."),
+            line_break(),
+            span("Output mode controls which result rows it sends to the sink."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("87"),
+        ]),
+        ],
+        notes="""We now return to micro-batch execution and choose what to publish. Complete, Append and Update are the three output modes. Configure one on writeStream before start; Append is the default. Our next examples keep the original Complete, Append, Update teaching order.
+
+Complete publishes the current aggregate result. Append publishes final rows. Update publishes rows the query updated, including newly created groups. The mode selects output records; it is not the batch writer's append/overwrite save mode, nor an instruction to merge a target table. We will make the selection concrete with the same cat, dog and owl counts, then check query and sink compatibility. Real-time has separate restrictions, revisited in that compatibility check.
+
+Definition source: https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+Default and compatibility: https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )

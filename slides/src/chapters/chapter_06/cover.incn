@@ -1,0 +1,33 @@
+"""Cover slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, image, line_break, node, prose, rich_heading, span, text
+
+pub def slide_section_6() -> Slide:
+    return Slide(
+        slug="section-6",
+        title="Grouping, joining and aggregating",
+        frame=Frame.Composed,
+        styles="slide dark joins-cover joins-waterfall-cover joins-railway-cover",
+        content=[
+            image("assets/joins-railway-junction.png", "Railway tracks converging through a switching yard at dusk.", style="joins-waterfall-art"),
+            group([
+            text("06 / FOLLOWING THE FLOW OF DATA"),
+        ], style="eyebrow"),
+            group([
+            span("06", attributes=[attr("aria-hidden", "true")]),
+            rich_heading([
+                text("Grouping,"),
+                line_break(),
+                text("joining &"),
+                line_break(),
+                text("aggregating"),
+            ], level=1),
+            prose("what Spark has to do behind the scenes", style="joins-waterfall-subtitle"),
+        ], style="joins-waterfall-title"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("56"),
+        ]),
+        ],
+        notes="Start with the familiar PySpark syntax, then recap the logical join types and grouping/aggregation calls. Assume the audience already knows relational joins. Ask: you know how to write this query, so why can it become expensive in Spark? Follow the data across workers through shuffle and skew, then explain the physical join strategies Spark can choose and how hints affect that choice. Return to the same report for partial aggregation and the product-version matching rule, and close with the single-server database comparison. The railway junction is cover artwork; the chapter uses literal records, partitions and workers to explain the mechanics. Distributed databases can face the same distribution costs; do not present these challenges as unique to Spark.",
+    )

@@ -1,0 +1,56 @@
+"""Dataset context slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, line_break, node, paragraph, prose, span, text
+
+pub def slide_dataset_context() -> Slide:
+    return Slide(
+        slug="dataset-context",
+        title="There’s also the Dataset API",
+        frame=Frame.Composed,
+        styles="slide lesson-slide ",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("There’s also the Dataset API", level=1),
+            group([
+            group([
+                prose("SCALA / JAVA", style="language-label"),
+                heading("Dataset<Sale>", level=2),
+                node(NodeKind.Preformatted, content="Sale(\"books\", 25)"),
+                prose("A typed object API."),
+                paragraph([
+                    text("Unified since Spark 2.0"),
+                    line_break(),
+                    text("Scala: DataFrame = Dataset[Row]"),
+                ], style="small-note"),
+            ]),
+            group([
+                prose("OUR PYSPARK COURSE", style="language-label"),
+                heading("DataFrame", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="category"),
+                            node(NodeKind.HeaderCell, content="amount"),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="25"),
+                        ]),
+                    ]),
+                ]),
+                prose("No typed Dataset API to learn here."),
+            ]),
+        ], style="dataset-brief"),
+            prose("Recognise the term in documentation. We’ll work with DataFrames.", style="dataset-close"),
+            node(NodeKind.Link, content="Earlier explanations and comparison slides ↗", style="reference-link", attributes=[attr("href", "core-abstractions-reference.html#hadoop-mapreduce")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("31"),
+        ]),
+        ],
+        notes="Keep this to a brief mention, around 30 seconds. Say: There’s also the Dataset API, for typed objects in Scala and Java. In this PySpark course we’ll use DataFrames, so we won’t spend time on it. The remaining details are backup for questions. Typed Dataset is a Scala/Java interface. Scala calls it Dataset[Sale]; Java writes Dataset<Sale>. In Scala DataFrame is an alias for Dataset[Row]; in Java the corresponding form is Dataset<Row>. Do not present this as a Python type equivalence. PySpark has DataFrames, not typed Dataset[T]. No automatic performance superiority. The original material remains in a separate reference deck linked on this slide. Spark 2.0 unified the DataFrame and Dataset APIs in Scala/Java; it did not add the typed Dataset API to Python. Transition to the overview of their relationship to execution. Source: https://spark.apache.org/releases/spark-release-2-0-0.html . Source: https://spark.apache.org/docs/latest/sql-programming-guide.html",
+    )

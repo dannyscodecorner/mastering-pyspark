@@ -1,0 +1,85 @@
+"""Dataframe meaning slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, paragraph, prose, span, strong, text
+
+pub def slide_dataframe_meaning() -> Slide:
+    return Slide(
+        slug="dataframe-meaning",
+        title="Give Spark more information",
+        frame=Frame.Composed,
+        styles="slide core-slide core-trial",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Give Spark more information", level=1),
+            prose("Keep the records. Add a schema and expressions Spark can understand.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Give Spark more information", attributes=[attr("id", "dataframe-meaning-title")]),
+                node(NodeKind.SvgDescription, content="Keep the records. Add a schema and expressions Spark can understand.", attributes=[attr("id", "dataframe-meaning-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#286faf")]),
+                    ], attributes=[attr("id", "dataframe-meaning-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "8"), attr("y", "16"), attr("width", "520"), attr("height", "348"), attr("rx", "12"), attr("fill", "#edf3f8"), attr("stroke", "#97aec0"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="RDD + Python function", style="trial-title", attributes=[attr("x", "30"), attr("y", "56")]),
+                    node(NodeKind.SvgText, content="lambda sale: sale[1] > 20", style="trial-note", attributes=[attr("x", "30"), attr("y", "98")]),
+                    node(NodeKind.SvgText, style="trial-note", attributes=[attr("x", "30"), attr("y", "132")]),
+                    node(NodeKind.SvgText, content="Spark can run the function.", style="trial-note", attributes=[attr("x", "30"), attr("y", "166")]),
+                    node(NodeKind.SvgText, content="Its column-level meaning", style="trial-note", attributes=[attr("x", "30"), attr("y", "200")]),
+                    node(NodeKind.SvgText, content="is not exposed as SQL.", style="trial-note", attributes=[attr("x", "30"), attr("y", "234")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "1"), attr("aria-label", "An arbitrary Python function hides its relational meaning")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "580"), attr("y", "16"), attr("width", "720"), attr("height", "166"), attr("rx", "12"), attr("fill", "#e8f2f9"), attr("stroke", "#286faf"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="DataFrame schema", style="trial-title", attributes=[attr("x", "602"), attr("y", "56")]),
+                    node(NodeKind.SvgText, content="category: string       amount: long", style="trial-note", attributes=[attr("x", "602"), attr("y", "98")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "2"), attr("aria-label", "A schema gives values names and types")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "580"), attr("y", "208"), attr("width", "720"), attr("height", "156"), attr("rx", "12"), attr("fill", "#e8f3ee"), attr("stroke", "#639681"), attr("stroke-width", "2")]),
+                    node(NodeKind.SvgText, content="Column expression", style="trial-title", attributes=[attr("x", "602"), attr("y", "248")]),
+                    node(NodeKind.SvgText, content="sales.filter(col(\"amount\") > 20)", style="trial-note", attributes=[attr("x", "602"), attr("y", "290")]),
+                    node(NodeKind.SvgText, content="Spark can analyse the expression.", style="trial-note", attributes=[attr("x", "602"), attr("y", "324")]),
+                ], attributes=[attr("data-motion-item", flag=true), attr("data-step", "3"), attr("aria-label", "A built-in expression exposes the requested computation")]),
+            ], attributes=[attr("viewBox", "0 0 1308 390"), attr("role", "img"), attr("aria-labelledby", "dataframe-meaning-title dataframe-meaning-desc")]),
+            group([
+                paragraph([
+                    strong("Give Spark more information"),
+                    span("Keep the records. Add a schema and expressions Spark can understand."),
+                ], style="narration-cue cue-0"),
+                paragraph([
+                    strong("1 · A function over elements"),
+                    span("Spark tracks RDD dependencies, but arbitrary Python logic is largely opaque to SQL optimisation."),
+                ], style="narration-cue cue-1"),
+                paragraph([
+                    strong("2 · Name and type the columns"),
+                    span("The schema says which values are category and amount."),
+                ], style="narration-cue cue-2"),
+                paragraph([
+                    strong("3 · Describe the operation"),
+                    span("A built-in column expression becomes part of a plan Spark can analyse and optimise."),
+                ], style="narration-cue cue-3"),
+            ], style="narration-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Play slowly", attributes=[attr("type", "button"), attr("data-motion-action", "play")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause")]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                node(NodeKind.Span, children=[
+                    text("Step "),
+                    span("3", attributes=[attr("data-motion-step-label", flag=true)]),
+                    text(" of 3"),
+                ], style="core-step"),
+            ], attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true)]),
+            node(NodeKind.Paragraph, style="sr-only", attributes=[attr("data-motion-status", flag=true), attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+        ], style="core-motion jvm-walkthrough trial-motion", attributes=[attr("data-motion-root", flag=true), attr("data-motion-mode", "step"), attr("data-step-count", "3"), attr("data-step-current", "3"), attr("data-frame", "static"), attr("style", "--motion-hold:6000ms"), attr("tabindex", "0"), attr("aria-label", "Give Spark more information. Use Next point to advance.")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("29"),
+        ]),
+        ],
+        notes="Use the same amount > 20 example as the RDD filter. Explain that schema alone is not magic: built-in relational expressions expose meaning. A Python UDF inside a DataFrame can again hide relevant logic. col is imported from pyspark.sql.functions in a runnable example. RDDs still have scheduling and dependency information; avoid claiming Spark knows nothing about them. DataFrame is not simply a Python table wrapped around an RDD. Modern Spark SQL has its own planning and internal row/columnar execution machinery. The familiar partition and dependency concepts remain relevant. Source: https://spark.apache.org/docs/latest/sql-programming-guide.html",
+    )

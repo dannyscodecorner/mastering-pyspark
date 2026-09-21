@@ -1,6 +1,7 @@
 # Working on this course
 
-- Author slide content in `slides/src/*.incn`. This is the chosen source of truth.
+- Author slide content in `slides/src/chapters/`. Each chapter's `mod.incn` lists
+  its slide modules in teaching order. This is the chosen source of truth.
   `dist/` is generated. Do not import the old HTML back over authored Incan edits.
 - Keep the Incan renderer native. No new authored Rust is needed for this course.
   Python repository tools may package files and run checks; slide construction
@@ -14,7 +15,7 @@
   animation steps and reference links.
 - `labs/chapter08/hands_on.py` is the canonical lesson source. Regenerate the
   optional notebook and HTML with its authoring helper. Keep exercise numbers
-  aligned with `slides/src/chapter_08.incn`.
+  aligned with `slides/src/chapters/chapter_08/`.
 - The lab uses its own locked uv project. Do not change its Spark/Python/Java
   baseline as a side effect of presentation work. Validate runtime changes and
   distinguish observed results from untested platform assumptions.

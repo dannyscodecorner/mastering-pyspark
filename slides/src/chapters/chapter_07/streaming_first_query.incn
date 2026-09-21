@@ -1,0 +1,63 @@
+"""Streaming first query slide."""
+
+from surface import Frame, NodeKind, Slide, code, group, heading, node, prose, span, text
+
+pub def slide_streaming_first_query() -> Slide:
+    return Slide(
+        slug="streaming-first-query",
+        title="Start processing the arriving data",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-first-run",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Start processing the arriving data", level=1),
+            group([
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("""query = (
+    counts.writeStream
+    .format("console")
+    .outputMode("complete")
+    .start()
+)"""),
+                ], style="language-python"),
+                prose("A small console demonstration using the word-count query we just defined.", style="ss-run-note"),
+            ]),
+            node(NodeKind.DefinitionList, children=[
+                group([
+                    node(NodeKind.Term, children=[
+                        code("counts"),
+                    ]),
+                    node(NodeKind.Definition, content="The streaming DataFrame describes the result we want."),
+                ]),
+                group([
+                    node(NodeKind.Term, children=[
+                        code(".start()"),
+                    ]),
+                    node(NodeKind.Definition, content="Starts executing that query as input arrives."),
+                ]),
+                group([
+                    node(NodeKind.Term, children=[
+                        code("query"),
+                    ]),
+                    node(NodeKind.Definition, children=[
+                        text("A "),
+                        code("StreamingQuery"),
+                        text(" handle for monitoring and stopping the run."),
+                    ]),
+                ]),
+            ], style="ss-run-explanation"),
+        ], style="ss-run-grid"),
+            prose("The query is now running. Next, we’ll look at how Spark processes new input.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("81"),
+        ]),
+        ],
+        notes="""Continue the counts definition from the earlier read/readStream example. Defining counts described a query; start() starts execution and returns a StreamingQuery. No trigger is set, so this demonstration uses the default micro-batch schedule. Console is a debugging destination. Complete prints all current counts after each batch. Both choices receive their own explanations later; mention their purpose here without enumerating alternatives. No explicit durable checkpoint is configured in this minimal classroom example, so it is not a restart recipe. The fuller writer configuration later adds the checkpoint path and named memory sink. Stop this demonstration with query.stop() before running that separate example. The code is an explanatory fragment that assumes spark, counts and the prepared input directory exist.
+
+https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.start.html
+https://spark.apache.org/docs/4.2.0/streaming/getting-started.html""",
+    )

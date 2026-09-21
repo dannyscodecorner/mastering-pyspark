@@ -1,0 +1,37 @@
+"""Why wait slide."""
+
+from surface import Frame, Slide, code, code_block, group, line_break, prose, text
+from components import Phase, flow
+
+pub def why_wait() -> Slide:
+    return Slide(
+        slug="why-lazy",
+        title="Why wait?",
+        frame=Frame.Lesson,
+        subtitle="Spark can see the whole request before processing the rows.",
+        content=[
+            group([
+                code_block("""amounts = sales.filter(col("amount") > 20).select("amount")
+amounts.show()"""),
+            ], style="lazy-benefit-code"),
+            flow([
+                Phase(label="YOU DESCRIBE", title="Filter + select", description=[
+                    text("Only amounts above 20."),
+                    line_break(),
+                    text("Only the amount column."),
+                ]),
+                Phase(label="SPARK CAN PLAN", title="Less work", description=[
+                    text("Prune unused columns."),
+                    line_break(),
+                    text("Combine compatible operations."),
+                ]),
+                Phase(label="YOU REQUEST", title="A result", description=[
+                    text("Run the work needed"),
+                    line_break(),
+                    text("for this action."),
+                ]),
+            ]),
+            prose("This is where Catalyst comes back into the story.", style="lazy-catalyst-return"),
+        ],
+        notes="Based on original slides 26–28. Close the open thread from the overview before the panda cover. Lazy evaluation provides the opportunity to inspect the whole relational request; Catalyst supplies the analysis and optimisation. Laziness alone does not guarantee a speedup or automatically memoise every result. Column pruning benefits depend on the source; the earlier Parquet example is a suitable illustration. Combining operators does not remove every shuffle, and actions need not execute all earlier transformations literally or separately. Explain the practical payoff without drawing the detailed Catalyst architecture yet; that is section 05. If asked about repeated actions: without persistence they can repeat work. If asked about failures: some are caught during analysis, others during execution. Do not promise delayed errors universally. Transition: how does Spark turn this request into work on the cluster? Source: https://spark.apache.org/docs/latest/sql-programming-guide.html",
+    )

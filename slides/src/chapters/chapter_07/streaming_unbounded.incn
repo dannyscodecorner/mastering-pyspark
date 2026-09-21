@@ -1,0 +1,123 @@
+"""Streaming unbounded slide."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, paragraph, span, strong, text
+
+pub def slide_streaming_unbounded() -> Slide:
+    return Slide(
+        slug="streaming-unbounded",
+        title="A table that keeps growing",
+        frame=Frame.Composed,
+        styles="slide streaming-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("A table that keeps growing", level=1),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="A continuing stream of text records becomes a growing input table", attributes=[attr("id", "sug-title")]),
+                node(NodeKind.SvgDescription, content="An initially empty stream carries cat dog, dog dog, owl cat, dog and owl into the input table, one row per text record. Its value column remains the same. Further arrivals continue beyond the five illustrated rows. The table is a logical model of an unbounded input, not all historical data held in memory.", attributes=[attr("id", "sug-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgClipPath, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "172"), attr("width", "668"), attr("height", "152")]),
+                    ], attributes=[attr("id", "sug-canal-clip")]),
+                    node(NodeKind.SvgClipPath, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "96"), attr("width", "1308"), attr("height", "356")]),
+                    ], attributes=[attr("id", "sug-record-clip")]),
+                ]),
+                node(NodeKind.SvgText, content="Data stream", style="sug-heading", attributes=[attr("x", "40"), attr("y", "42")]),
+                node(NodeKind.SvgText, content="Text records arrive over time", style="sug-subheading", attributes=[attr("x", "40"), attr("y", "75")]),
+                node(NodeKind.SvgText, content="Streaming DataFrame", style="sug-heading", attributes=[attr("x", "744"), attr("y", "42")]),
+                node(NodeKind.SvgText, content="An unbounded input table", style="sug-subheading", attributes=[attr("x", "744"), attr("y", "75")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="sug-water", attributes=[attr("d", "M-32 192 C108 180 202 202 332 192 S544 182 688 194 V306 C556 294 438 318 310 308 S88 298 -32 310 Z")]),
+                    node(NodeKind.SvgPath, style="sug-bank", attributes=[attr("d", "M-32 192 C108 180 202 202 332 192 S544 182 688 194 M-32 310 C88 298 182 298 310 308 S556 294 688 306")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M-112 216 C-16 206 80 228 176 216 S368 206 464 216 S656 228 752 216")]),
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M-160 286 C-64 276 32 298 128 286 S320 276 416 286 S608 298 704 286")]),
+                    ], style="sug-ripples", attributes=[attr("aria-hidden", "true")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M82 247 H122 M114 239 L122 247 L114 255 M286 247 H326 M318 239 L326 247 L318 255 M490 247 H530 M522 239 L530 247 L522 255")]),
+                    ], style="sug-flow-direction", attributes=[attr("aria-hidden", "true")]),
+                ], style="sug-canal", attributes=[attr("clip-path", "url(#sug-canal-clip)")]),
+                node(NodeKind.SvgRectangle, style="sug-table-head", attributes=[attr("x", "744"), attr("y", "96"), attr("width", "520"), attr("height", "36")]),
+                node(NodeKind.SvgText, content="value", style="sug-column-name", attributes=[attr("x", "772"), attr("y", "121")]),
+                node(NodeKind.SvgText, content="string", style="sug-column-type", attributes=[attr("x", "1236"), attr("y", "121"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgPath, style="sug-table-edge", attributes=[attr("d", "M744 132 V424 M1264 132 V424")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "132"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="cat dog", style="sug-value", attributes=[attr("x", "772"), attr("y", "168")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "5400"), attr("style", "--arrival:5400ms"), attr("aria-label", "Input row 1: cat dog")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "188"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="dog dog", style="sug-value", attributes=[attr("x", "772"), attr("y", "224")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "7000"), attr("style", "--arrival:7000ms"), attr("aria-label", "Input row 2: dog dog")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "244"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="owl cat", style="sug-value", attributes=[attr("x", "772"), attr("y", "280")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "8600"), attr("style", "--arrival:8600ms"), attr("aria-label", "Input row 3: owl cat")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "300"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="dog", style="sug-value", attributes=[attr("x", "772"), attr("y", "336")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "10200"), attr("style", "--arrival:10200ms"), attr("aria-label", "Input row 4: dog")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "356"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="owl", style="sug-value", attributes=[attr("x", "772"), attr("y", "392")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "11800"), attr("style", "--arrival:11800ms"), attr("aria-label", "Input row 5: owl")]),
+                node(NodeKind.SvgPath, style="sug-open-end", attributes=[attr("d", "M744 424 V448 M1264 424 V448")]),
+                node(NodeKind.SvgText, content="… new rows continue below", style="sug-continuation", attributes=[attr("x", "1004"), attr("y", "444"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="cat dog", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:1200ms;offset-path:path('M-100 248 H616 Q640 248 640 224 V184 Q640 160 664 160 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="dog dog", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:2800ms;offset-path:path('M-100 248 H624 Q640 248 640 232 V232 Q640 216 656 216 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="owl cat", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:4400ms;offset-path:path('M-100 248 H628 Q640 248 640 260 V260 Q640 272 652 272 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="dog", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:6000ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V304 Q640 328 664 328 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="owl", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:7600ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V360 Q640 384 664 384 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="…", style="sug-value", attributes=[attr("x", "0"), attr("y", "8"), attr("text-anchor", "middle")]),
+                    ], style="sug-record sug-future", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:9200ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V408 Q640 432 664 432 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="…", style="sug-value", attributes=[attr("x", "0"), attr("y", "8"), attr("text-anchor", "middle")]),
+                    ], style="sug-record sug-future", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:11300ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V408 Q640 432 664 432 H840')")]),
+                ], attributes=[attr("clip-path", "url(#sug-record-clip)")]),
+            ], attributes=[attr("viewBox", "0 0 1308 452"), attr("role", "img"), attr("aria-labelledby", "sug-title sug-desc")]),
+            group([
+                paragraph([
+                    strong("Each arriving record becomes a new row."),
+                    span("The input keeps growing, while the table’s schema stays the same."),
+                ]),
+            ], style="sug-cues"),
+            group([
+                node(NodeKind.Button, content="Previous row", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Next row", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Play", attributes=[attr("type", "button"), attr("data-motion-action", "play"), attr("aria-pressed", "false")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause"), attr("aria-pressed", "true")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                span("Space: pause / resume", style="sug-control-hint"),
+                span("5 rows shown · stream continues", style="sug-progress", attributes=[attr("data-stream-progress", flag=true)]),
+            ], style="sug-controls", attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true), attr("role", "group"), attr("aria-label", "Stream animation controls")]),
+            node(NodeKind.Paragraph, content="Five illustrated rows in an unbounded input table.", style="sr-only", attributes=[attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true"), attr("data-motion-status", flag=true)]),
+        ], style="sug-figure", attributes=[attr("data-stream-root", flag=true), attr("data-frame", "static"), attr("tabindex", "0"), attr("aria-label", "Growing input table animation")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("80"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 7. Presenter narrative: “This is a streaming DataFrame. We can use familiar DataFrame operations, but the input keeps arriving. That brings a few differences, which we will cover through the rest of this section.” In PySpark, readStream creates a streaming DataFrame; DataStream is not a separate object type here. Avoid promising identical behaviour or support for every batch operation. Start empty. The water moves continuously, and text records float in automatically: cat dog, dog dog, owl cat, dog, owl. Each full record becomes one row in the same value column; words have not yet been split. The ellipsis records continue into the open lower end after the first five rows, so the animation does not suggest that the source ends. The canal represents continuing arrivals only, not a network route, partition, executor or buffer implementation. Depicted order and spacing are illustrative, not a DataFrame ordering guarantee or trigger schedule. The later file example groups the first two and last two records into batches. The growing input table is a logical model, not a claim that Spark retains all input history in memory or rereads it each time. Query state and output follow on the next slides. Animation starts on the first visit to this slide. Pause freezes water and records in place; Play resumes, Replay clears the example and restarts, and Previous/Next row lets the presenter inspect arrivals. Leaving the slide pauses it. Reduced-motion, static URLs, print and no-JavaScript views show the complete five-row illustration. Source: https://spark.apache.org/docs/4.2.0/streaming/getting-started.html and https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )
