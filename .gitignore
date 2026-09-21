@@ -1,6 +1,7 @@
 # Built presentation and compiler state
 /dist/
 /.build/
+/slides/target/
 .incan/
 .incan-home/
 

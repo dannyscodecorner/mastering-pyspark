@@ -1,0 +1,67 @@
+"""Text helper contracts, independent of presentation rendering."""
+
+from std.testing import assert_eq
+from surface import code_block, dedent
+
+
+def test_dedent_preserves_nested_code() -> None:
+    source = "    if ready:\n        run()\n    done()"
+    assert_eq(dedent(source), "if ready:\n    run()\ndone()")
+
+
+def test_dedent_uses_all_nonblank_lines() -> None:
+    source = "        nested()\n    outer()"
+    assert_eq(dedent(source), "    nested()\nouter()")
+
+
+def test_dedent_leaves_unindented_text_alone() -> None:
+    source = "first\n    second"
+    assert_eq(dedent(source), source)
+
+
+def test_dedent_ignores_blank_lines_and_keeps_boundary_newlines() -> None:
+    source = "\n    first\n \t \n    second\n    "
+    assert_eq(dedent(source), "\nfirst\n\nsecond\n")
+
+
+def test_dedent_empty_and_whitespace_only_input() -> None:
+    assert_eq(dedent(""), "")
+    assert_eq(dedent("   \t"), "")
+    assert_eq(dedent("  \n\t\n"), "\n\n")
+
+
+def test_dedent_preserves_relative_tabs() -> None:
+    source = "\tfirst\n\t\tsecond"
+    assert_eq(dedent(source), "first\n\tsecond")
+
+
+def test_dedent_does_not_equate_tabs_and_spaces() -> None:
+    source = "\tfirst\n    second"
+    assert_eq(dedent(source), source)
+    assert_eq(dedent(" \tfirst\n  second"), "\tfirst\n second")
+
+
+def test_dedent_preserves_unicode_and_content_whitespace() -> None:
+    source = "    café  \n        日本語\t\n    🐍"
+    assert_eq(dedent(source), "café  \n    日本語\t\n🐍")
+
+
+def test_dedent_preserves_crlf_on_content_lines() -> None:
+    assert_eq(dedent("    first\r\n    second\r\n"), "first\r\nsecond\r\n")
+    assert_eq(dedent("    first\r\n    \r\n    second"), "first\r\n\nsecond")
+
+
+def test_dedent_normalizes_unicode_whitespace_only_lines() -> None:
+    assert_eq(dedent("    café\n \n    日本語"), "café\n\n日本語")
+
+
+def test_dedent_single_line_and_repeated_application() -> None:
+    assert_eq(dedent("    first  "), "first  ")
+    source = "\n    first\n        second\n"
+    assert_eq(dedent(dedent(source)), dedent(source))
+
+
+def test_code_block_only_dedents_when_requested() -> None:
+    source = "    first\n        second"
+    assert_eq(code_block(source).content, source)
+    assert_eq(code_block(dedent(source)).content, "first\n    second")
