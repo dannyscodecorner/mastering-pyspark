@@ -1,7 +1,8 @@
 """Text helper contracts, independent of presentation rendering."""
 
 from std.testing import assert_eq
-from surface import code_block, dedent
+from helper import dedent
+from surface import code_block
 
 
 def test_dedent_preserves_nested_code() -> None:

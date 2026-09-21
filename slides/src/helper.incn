@@ -1,0 +1,46 @@
+"""General-purpose helpers for presentation authoring."""
+
+pub def dedent(value: str) -> str:
+    """Remove the common space/tab prefix of nonblank lines.
+
+    Relative indentation and nonblank-line content are preserved. Tabs are
+    compared literally, not expanded into spaces. Whitespace-only lines become
+    empty lines and do not determine the margin. Leading/trailing newlines are
+    retained; callers can strip them separately when appropriate.
+
+    This is a local text utility, independent of rendering, for eventual reuse
+    in the Incan standard library.
+    """
+    mut margin = ""
+    mut found_content = false
+    mut lines: list[str] = []
+    for line in value.split("\n"):
+        if line.strip() == "":
+            lines.append("")
+            continue
+        lines.append(line)
+        mut end = 0
+        while end < len(line):
+            if line[end] != " " and line[end] != "\t":
+                break
+            end += 1
+        indent = line[:end]
+        if not found_content:
+            margin = indent
+            found_content = true
+        else:
+            mut common = 0
+            while common < len(margin) and common < end:
+                if margin[common] != indent[common]:
+                    break
+                common += 1
+            margin = margin[:common]
+
+    mut result: list[str] = []
+    for line in lines:
+        if line == "":
+            result.append("")
+        else:
+            result.append(line[len(margin):])
+    return "\n".join(result)
+

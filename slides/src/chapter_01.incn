@@ -1,7 +1,8 @@
 """Editable Incan content migrated from the captured index.html."""
 
-from surface import Attribute, Chapter, Frame, NodeKind, Slide, Surface, TeachingStep, attr, code, code_block, dedent, emphasis, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from surface import Attribute, Chapter, Frame, NodeKind, Slide, Surface, TeachingStep, attr, code, code_block, emphasis, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, strong, text
 from components import step_rail, step_cues
+from helper import dedent
 
 pub def slide_section_1() -> Slide:
     return Slide(
