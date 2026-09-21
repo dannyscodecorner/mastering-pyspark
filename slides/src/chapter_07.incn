@@ -1,0 +1,2368 @@
+"""Editable Incan content migrated from the captured index.html."""
+
+from surface import Attribute, Chapter, Frame, NodeKind, Slide, Surface, TeachingStep, attr, code, code_block, emphasis, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_section_7() -> Slide:
+    return Slide(
+        slug="section-7",
+        title="Structured Streaming",
+        frame=Frame.Composed,
+        styles="slide dark joins-waterfall-cover streaming-cover",
+        content=[
+            image("assets/joins-waterfalls.png", "Waterfalls flowing continuously into a deep teal pool.", style="joins-waterfall-art"),
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            group([
+            span("07", attributes=[attr("aria-hidden", "true")]),
+            rich_heading([
+                text("Structured"),
+                line_break(),
+                text("Streaming"),
+            ], level=1),
+        ], style="joins-waterfall-title"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("76"),
+        ]),
+        ],
+        notes="The same DataFrame model, now with data that keeps arriving. Follow the original section 8.2 and 8.3 narrative: Spark SQL, the unbounded input table, the programming model, output modes, word count, sources and sinks, and converting and managing a query. The waterfall is chapter artwork, not a literal model of Spark execution.",
+    )
+
+pub def slide_streaming_model() -> Slide:
+    return Slide(
+        slug="streaming-model",
+        title="Spark Structured Streaming",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Spark Structured Streaming", level=1),
+            prose("The DataFrame API for data that keeps arriving.", style="ss-lead"),
+            group([
+            group([
+                span("THIS CHAPTER", style="ss-kicker"),
+                rich_heading([
+                    text("Structured"),
+                    line_break(),
+                    text("Streaming"),
+                ], level=2),
+                prose("DataFrames and Spark SQL"),
+                code("pyspark.sql"),
+            ], style="ss-api-current"),
+            span("≠", style="ss-not-equal", attributes=[attr("aria-label", "is different from")]),
+            group([
+                span("THE OLDER API", style="ss-kicker"),
+                rich_heading([
+                    text("Spark"),
+                    line_break(),
+                    text("Streaming"),
+                ], level=2),
+                prose("DStreams, built on RDDs"),
+                code("pyspark.streaming"),
+            ], style="ss-api-legacy"),
+        ], style="ss-api-comparison"),
+            prose("We will keep using the DataFrame model we already know.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("77"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 4–6 and 12. Keep the naming distinction brief. Spark Streaming is the older DStream API. Structured Streaming belongs to Spark SQL and uses DataFrames in PySpark. This is not a switch to DStreams. The older slide12 notes contained unrelated ML/MLlib text and are not reused. Overview: https://spark.apache.org/docs/4.2.0/streaming/index.html",
+    )
+
+pub def slide_streaming_conversion() -> Slide:
+    return Slide(
+        slug="streaming-conversion",
+        title="From a batch DataFrame to a streaming DataFrame",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-code-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("From a batch DataFrame to a streaming DataFrame", level=1),
+            group([
+            group([
+                heading("Batch", level=2),
+                code_block("static_lines = spark.read.text(\"data/words\")", style="language-python"),
+            ]),
+            group([
+                heading("Streaming", level=2),
+                code_block("lines = spark.readStream.text(\"data/words\")", style="language-python"),
+            ]),
+        ], style="ss-readers"),
+            group([
+            code_block("""from pyspark.sql import functions as F
+
+counts = (
+    lines
+    .select(
+        F.explode(F.split("value", " "))
+        .alias("word")
+    )
+    .groupBy("word")
+    .count()
+)""", style="language-python"),
+            group([
+                heading("The same word-count query", level=2),
+                paragraph([
+                    text("Each text line is a row in the "),
+                    code("value"),
+                    text(" column."),
+                ]),
+                prose("Split the line into words, then group and count them."),
+                paragraph([
+                    text("For the batch version, use "),
+                    code("static_lines"),
+                    text(" in the same pipeline."),
+                ], style="ss-small"),
+            ]),
+        ], style="ss-conversion-body"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("78"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.3 Managing and Converting Streams, slides2–4 and recording around03:00. Preserve the static/read versus streaming/readStream comparison and shared transformations. SparkSession spark is assumed from the earlier course setup. data/words contains prepared plain text files, each with the exact lines from the preceding word-count example. Text input has the fixed value string column, so no schema inference example is needed. Add each new file atomically and leave earlier files unchanged. For this controlled example words are separated by single spaces; this is not a general text tokenizer. Use static_lines for a bounded run and lines for a streaming run. Not every batch transformation has an equivalent supported streaming combination. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html API reference: https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamReader.text.html Prepared input files and replay instructions: data/streaming-example.md.",
+    )
+
+pub def slide_streaming_sql() -> Slide:
+    return Slide(
+        slug="streaming-sql",
+        title="Structured Streaming is part of Spark SQL",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Structured Streaming is part of Spark SQL", level=1),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Batch and Structured Streaming share Spark SQL", attributes=[attr("id", "ss-engine-title")]),
+                node(NodeKind.SvgDescription, content="Within the Spark SQL engine, a bounded batch input and ongoing streaming input use the DataFrame API and Catalyst query planning. A physical plan is executed as tasks on Spark executors. These are alternative query models, not two sources being joined together.", attributes=[attr("id", "ss-engine-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("fill", "#557c98")]),
+                    ], attributes=[attr("id", "ss-engine-blue-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "7"), attr("markerHeight", "7"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("fill", "#557e3f")]),
+                    ], attributes=[attr("id", "ss-engine-green-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "7"), attr("markerHeight", "7"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10Z"), attr("fill", "#66757b")]),
+                    ], attributes=[attr("id", "ss-engine-ink-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "7"), attr("markerHeight", "7"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgRectangle, style="sse-engine-region", attributes=[attr("x", "2"), attr("y", "24"), attr("width", "928"), attr("height", "446"), attr("rx", "8")]),
+                node(NodeKind.SvgRectangle, style="sse-execution-region", attributes=[attr("x", "1024"), attr("y", "90"), attr("width", "282"), attr("height", "378"), attr("rx", "8")]),
+                node(NodeKind.SvgText, content="Spark SQL", style="sse-engine-name", attributes=[attr("x", "892"), attr("y", "67"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgPath, style="sse-batch-link", attributes=[attr("d", "M250 157 H407"), attr("marker-end", "url(#ss-engine-blue-arrow)")]),
+                node(NodeKind.SvgPath, style="sse-stream-link", attributes=[attr("d", "M298 387 H332 Q356 387 356 363 V270 Q356 246 380 246 H407"), attr("marker-end", "url(#ss-engine-green-arrow)")]),
+                node(NodeKind.SvgPath, style="sse-plan-link", attributes=[attr("d", "M656 277 V320"), attr("marker-end", "url(#ss-engine-ink-arrow)")]),
+                node(NodeKind.SvgPath, style="sse-plan-link sse-physical-plan-link", attributes=[attr("d", "M892 382 H936 Q950 382 950 368 V326 Q950 312 964 312 H1014"), attr("marker-end", "url(#ss-engine-ink-arrow)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Batch", style="sse-mode-name", attributes=[attr("x", "32"), attr("y", "117")]),
+                    node(NodeKind.SvgText, content="A bounded input", style="sse-mode-description", attributes=[attr("x", "32"), attr("y", "146")]),
+                    node(NodeKind.SvgRectangle, style="sse-batch-table", attributes=[attr("x", "32"), attr("y", "169"), attr("width", "214"), attr("height", "76"), attr("rx", "4")]),
+                    node(NodeKind.SvgPath, style="sse-table-grid", attributes=[attr("d", "M32 195 H246 M32 220 H246 M101 169 V245 M175 169 V245")]),
+                    node(NodeKind.SvgPath, style="sse-batch-rows", attributes=[attr("d", "M46 181 H82 M116 181 H157 M190 181 H230 M46 207 H82 M116 207 H157 M190 207 H230 M46 232 H82 M116 232 H157 M190 232 H230")]),
+                    node(NodeKind.SvgText, content="spark.read", style="sse-input-code", attributes=[attr("x", "32"), attr("y", "274")]),
+                ], style="sse-batch", attributes=[attr("transform", "translate(0 -50)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Structured Streaming", style="sse-mode-name", attributes=[attr("x", "32"), attr("y", "328")]),
+                    node(NodeKind.SvgText, content="New rows keep arriving", style="sse-mode-description", attributes=[attr("x", "32"), attr("y", "358")]),
+                    node(NodeKind.SvgPath, style="sse-stream-track", attributes=[attr("d", "M34 407 H281")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "41"), attr("cy", "407"), attr("r", "2.5"), attr("fill", "#557e3f")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "51"), attr("cy", "407"), attr("r", "2.5"), attr("fill", "#557e3f")]),
+                    node(NodeKind.SvgCircle, attributes=[attr("cx", "61"), attr("cy", "407"), attr("r", "2.5"), attr("fill", "#557e3f")]),
+                    node(NodeKind.SvgRectangle, style="sse-arrival sse-arrival-1", attributes=[attr("x", "77"), attr("y", "385"), attr("width", "58"), attr("height", "44"), attr("rx", "4")]),
+                    node(NodeKind.SvgRectangle, style="sse-arrival sse-arrival-2", attributes=[attr("x", "151"), attr("y", "385"), attr("width", "58"), attr("height", "44"), attr("rx", "4")]),
+                    node(NodeKind.SvgRectangle, style="sse-arrival", attributes=[attr("x", "225"), attr("y", "385"), attr("width", "58"), attr("height", "44"), attr("rx", "4")]),
+                    node(NodeKind.SvgPath, style="sse-stream-rows", attributes=[attr("d", "M87 400 H125 M87 413 H125 M161 400 H199 M161 413 H199 M235 400 H273 M235 413 H273")]),
+                    node(NodeKind.SvgText, content="spark.readStream", style="sse-input-code", attributes=[attr("x", "32"), attr("y", "455")]),
+                ], style="sse-stream", attributes=[attr("transform", "translate(0 -20)")]),
+                node(NodeKind.SvgRectangle, style="sse-api", attributes=[attr("x", "420"), attr("y", "145"), attr("width", "472"), attr("height", "132"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="DataFrame API", style="sse-api-title", attributes=[attr("x", "656"), attr("y", "190"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="select · filter · join", style="sse-operations", attributes=[attr("x", "656"), attr("y", "230"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="groupBy · agg", style="sse-operations", attributes=[attr("x", "656"), attr("y", "257"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="sse-catalyst", attributes=[attr("x", "420"), attr("y", "332"), attr("width", "472"), attr("height", "100"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Catalyst", style="sse-catalyst-title", attributes=[attr("x", "656"), attr("y", "375"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Query planning & optimisation", style="sse-catalyst-note", attributes=[attr("x", "656"), attr("y", "410"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Physical", style="sse-plan-label", attributes=[attr("x", "971"), attr("y", "267"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="plan", style="sse-plan-label", attributes=[attr("x", "971"), attr("y", "293"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Spark execution", style="sse-execution-title", attributes=[attr("x", "1040"), attr("y", "132")]),
+                node(NodeKind.SvgText, content="Stages and tasks", style="sse-mode-description", attributes=[attr("x", "1040"), attr("y", "161")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "1052"), attr("y", "192"), attr("width", "250"), attr("height", "103"), attr("rx", "6")]),
+                    node(NodeKind.SvgText, content="Executor 1", style="sse-executor-name", attributes=[attr("x", "1068"), attr("y", "223")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1068"), attr("y", "241"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1101"), attr("y", "265"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1144"), attr("y", "241"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1177"), attr("y", "265"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1220"), attr("y", "241"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1253"), attr("y", "265"), attr("text-anchor", "middle")]),
+                ], style="sse-executor", attributes=[attr("transform", "translate(-12 0)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "1052"), attr("y", "329"), attr("width", "250"), attr("height", "103"), attr("rx", "6")]),
+                    node(NodeKind.SvgText, content="Executor 2", style="sse-executor-name", attributes=[attr("x", "1068"), attr("y", "360")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1068"), attr("y", "378"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1101"), attr("y", "402"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1144"), attr("y", "378"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1177"), attr("y", "402"), attr("text-anchor", "middle")]),
+                    node(NodeKind.SvgRectangle, style="sse-task", attributes=[attr("x", "1220"), attr("y", "378"), attr("width", "66"), attr("height", "36"), attr("rx", "3")]),
+                    node(NodeKind.SvgText, content="task", style="sse-task-label", attributes=[attr("x", "1253"), attr("y", "402"), attr("text-anchor", "middle")]),
+                ], style="sse-executor", attributes=[attr("transform", "translate(-12 0)")]),
+            ], attributes=[attr("viewBox", "0 0 1308 500"), attr("role", "img"), attr("aria-labelledby", "ss-engine-title ss-engine-desc")]),
+        ], style="ss-engine-diagram"),
+            prose("Familiar DataFrame operations, planned by Catalyst, now applied as data arrives.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("79"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 5–6. Connect back to DataFrames, Catalyst and the execution chapter. Structured Streaming is built on the Spark SQL engine; this is a simplified relationship diagram, not an exhaustive Spark component architecture. The left side contrasts bounded input with continuing arrivals. Both query models are contained in the Spark SQL region and use the shared DataFrame API and Catalyst. The connectors represent query construction and planning, not data records passing through the optimiser. Batch and streaming are alternative models here, not two inputs being joined. The executor boxes recall the execution chapter; counts of executors and tasks are illustrative. Explain incremental execution on the following model slides. The same API vocabulary is available, but not every batch operation or combination is supported in streaming. Default execution uses micro-batches. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )
+
+pub def slide_streaming_unbounded() -> Slide:
+    return Slide(
+        slug="streaming-unbounded",
+        title="A table that keeps growing",
+        frame=Frame.Composed,
+        styles="slide streaming-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("A table that keeps growing", level=1),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="A continuing stream of text records becomes a growing input table", attributes=[attr("id", "sug-title")]),
+                node(NodeKind.SvgDescription, content="An initially empty stream carries cat dog, dog dog, owl cat, dog and owl into the input table, one row per text record. Its value column remains the same. Further arrivals continue beyond the five illustrated rows. The table is a logical model of an unbounded input, not all historical data held in memory.", attributes=[attr("id", "sug-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgClipPath, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "172"), attr("width", "668"), attr("height", "152")]),
+                    ], attributes=[attr("id", "sug-canal-clip")]),
+                    node(NodeKind.SvgClipPath, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "96"), attr("width", "1308"), attr("height", "356")]),
+                    ], attributes=[attr("id", "sug-record-clip")]),
+                ]),
+                node(NodeKind.SvgText, content="Data stream", style="sug-heading", attributes=[attr("x", "40"), attr("y", "42")]),
+                node(NodeKind.SvgText, content="Text records arrive over time", style="sug-subheading", attributes=[attr("x", "40"), attr("y", "75")]),
+                node(NodeKind.SvgText, content="Streaming DataFrame", style="sug-heading", attributes=[attr("x", "744"), attr("y", "42")]),
+                node(NodeKind.SvgText, content="An unbounded input table", style="sug-subheading", attributes=[attr("x", "744"), attr("y", "75")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="sug-water", attributes=[attr("d", "M-32 192 C108 180 202 202 332 192 S544 182 688 194 V306 C556 294 438 318 310 308 S88 298 -32 310 Z")]),
+                    node(NodeKind.SvgPath, style="sug-bank", attributes=[attr("d", "M-32 192 C108 180 202 202 332 192 S544 182 688 194 M-32 310 C88 298 182 298 310 308 S556 294 688 306")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M-112 216 C-16 206 80 228 176 216 S368 206 464 216 S656 228 752 216")]),
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M-160 286 C-64 276 32 298 128 286 S320 276 416 286 S608 298 704 286")]),
+                    ], style="sug-ripples", attributes=[attr("aria-hidden", "true")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M82 247 H122 M114 239 L122 247 L114 255 M286 247 H326 M318 239 L326 247 L318 255 M490 247 H530 M522 239 L530 247 L522 255")]),
+                    ], style="sug-flow-direction", attributes=[attr("aria-hidden", "true")]),
+                ], style="sug-canal", attributes=[attr("clip-path", "url(#sug-canal-clip)")]),
+                node(NodeKind.SvgRectangle, style="sug-table-head", attributes=[attr("x", "744"), attr("y", "96"), attr("width", "520"), attr("height", "36")]),
+                node(NodeKind.SvgText, content="value", style="sug-column-name", attributes=[attr("x", "772"), attr("y", "121")]),
+                node(NodeKind.SvgText, content="string", style="sug-column-type", attributes=[attr("x", "1236"), attr("y", "121"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgPath, style="sug-table-edge", attributes=[attr("d", "M744 132 V424 M1264 132 V424")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "132"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="cat dog", style="sug-value", attributes=[attr("x", "772"), attr("y", "168")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "5400"), attr("style", "--arrival:5400ms"), attr("aria-label", "Input row 1: cat dog")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "188"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="dog dog", style="sug-value", attributes=[attr("x", "772"), attr("y", "224")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "7000"), attr("style", "--arrival:7000ms"), attr("aria-label", "Input row 2: dog dog")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "244"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="owl cat", style="sug-value", attributes=[attr("x", "772"), attr("y", "280")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "8600"), attr("style", "--arrival:8600ms"), attr("aria-label", "Input row 3: owl cat")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "300"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="dog", style="sug-value", attributes=[attr("x", "772"), attr("y", "336")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "10200"), attr("style", "--arrival:10200ms"), attr("aria-label", "Input row 4: dog")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "744"), attr("y", "356"), attr("width", "520"), attr("height", "56")]),
+                    node(NodeKind.SvgText, content="owl", style="sug-value", attributes=[attr("x", "772"), attr("y", "392")]),
+                ], style="sug-row", attributes=[attr("data-arrival", "11800"), attr("style", "--arrival:11800ms"), attr("aria-label", "Input row 5: owl")]),
+                node(NodeKind.SvgPath, style="sug-open-end", attributes=[attr("d", "M744 424 V448 M1264 424 V448")]),
+                node(NodeKind.SvgText, content="… new rows continue below", style="sug-continuation", attributes=[attr("x", "1004"), attr("y", "444"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="cat dog", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:1200ms;offset-path:path('M-100 248 H616 Q640 248 640 224 V184 Q640 160 664 160 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="dog dog", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:2800ms;offset-path:path('M-100 248 H624 Q640 248 640 232 V232 Q640 216 656 216 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="owl cat", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:4400ms;offset-path:path('M-100 248 H628 Q640 248 640 260 V260 Q640 272 652 272 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="dog", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:6000ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V304 Q640 328 664 328 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="owl", style="sug-value", attributes=[attr("x", "-68"), attr("y", "8")]),
+                    ], style="sug-record", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:7600ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V360 Q640 384 664 384 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="…", style="sug-value", attributes=[attr("x", "0"), attr("y", "8"), attr("text-anchor", "middle")]),
+                    ], style="sug-record sug-future", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:9200ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V408 Q640 432 664 432 H840')")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "-88"), attr("y", "-24"), attr("width", "176"), attr("height", "48"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="…", style="sug-value", attributes=[attr("x", "0"), attr("y", "8"), attr("text-anchor", "middle")]),
+                    ], style="sug-record sug-future", attributes=[attr("data-motion-decorative", flag=true), attr("aria-hidden", "true"), attr("focusable", "false"), attr("style", "--arrival-start:11300ms;offset-path:path('M-100 248 H616 Q640 248 640 272 V408 Q640 432 664 432 H840')")]),
+                ], attributes=[attr("clip-path", "url(#sug-record-clip)")]),
+            ], attributes=[attr("viewBox", "0 0 1308 452"), attr("role", "img"), attr("aria-labelledby", "sug-title sug-desc")]),
+            group([
+                paragraph([
+                    strong("Each arriving record becomes a new row."),
+                    span("The input keeps growing, while the table’s schema stays the same."),
+                ]),
+            ], style="sug-cues"),
+            group([
+                node(NodeKind.Button, content="Previous row", attributes=[attr("type", "button"), attr("data-motion-action", "prev")]),
+                node(NodeKind.Button, content="Next row", attributes=[attr("type", "button"), attr("data-motion-action", "next")]),
+                node(NodeKind.Button, content="Play", attributes=[attr("type", "button"), attr("data-motion-action", "play"), attr("aria-pressed", "false")]),
+                node(NodeKind.Button, content="Pause", attributes=[attr("type", "button"), attr("data-motion-action", "pause"), attr("aria-pressed", "true")]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-motion-action", "replay")]),
+                span("Space: pause / resume", style="sug-control-hint"),
+                span("5 rows shown · stream continues", style="sug-progress", attributes=[attr("data-stream-progress", flag=true)]),
+            ], style="sug-controls", attributes=[attr("data-motion-controls", flag=true), attr("hidden", flag=true), attr("role", "group"), attr("aria-label", "Stream animation controls")]),
+            node(NodeKind.Paragraph, content="Five illustrated rows in an unbounded input table.", style="sr-only", attributes=[attr("role", "status"), attr("aria-live", "polite"), attr("aria-atomic", "true"), attr("data-motion-status", flag=true)]),
+        ], style="sug-figure", attributes=[attr("data-stream-root", flag=true), attr("data-frame", "static"), attr("tabindex", "0"), attr("aria-label", "Growing input table animation")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("80"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 7. Presenter narrative: “This is a streaming DataFrame. We can use familiar DataFrame operations, but the input keeps arriving. That brings a few differences, which we will cover through the rest of this section.” In PySpark, readStream creates a streaming DataFrame; DataStream is not a separate object type here. Avoid promising identical behaviour or support for every batch operation. Start empty. The water moves continuously, and text records float in automatically: cat dog, dog dog, owl cat, dog, owl. Each full record becomes one row in the same value column; words have not yet been split. The ellipsis records continue into the open lower end after the first five rows, so the animation does not suggest that the source ends. The canal represents continuing arrivals only, not a network route, partition, executor or buffer implementation. Depicted order and spacing are illustrative, not a DataFrame ordering guarantee or trigger schedule. The later file example groups the first two and last two records into batches. The growing input table is a logical model, not a claim that Spark retains all input history in memory or rereads it each time. Query state and output follow on the next slides. Animation starts on the first visit to this slide. Pause freezes water and records in place; Play resumes, Replay clears the example and restarts, and Previous/Next row lets the presenter inspect arrivals. Leaving the slide pauses it. Reduced-motion, static URLs, print and no-JavaScript views show the complete five-row illustration. Source: https://spark.apache.org/docs/4.2.0/streaming/getting-started.html and https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )
+
+pub def slide_streaming_first_query() -> Slide:
+    return Slide(
+        slug="streaming-first-query",
+        title="Start processing the arriving data",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-first-run",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Start processing the arriving data", level=1),
+            group([
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("""query = (
+    counts.writeStream
+    .format("console")
+    .outputMode("complete")
+    .start()
+)"""),
+                ], style="language-python"),
+                prose("A small console demonstration using the word-count query we just defined.", style="ss-run-note"),
+            ]),
+            node(NodeKind.DefinitionList, children=[
+                group([
+                    node(NodeKind.Term, children=[
+                        code("counts"),
+                    ]),
+                    node(NodeKind.Definition, content="The streaming DataFrame describes the result we want."),
+                ]),
+                group([
+                    node(NodeKind.Term, children=[
+                        code(".start()"),
+                    ]),
+                    node(NodeKind.Definition, content="Starts executing that query as input arrives."),
+                ]),
+                group([
+                    node(NodeKind.Term, children=[
+                        code("query"),
+                    ]),
+                    node(NodeKind.Definition, children=[
+                        text("A "),
+                        code("StreamingQuery"),
+                        text(" handle for monitoring and stopping the run."),
+                    ]),
+                ]),
+            ], style="ss-run-explanation"),
+        ], style="ss-run-grid"),
+            prose("The query is now running. Next, we’ll look at how Spark processes new input.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("81"),
+        ]),
+        ],
+        notes="""Continue the counts definition from the earlier read/readStream example. Defining counts described a query; start() starts execution and returns a StreamingQuery. No trigger is set, so this demonstration uses the default micro-batch schedule. Console is a debugging destination. Complete prints all current counts after each batch. Both choices receive their own explanations later; mention their purpose here without enumerating alternatives. No explicit durable checkpoint is configured in this minimal classroom example, so it is not a restart recipe. The fuller writer configuration later adds the checkpoint path and named memory sink. Stop this demonstration with query.stop() before running that separate example. The code is an explanatory fragment that assumes spark, counts and the prepared input directory exist.
+
+https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.start.html
+https://spark.apache.org/docs/4.2.0/streaming/getting-started.html""",
+    )
+
+pub def slide_streaming_execution_modes() -> Slide:
+    return Slide(
+        slug="streaming-execution-modes",
+        title="Streaming execution modes",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-execution-overview",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming execution modes", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Three execution modes for a Structured Streaming query", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-execution-name"),
+                node(NodeKind.Column, style="ss-execution-behaviour"),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Mode", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="How input is processed", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="What to keep in mind", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Micro-batch"),
+                        span("The default"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("Successive portions of new input."),
+                        span("Each batch finishes before the next starts."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        text("Runs as soon as possible by default."),
+                        span("A fixed interval is optional."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Real-time mode"),
+                        span("Records processed as they arrive"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("Long-running tasks pass records through the query."),
+                        span("Progress is checkpointed periodically."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        text("For low-latency workloads."),
+                        span("Supported queries and connectors depend on the Spark version and runtime."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Continuous Processing"),
+                        span("Older · experimental"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("Processes records continuously."),
+                        span("A separate engine from Real-time mode."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        text("Restricted operations and connectors."),
+                        span("No aggregations; at-least-once processing."),
+                    ]),
+                ], style="ss-execution-legacy"),
+            ]),
+        ], style="ss-execution-table"),
+            paragraph([
+            strong("Execution mode"),
+            text(" controls how the query runs."),
+            line_break(),
+            strong("Output mode"),
+            text(" controls which result rows are sent to the sink."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("82"),
+        ]),
+        ],
+        notes="""We have a streaming DataFrame. Once we start a query against it, how does Spark process the arriving data? These are alternative execution modes, not consecutive stages. Micro-batch is the default and is what we will use for the word-count example next. Without an explicit trigger interval, Spark starts the next batch as soon as the previous one finishes. A fixed processing-time interval is optional; it is not a completion deadline.
+
+Real-time mode processes records as they arrive within long-running execution, with periodic progress checkpoints. A configured realTime duration is not a wait before each record can be processed. Do not promise microsecond end-to-end latency: per-record processing describes the execution approach, and observed latency also depends on the query, resources, source and sink. PySpark 4.2 exposes the realTime trigger. Query support varies by Spark version and vendor runtime; do not imply that the following stateful word count can run unchanged in every mode. The Databricks source describes that runtime's architecture and is not a universal connector/operator compatibility matrix.
+
+Continuous Processing is the separate, older experimental mode introduced in Spark 2.3. It supports a restricted set of operations such as projections and filters, excludes aggregations and provides at-least-once processing. Keep this brief so older documentation does not confuse it with Real-time mode. AvailableNow is a micro-batch trigger for processing available data and stopping, rather than a fourth execution engine. Execution and output modes are different choices, with compatibility constraints; Append, Update and Complete are output modes.
+
+Sources (checked 20 September 2026): https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers ; https://spark.apache.org/releases/spark-release-4-2-0.html ; https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html ; https://spark.apache.org/docs/4.2.0/streaming/performance-tips.html#continuous-processing ; https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts""",
+    )
+
+pub def slide_streaming_programming_model() -> Slide:
+    return Slide(
+        slug="streaming-programming-model",
+        title="How Spark keeps the result up to date",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-incremental-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("How Spark keeps the result up to date", level=1),
+            group([
+            group([
+                strong("Count each word"),
+                span("Micro-batch execution"),
+            ]),
+            node(NodeKind.Preformatted, children=[
+                code("words.groupBy(\"word\").count()"),
+            ], style="language-python"),
+        ], style="ss-incremental-query"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The same word-count query incorporates three batches of new input into its existing counts.", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-incremental-row-name"),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.Cell),
+                    node(NodeKind.HeaderCell, content="Batch 1", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 2", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 3", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="New input", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("cat dog"),
+                            line_break(),
+                            text("dog dog"),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        code("owl cat"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("dog"),
+                            line_break(),
+                            text("owl"),
+                        ]),
+                    ]),
+                ], style="ss-incremental-input"),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Running"),
+                        line_break(),
+                        text("counts"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, children=[
+                                    strong("1"),
+                                ]),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, children=[
+                                    strong("3"),
+                                ]),
+                            ]),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, children=[
+                                    span("1 + 1 = "),
+                                    strong("2"),
+                                ]),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, children=[
+                                    strong("1"),
+                                ]),
+                            ]),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, children=[
+                                    span("3 + 1 = "),
+                                    strong("4"),
+                                ]),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, children=[
+                                    span("1 + 1 = "),
+                                    strong("2"),
+                                ]),
+                            ]),
+                        ]),
+                    ]),
+                ], style="ss-incremental-result"),
+            ]),
+        ], style="ss-incremental-table"),
+            paragraph([
+            text("Spark updates the existing counts with each new batch."),
+            line_break(),
+            span("When does the next batch start? That depends on the trigger."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("83"),
+        ]),
+        ],
+        notes="""We now have a DataFrame whose input keeps arriving. What happens when we run a query against it? We define the query once. Once started, Spark keeps processing new input and updating the result.
+
+Use the same cat, dog and owl input lines from the preceding growing-table slide. Here words means the streaming DataFrame after splitting those lines into individual words; the full code follows later. For this illustration, the first two lines arrive in batch 1, owl cat in batch 2, and dog plus owl in batch 3. These batch boundaries are illustrative, not implied by the animation's arrival timing.
+
+Read from left to right. Batch 1 produces cat 1 and dog 3. Batch 2 brings owl cat: Spark adds one to the existing cat count and creates an owl count. The dog count stays at three. Batch 3 adds dog and owl, taking the counts to cat 2, dog 4 and owl 2. Bold green values are newly created or updated; the equations show how the old count contributes. Batch 1 contains only cat and dog: the owl result row first appears when owl arrives in batch 2.
+
+Spark does not need to count the entire input history again. It retains aggregation state and incorporates the next portion of new input. We are showing the logical running result, not every detail of partial aggregation, state-store layout or physical partitioning, and not the rows already written to a sink. This worked example uses default micro-batch execution. The next batch normally starts as soon as the previous one finishes; a fixed interval is optional. Real-time mode has different execution and support constraints, so do not suggest the same word-count query is supported unchanged in every runtime and mode.
+
+We have seen how the counts change. Next, explain when a new micro-batch starts by comparing trigger settings, then introduce Real-time mode. After that, return to this example for the output-mode question: which results should Spark send to the destination?
+
+Sources: https://spark.apache.org/docs/4.2.0/streaming/getting-started.html ; https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers""",
+    )
+
+pub def slide_streaming_microbatch_triggers() -> Slide:
+    return Slide(
+        slug="streaming-microbatch-triggers",
+        title="Micro-batch triggers",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-trigger-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Micro-batch triggers", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Ways to schedule micro-batches, configured on a streaming writer before starting the query", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-trigger-name"),
+                node(NodeKind.Column, style="ss-trigger-setting"),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Trigger", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, children=[
+                        text("Setting on "),
+                        code("writeStream"),
+                    ], attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Behaviour", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Default", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Span, children=[
+                            text("No "),
+                            code(".trigger(...)"),
+                            text(" setting"),
+                        ], style="ss-trigger-default"),
+                    ]),
+                    node(NodeKind.Cell, content="Start the next batch as soon as the previous one finishes."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Processing time", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".trigger(processingTime=\"5 seconds\")"),
+                        ], style="language-python"),
+                    ]),
+                    node(NodeKind.Cell, content="Every 5 seconds, or as soon as an overrunning batch finishes."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="AvailableNow", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".trigger(availableNow=True)"),
+                        ], style="language-python"),
+                    ]),
+                    node(NodeKind.Cell, content="Process the data available at the start, then stop. May use several batches."),
+                ]),
+            ]),
+        ], style="ss-trigger-table"),
+            group([
+            strong("Once · deprecated"),
+            code(".trigger(once=True)"),
+            node(NodeKind.Span, children=[
+                text("One batch, then stop."),
+                line_break(),
+                text("Use AvailableNow for new work."),
+            ]),
+        ], style="ss-trigger-legacy"),
+            prose("The trigger controls the schedule. It does not set a batch’s size or completion deadline.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("84"),
+        ]),
+        ],
+        notes="""We have seen what happens inside successive micro-batches. Now we choose how the next one starts. These are trigger settings within micro-batch execution, not new execution engines. Apply a trigger on the configured writeStream builder before calling start; the source, sink and checkpoint configuration are omitted here so the settings remain easy to compare.
+
+Default: leave the trigger unspecified. The next batch starts as soon as the previous batch completes. Processing time: request a fixed cadence, here five seconds. If the batch finishes early, Spark waits for the next scheduled start. If it overruns, the next batch starts as soon as it finishes; Spark does not launch overlapping batches to catch up. Five seconds is not a guarantee that the work finishes in five seconds.
+
+AvailableNow: process the records available when this run begins, potentially across several batches, and stop. Source admission controls such as maxFilesPerTrigger can limit each batch. With a compatible retained checkpoint, a later run can resume progress, making this useful for scheduled catch-up workloads. Check source support; the documented fallback for unsupported sources is one-time execution. New arrivals after the run's initial target belong to a later run.
+
+Once is included for older code only. It runs one batch and is deprecated in favour of AvailableNow. The trigger alone is not a row-count or byte-size setting: the source and its admission controls determine the work in a batch. Before discussing which results get written, we will look at the other current execution approach: Real-time mode.
+
+Sources (checked 20 September 2026): https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers ; https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html""",
+    )
+
+pub def slide_streaming_real_time() -> Slide:
+    return Slide(
+        slug="streaming-real-time",
+        title="Real-time mode",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-realtime-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Real-time mode", level=1),
+            prose("Long-running tasks process records as they arrive.", style="ss-realtime-lead"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="Processing records throughout a long-running batch", attributes=[attr("id", "ss-rt-title")]),
+                node(NodeKind.SvgDescription, content="A stateless Kafka example reads, transforms and writes records throughout one long-running batch. The time line ends at the progress checkpoint boundary. The example duration of five minutes governs that boundary, not a five-minute wait before each record is processed. The three operations may be fused into a single task.", attributes=[attr("id", "ss-rt-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#67747b")]),
+                    ], attributes=[attr("id", "ss-rt-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgText, content="During one long-running batch", style="ss-rt-heading", attributes=[attr("x", "24"), attr("y", "27")]),
+                node(NodeKind.SvgText, content="Example: stateless Kafka → Kafka", style="ss-rt-small", attributes=[attr("x", "1284"), attr("y", "27"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgPath, style="ss-rt-connector", attributes=[attr("d", "M304 99H482")]),
+                node(NodeKind.SvgPath, style="ss-rt-connector", attributes=[attr("d", "M824 99H1002")]),
+                node(NodeKind.SvgRectangle, style="ss-rt-endpoint", attributes=[attr("x", "24"), attr("y", "56"), attr("width", "280"), attr("height", "88"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Read records", style="ss-rt-node", attributes=[attr("x", "164"), attr("y", "94"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Kafka input topic", style="ss-rt-small", attributes=[attr("x", "164"), attr("y", "122"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-rt-transform", attributes=[attr("x", "484"), attr("y", "56"), attr("width", "340"), attr("height", "88"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Transform records", style="ss-rt-node", attributes=[attr("x", "654"), attr("y", "94"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="select · filter", style="ss-rt-small", attributes=[attr("x", "654"), attr("y", "122"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-rt-endpoint", attributes=[attr("x", "1004"), attr("y", "56"), attr("width", "280"), attr("height", "88"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Write records", style="ss-rt-node", attributes=[attr("x", "1144"), attr("y", "94"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Kafka output topic", style="ss-rt-small", attributes=[attr("x", "1144"), attr("y", "122"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgLine, style="ss-rt-timeline", attributes=[attr("x1", "24"), attr("y1", "184"), attr("x2", "1284"), attr("y2", "184")]),
+                node(NodeKind.SvgLine, style="ss-rt-tick", attributes=[attr("x1", "24"), attr("y1", "174"), attr("x2", "24"), attr("y2", "194")]),
+                node(NodeKind.SvgCircle, style="ss-rt-checkpoint", attributes=[attr("cx", "1284"), attr("cy", "184"), attr("r", "6")]),
+                node(NodeKind.SvgText, content="Batch starts", style="ss-rt-small", attributes=[attr("x", "24"), attr("y", "224")]),
+                node(NodeKind.SvgText, content="Records are processed throughout", style="ss-rt-small", attributes=[attr("x", "654"), attr("y", "224"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Checkpoint progress", style="ss-rt-boundary", attributes=[attr("x", "1284"), attr("y", "224"), attr("text-anchor", "end")]),
+            ], attributes=[attr("viewBox", "0 0 1308 248"), attr("role", "img"), attr("aria-labelledby", "ss-rt-title ss-rt-desc")]),
+        ], style="ss-realtime-diagram"),
+            group([
+            group([
+                prose("Writer settings · PySpark 4.2+", style="ss-realtime-code-label"),
+                node(NodeKind.Preformatted, children=[
+                    code(""".outputMode("update")
+.trigger(realTime="5 minutes")"""),
+                ], style="language-python"),
+            ]),
+            paragraph([
+                strong("Five minutes is the batch duration."),
+                line_break(),
+                text("It controls the progress checkpoint boundary. Records can reach the sink during that interval."),
+            ]),
+        ], style="ss-realtime-config"),
+            paragraph([
+            text("Enough task slots must be available for the running query."),
+            line_break(),
+            span("Supported operators and connectors depend on the Spark version and runtime."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("85"),
+        ]),
+        ],
+        notes="""What if waiting for a new record to be included in the next micro-batch is too slow? Real-time mode uses long-running tasks that keep accepting records through the running pipeline. This reduces repeated batch-planning and task-launch overhead. Use a stateless Kafka-to-Kafka query here rather than implying the earlier word count is supported in every Real-time runtime.
+
+Follow one record from read, through select or filter, to a Kafka write. These are operations, not three guaranteed Spark stages or separate executors; they may be fused into one task. The diagram is a schematic of ongoing processing, not a measured latency trace. A filter can discard a record. A record can be written before the batch ends. Micro-batch sinks can also emit while processing a batch; the distinction here is that a newly arriving input record can enter the running Real-time query without waiting for the next bounded micro-batch.
+
+The shown PySpark settings are a fragment applied to a compatible writer before start, with Kafka and checkpointLocation configured. realTime is exposed in PySpark 4.2. The example's five minutes is the long-running batch duration used for progress checkpointing. It is not a five-minute per-record delay or a latency guarantee. Shorter durations checkpoint more often; longer durations can mean more replay after failure. Sink delivery guarantees still matter, and Kafka writes can be repeated after recovery.
+
+Long-running execution requires enough concurrent task slots. When a supported plan has multiple pipelined stages, they need capacity together. Source, operator and sink support depends on version and runtime. The current references require Update output mode and exclude foreachBatch; output modes follow next. The Apache Real-time guide linked below is in-progress documentation and includes future version support: it says stateless support is available from 4.1, with stateful aggregation and other operators beginning in 4.3. Do not present those future sections as Apache Spark 4.2 capabilities or apply Databricks' broader operator matrix to every runtime. Continuous Processing from Spark 2.3 is a different, older experimental engine.
+
+Transition: follow the same arriving record through micro-batch and Real-time execution on the next slide. Then return to our micro-batch word count to compare what Complete, Append and Update send to the sink.
+
+Sources (checked 20 September 2026): PySpark 4.2 trigger API, https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html ; released API addition, https://spark.apache.org/releases/spark-release-4-2-0.html ; Apache in-progress architecture and version notes, https://apache.github.io/spark/streaming/real-time-mode.html ; Databricks architecture, https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts ; runtime-specific support, https://docs.databricks.com/aws/en/structured-streaming/real-time/reference""",
+    )
+
+pub def slide_streaming_arrival_comparison() -> Slide:
+    return Slide(
+        slug="streaming-arrival-comparison",
+        title="Micro-batch and Real-time processing",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-arrival-compare-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Micro-batch and Real-time processing", level=1),
+            prose("Follow record C, arriving after processing has started.", style="ss-arrival-lead"),
+            node(NodeKind.Figure, children=[
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="When a new record can enter the running query", attributes=[attr("id", "ss-ac-title")]),
+                node(NodeKind.SvgDescription, content="Record C arrives at the same point in both timelines: micro-batch holds it for Batch 2 because Batch 1 has fixed input, while Real-time tasks can process C during their ongoing run.", attributes=[attr("id", "ss-ac-desc")]),
+                node(NodeKind.SvgDefinitions, children=[
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#67747b")]),
+                    ], attributes=[attr("id", "ss-ac-arrow"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#a66714")]),
+                    ], attributes=[attr("id", "ss-ac-arrow-wait"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                    node(NodeKind.SvgMarker, children=[
+                        node(NodeKind.SvgPath, attributes=[attr("d", "M0 0L8 3L0 6Z"), attr("fill", "#4b7c35")]),
+                    ], attributes=[attr("id", "ss-ac-arrow-run"), attr("markerWidth", "8"), attr("markerHeight", "6"), attr("refX", "7"), attr("refY", "3"), attr("orient", "auto")]),
+                ]),
+                node(NodeKind.SvgText, content="Earlier", style="ss-ac-small", attributes=[attr("x", "280"), attr("y", "22")]),
+                node(NodeKind.SvgText, content="Same arrivals · no latency scale", style="ss-ac-caption", attributes=[attr("x", "824"), attr("y", "22"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Later →", style="ss-ac-small", attributes=[attr("x", "1284"), attr("y", "22"), attr("text-anchor", "end")]),
+                node(NodeKind.SvgLine, style="ss-ac-rule", attributes=[attr("x1", "280"), attr("y1", "36"), attr("x2", "1284"), attr("y2", "36")]),
+                node(NodeKind.SvgLine, style="ss-ac-rule", attributes=[attr("x1", "616"), attr("y1", "30"), attr("x2", "616"), attr("y2", "42")]),
+                node(NodeKind.SvgPath, style="ss-ac-wait-arrow", attributes=[attr("d", "M672 86H956Q964 86 964 94V142")]),
+                node(NodeKind.SvgPath, style="ss-ac-arrow", attributes=[attr("d", "M876 184H946")]),
+                node(NodeKind.SvgPath, style="ss-ac-run-arrow", attributes=[attr("d", "M616 296V330")]),
+                node(NodeKind.SvgText, content="Micro-batch", style="ss-ac-mode", attributes=[attr("x", "0"), attr("y", "178")]),
+                node(NodeKind.SvgText, content="New tasks per batch", style="ss-ac-small", attributes=[attr("x", "0"), attr("y", "210")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-record", attributes=[attr("x", "560"), attr("y", "64"), attr("width", "112"), attr("height", "44"), attr("rx", "4")]),
+                node(NodeKind.SvgText, content="Record C", style="ss-ac-record-text", attributes=[attr("x", "616"), attr("y", "93"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, attributes=[attr("x", "748"), attr("y", "51"), attr("width", "244"), attr("height", "28"), attr("fill", "#fafaf8")]),
+                node(NodeKind.SvgText, content="Waits for Batch 2", style="ss-ac-wait-label", attributes=[attr("x", "870"), attr("y", "72"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-batch", attributes=[attr("x", "280"), attr("y", "144"), attr("width", "596"), attr("height", "80"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Batch 1", style="ss-ac-batch-title", attributes=[attr("x", "578"), attr("y", "178"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Processes A and B", style="ss-ac-detail", attributes=[attr("x", "578"), attr("y", "208"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-batch", attributes=[attr("x", "948"), attr("y", "144"), attr("width", "336"), attr("height", "80"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="Batch 2", style="ss-ac-batch-title", attributes=[attr("x", "1116"), attr("y", "178"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Processes C", style="ss-ac-detail", attributes=[attr("x", "1116"), attr("y", "208"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Real-time", style="ss-ac-mode", attributes=[attr("x", "0"), attr("y", "358")]),
+                node(NodeKind.SvgText, content="Tasks keep running", style="ss-ac-small", attributes=[attr("x", "0"), attr("y", "390")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-record", attributes=[attr("x", "560"), attr("y", "252"), attr("width", "112"), attr("height", "44"), attr("rx", "4")]),
+                node(NodeKind.SvgText, content="Record C", style="ss-ac-record-text", attributes=[attr("x", "616"), attr("y", "281"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="Enters the running tasks", style="ss-ac-run-label", attributes=[attr("x", "704"), attr("y", "281")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-running", attributes=[attr("x", "280"), attr("y", "332"), attr("width", "1004"), attr("height", "64"), attr("rx", "6")]),
+                node(NodeKind.SvgText, content="A, B…", style="ss-ac-detail", attributes=[attr("x", "360"), attr("y", "372")]),
+                node(NodeKind.SvgRectangle, style="ss-ac-processing", attributes=[attr("x", "616"), attr("y", "344"), attr("width", "176"), attr("height", "40"), attr("rx", "4")]),
+                node(NodeKind.SvgText, content="Process C", style="ss-ac-process-text", attributes=[attr("x", "704"), attr("y", "372"), attr("text-anchor", "middle")]),
+                node(NodeKind.SvgText, content="…keep accepting records", style="ss-ac-detail", attributes=[attr("x", "816"), attr("y", "372")]),
+            ], attributes=[attr("viewBox", "0 0 1308 416"), attr("role", "img"), attr("aria-labelledby", "ss-ac-title ss-ac-desc")]),
+        ], style="ss-arrival-compare"),
+            paragraph([
+            text("A micro-batch fixes its input before it runs."),
+            line_break(),
+            span("Real-time tasks keep accepting new records during the run."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("86"),
+        ]),
+        ],
+        notes="""Use the same compatible stateless Kafka query from the preceding Real-time slide. A, B and C label records, not partitions or tasks. Both lanes show the same arrival history. The horizontal positions explain ordering, not benchmark timings.
+
+Start at Batch 1. Spark has chosen a bounded slice containing A and B. C reaches Kafka after that input boundary was fixed, while Batch 1 is still running. C cannot join Batch 1; it waits at the source until a later batch includes it. In this small example that is Batch 2. Admission limits or a backlog can defer it further. The default trigger already starts the next batch as soon as the previous batch finishes; the wait drawn here is not an optional five-second timer.
+
+Now follow the same C on the lower lane. The Real-time tasks are already running and can read the newly available record through the same stateless pipeline. They do not need a new micro-batch and a fresh task set to admit C. Processing, source polling and sink delivery still take time; spare capacity is assumed. Real-time also checkpoints progress periodically, as explained on 72. It does not eliminate every boundary or guarantee zero latency.
+
+The distinction is input admission and task lifetime. Do not say micro-batch writes always wait until the batch ends: some sinks emit while tasks process the bounded slice. This figure also does not claim the original word-count query is supported in every Real-time runtime. Operator and connector support remains version-dependent.
+
+Transition: we have compared how the work runs. Return to the micro-batch word count to explain which result rows the output mode sends to the sink.
+
+Sources checked 20 September 2026: https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#triggers ; https://apache.github.io/spark/streaming/real-time-mode.html#how-real-time-mode-works (in-progress architecture documentation, not a pinned 4.2 support matrix) ; https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts""",
+    )
+
+pub def slide_streaming_output_modes() -> Slide:
+    return Slide(
+        slug="streaming-output-modes",
+        title="Streaming output modes",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-overview",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming output modes", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The three output modes, shown for micro-batch execution", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, attributes=[attr("style", "width:240px")]),
+                node(NodeKind.Column, attributes=[attr("style", "width:524px")]),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Mode", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Rows sent to the sink", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, children=[
+                        text("Setting on "),
+                        code("writeStream"),
+                    ], attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Complete", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("The full current result,"),
+                        line_break(),
+                        text("including unchanged groups."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".outputMode(\"complete\")"),
+                        ], style="language-python"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Append"),
+                        span("The default"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        text("New final rows that the query"),
+                        line_break(),
+                        text("will not revise later."),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".outputMode(\"append\")"),
+                        ], style="language-python"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Update", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="New or updated result rows."),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Preformatted, children=[
+                            code(".outputMode(\"update\")"),
+                        ], style="language-python"),
+                    ]),
+                ]),
+            ]),
+        ], style="ss-output-mode-table"),
+            paragraph([
+            text("Execution mode controls how the query runs."),
+            line_break(),
+            span("Output mode controls which result rows it sends to the sink."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("87"),
+        ]),
+        ],
+        notes="""We now return to micro-batch execution and choose what to publish. Complete, Append and Update are the three output modes. Configure one on writeStream before start; Append is the default. Our next examples keep the original Complete, Append, Update teaching order.
+
+Complete publishes the current aggregate result. Append publishes final rows. Update publishes rows the query updated, including newly created groups. The mode selects output records; it is not the batch writer's append/overwrite save mode, nor an instruction to merge a target table. We will make the selection concrete with the same cat, dog and owl counts, then check query and sink compatibility. Real-time has separate restrictions, revisited in that compatibility check.
+
+Definition source: https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+Default and compatibility: https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )
+
+pub def slide_streaming_complete() -> Slide:
+    return Slide(
+        slug="streaming-complete",
+        title="Output mode: Complete",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-emission-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Output mode: Complete", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                code("words.groupBy(\"word\").count()"),
+            ], style="language-python"),
+            node(NodeKind.Preformatted, children=[
+                code(".outputMode(\"complete\")"),
+            ], style="language-python"),
+        ], style="ss-emission-code"),
+            group([
+            group([
+                heading("New input", level=2),
+                prose("Batch 3", style="ss-emission-label"),
+                group([
+                    code("dog"),
+                    code("owl"),
+                ], style="ss-record-list"),
+            ], style="ss-emission-input"),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Running counts", level=2),
+                prose("Two counts change", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Running word counts before and after Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Before", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Now", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, children=[
+                                text("cat"),
+                                span("unchanged"),
+                            ], attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="2"),
+                        ], style="ss-emission-unchanged"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="4"),
+                        ], style="ss-emission-changed"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="2"),
+                        ], style="ss-emission-changed"),
+                    ]),
+                ], style="ss-emission-counts"),
+            ]),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Sent to the sink", level=2),
+                prose("Every result row", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Rows emitted by Complete after Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="count", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="4"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                    ]),
+                ], style="ss-emission-sent"),
+                prose("3 rows emitted", style="ss-emission-total"),
+            ], style="ss-emission-output"),
+        ], style="ss-emission-flow"),
+            paragraph([
+            text("Complete sends cat 2 again, even though its count did not change."),
+            line_break(),
+            span("All groups are retained in Complete mode."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("88"),
+        ]),
+        ],
+        notes="""The same word-count query and original cat/dog/owl data as the incremental example. We zoom into Batch 3: the previous counts are cat 2, dog 3 and owl 1; the arriving records are dog and owl. Spark updates only dog and owl, producing cat 2, dog 4 and owl 2. Read from the new input through the result to the records emitted to the sink.
+
+Complete sends all three result rows, including unchanged cat 2. It still computes incrementally; it does not reread the entire source. It retains all aggregate groups, so a watermark does not evict old groups in Complete mode. It is not a universal instruction to overwrite an arbitrary sink.
+
+The two code blocks are query and writer-setting fragments; a compatible sink and start() are required. These are micro-batch examples and row order is illustrative. Original diagrams remain in the source backup and corpus; this version uses actual rows instead of generic document glyphs.
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )
+
+pub def slide_streaming_append() -> Slide:
+    return Slide(
+        slug="streaming-append",
+        title="Output mode: Append",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-emission-slide ss-emission-append",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Output mode: Append", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                code("words.select(\"word\")"),
+            ], style="language-python"),
+            node(NodeKind.Preformatted, children=[
+                code(".outputMode(\"append\")"),
+            ], style="language-python"),
+        ], style="ss-emission-code"),
+            group([
+            group([
+                heading("New input", level=2),
+                prose("Batch 3", style="ss-emission-label"),
+                group([
+                    code("dog"),
+                    code("owl"),
+                ], style="ss-record-list"),
+            ], style="ss-emission-input"),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("A query without aggregation", level=2),
+                prose("One result row per input row", style="ss-emission-label"),
+                group([
+                    group([
+                        code("dog"),
+                        span("Final"),
+                    ]),
+                    group([
+                        code("owl"),
+                        span("Final"),
+                    ]),
+                ], style="ss-append-records"),
+                paragraph([
+                    text("Later input adds more rows."),
+                    line_break(),
+                    text("It does not revise these rows."),
+                ]),
+            ], style="ss-append-query"),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Sent to the sink", level=2),
+                prose("Only the new, final rows", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Rows emitted by Append after Batch 3 for the select query", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                        ]),
+                    ]),
+                ], style="ss-emission-sent"),
+                prose("2 rows emitted", style="ss-emission-total"),
+                prose("Earlier rows are not sent again.", style="ss-emission-history"),
+            ], style="ss-emission-output"),
+        ], style="ss-emission-flow"),
+            paragraph([
+            text("Append is the default. An unwindowed running count cannot use it."),
+            line_break(),
+            span("Windowed counts can append once a watermark makes the result final."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("89"),
+        ]),
+        ],
+        notes="""Keep the incoming dog and owl records from Batch 3, but explicitly change the query: this is select, with no aggregation. Each input row produces a result row whose value will not be revised by future input. Append therefore emits the new dog and owl rows; it does not resend earlier rows or remove duplicate words. The repeated words are separate input records.
+
+This is deliberately not the unwindowed running count on the neighbouring slides. That count never becomes final while more input can arrive, so Append is unsupported for it. Compatible windowed aggregations can append results after event-time progress and a watermark finalize their windows. The watermark advances with observed event time, not merely wall-clock time; an idle stream may leave a window unpublished. Full window and late-data mechanics follow later.
+
+Append is the default output mode. The visible writer line is a setting fragment, not a complete running query. In this stateless example Update would emit the same rows, while Complete requires an aggregation. Row order is illustrative.
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )
+
+pub def slide_streaming_update() -> Slide:
+    return Slide(
+        slug="streaming-update",
+        title="Output mode: Update",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-emission-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Output mode: Update", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                code("words.groupBy(\"word\").count()"),
+            ], style="language-python"),
+            node(NodeKind.Preformatted, children=[
+                code(".outputMode(\"update\")"),
+            ], style="language-python"),
+        ], style="ss-emission-code"),
+            group([
+            group([
+                heading("New input", level=2),
+                prose("Batch 3", style="ss-emission-label"),
+                group([
+                    code("dog"),
+                    code("owl"),
+                ], style="ss-record-list"),
+            ], style="ss-emission-input"),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Running counts", level=2),
+                prose("Two counts change", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Running word counts before and after Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Before", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Now", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, children=[
+                                text("cat"),
+                                span("unchanged"),
+                            ], attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="2"),
+                        ], style="ss-emission-unchanged"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="4"),
+                        ], style="ss-emission-changed"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="2"),
+                        ], style="ss-emission-changed"),
+                    ]),
+                ], style="ss-emission-counts"),
+            ]),
+            group([
+                text("→"),
+            ], style="ss-emission-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Sent to the sink", level=2),
+                prose("Only updated rows", style="ss-emission-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Rows emitted by Update after Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="count", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="4"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                    ]),
+                ], style="ss-emission-sent"),
+                prose("2 rows emitted", style="ss-emission-total"),
+            ], style="ss-emission-output"),
+        ], style="ss-emission-flow"),
+            paragraph([
+            text("Update sends dog 4 and owl 2. The unchanged cat row is left out."),
+            line_break(),
+            span("These are the new totals, not increments of one."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("90"),
+        ]),
+        ],
+        notes="""The same word-count query and original cat/dog/owl data as the incremental example. We zoom into Batch 3: the previous counts are cat 2, dog 3 and owl 1; the arriving records are dog and owl. Spark updates only dog and owl, producing cat 2, dog 4 and owl 2. Read from the new input through the result to the records emitted to the sink.
+
+Update sends dog 4 and owl 2. Cat remains in the running result but is absent from this batch output. The numbers emitted are updated totals, not deltas. Update does not automatically upsert or merge the destination: Kafka receives records; custom sink code can implement a merge. For a simple stateless select/filter query, Update and Append emit equivalent rows.
+
+The two code blocks are query and writer-setting fragments; a compatible sink and start() are required. These are micro-batch examples and row order is illustrative. Original diagrams remain in the source backup and corpus; this version uses actual rows instead of generic document glyphs.
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )
+
+pub def slide_streaming_word_count() -> Slide:
+    return Slide(
+        slug="streaming-word-count",
+        title="What the word-count query sends",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-example",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("What the word-count query sends", level=1),
+            group([
+            group([
+                strong("The same running count"),
+                span("Micro-batch execution"),
+            ]),
+            node(NodeKind.Preformatted, children=[
+                code("words.groupBy(\"word\").count()"),
+            ], style="language-python"),
+        ], style="ss-incremental-query"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Actual rows emitted to the sink by Complete and Update after each batch", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, attributes=[attr("style", "width:220px")]),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.Cell),
+                    node(NodeKind.HeaderCell, content="Batch 1", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 2", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Batch 3", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="New input", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("cat dog"),
+                            line_break(),
+                            text("dog dog"),
+                        ]),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        code("owl cat"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.Code, children=[
+                            text("dog"),
+                            line_break(),
+                            text("owl"),
+                        ]),
+                    ]),
+                ], style="ss-output-input"),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Complete"),
+                        span("All current counts"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="4"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Update"),
+                        span("Only updated counts"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="3"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="cat"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="1"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                    node(NodeKind.Cell, children=[
+                        node(NodeKind.DefinitionList, children=[
+                            group([
+                                node(NodeKind.Term, content="dog"),
+                                node(NodeKind.Definition, content="4"),
+                            ]),
+                            group([
+                                node(NodeKind.Term, content="owl"),
+                                node(NodeKind.Definition, content="2"),
+                            ]),
+                        ], style="ss-output-rows"),
+                    ]),
+                ]),
+            ]),
+        ], style="ss-output-example-table"),
+            paragraph([
+            text("In Batch 3, Complete sends cat 2 again. Update sends only dog 4 and owl 2."),
+            line_break(),
+            span("Append is not supported for this unwindowed running count."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("91"),
+        ]),
+        ],
+        notes="""Keep the original corpus's cat/dog/owl data from section 8.2 slide 11 and the already-explained running counts on the earlier incremental-count slide. This time the table shows rows emitted to the sink, not stored state or accumulated output. Each output-mode row represents a separate run of the same query.
+
+Batch 1 creates cat 1 and dog 3; both modes emit both rows. Batch 2 changes cat to 2 and creates owl 1. Complete also repeats dog 3; Update leaves dog out. Batch 3 changes dog to 4 and owl to 2. Complete repeats cat 2; Update leaves cat out. Update sends the new counts, not increments of one. No owl row exists before Batch 2. Row order is illustrative, not a Spark ordering guarantee.
+
+The unwindowed count has no final value while input keeps arriving, so Append is invalid for this query. Use a compatible sink for each mode; the later memory-sink demonstration deliberately chooses Complete. Mode definitions: https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+
+Original input figures remain in assets/streaming/original-word-count.png; the logical data is preserved in this editable table.""",
+    )
+
+pub def slide_streaming_state() -> Slide:
+    return Slide(
+        slug="streaming-state",
+        title="A running count needs state",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-state-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("A running count needs state", level=1),
+            paragraph([
+            text("After Batch 3, the next "),
+            code("dog"),
+            text(" must continue from 4."),
+        ], style="ss-time-intro"),
+            group([
+            group([
+                heading("Counts retained after Batch 3", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Word counts retained between batches", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="count", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="4"),
+                        ], style="ss-state-dog"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                    ]),
+                ], style="ss-state-table"),
+                prose("Spark keeps aggregate state between batches.", style="ss-state-caption"),
+            ]),
+            group([
+                group([
+                    rich_heading([
+                        text("Another "),
+                        code("dog"),
+                        text(" arrives"),
+                    ], level=3),
+                    paragraph([
+                        text("Read the saved count, add 1, keep 5."),
+                        line_break(),
+                        text("The count does not need every earlier word record."),
+                    ]),
+                ]),
+                group([
+                    heading("More distinct words arrive", level=3),
+                    paragraph([
+                        text("Each new word needs its own count."),
+                        line_break(),
+                        text("The number of retained keys can keep growing."),
+                    ]),
+                ]),
+                group([
+                    heading("Sending output does not clear this state", level=3),
+                    prose("Update and Complete still need these counts for the next batch."),
+                ]),
+            ], style="ss-state-cases"),
+        ], style="ss-state-grid"),
+            paragraph([
+            text("When can Spark forget an old count?"),
+            line_break(),
+            span("For counts over a time interval, we first need to define which time matters."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("92"),
+        ]),
+        ],
+        notes="""Return to the original running word count after examining the rows each output mode sends. Its state is the current count for each observed word, logically partitioned across the executors. This is not a single driver table or an input-history buffer. Another dog changes 4 to 5; the other two entries remain. More records for the same three keys do not require three new entries every batch. New distinct words add keys. An unwindowed aggregation has no event-time boundary that lets Spark forget one of these word counts. State consumes resources, and checkpointing protects it for recovery, as explained later. Spark may still retain source files or progress metadata separately; the claim about not retaining every word concerns the aggregate state needed to update this count. Use the question at the bottom to change the business question explicitly: next we count all words per ten-minute interval rather than each word across the lifetime of the query.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#state-store""",
+    )
+
+pub def slide_streaming_event_time() -> Slide:
+    return Slide(
+        slug="streaming-event-time",
+        title="Count words by when they happened",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-window-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Count words by when they happened", level=1),
+            paragraph([
+            text("Now each word has an "),
+            code("event_time"),
+            text(" timestamp. Count all words per ten-minute interval."),
+        ], style="ss-time-intro"),
+            node(NodeKind.Preformatted, children=[
+            code("""window_counts = events.groupBy(
+    F.window("event_time", "10 minutes")
+).count()"""),
+        ], style="language-python ss-window-query"),
+            group([
+            group([
+                heading("Input in arrival order", level=2),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Four word events, including a delayed cat record", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="Arrival", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="event_time", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="12:01"),
+                            node(NodeKind.Cell, content="cat"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="12:04"),
+                            node(NodeKind.Cell, content="dog"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="12:12"),
+                            node(NodeKind.Cell, content="owl"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="4 · late"),
+                            node(NodeKind.Cell, content="12:03"),
+                            node(NodeKind.Cell, content="cat"),
+                        ], style="ss-late-word"),
+                    ]),
+                ], style="ss-timed-events"),
+            ]),
+            group([
+                heading("Counts after these arrivals", level=2),
+                node(NodeKind.DefinitionList, children=[
+                    group([
+                        node(NodeKind.Term, content="12:00–12:10"),
+                        node(NodeKind.Definition, children=[
+                            span("2 → "),
+                            text("3"),
+                        ]),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="12:10–12:20"),
+                        node(NodeKind.Definition, content="1"),
+                    ]),
+                ], style="ss-window-totals"),
+                paragraph([
+                    text("The late cat belongs to the first window."),
+                    line_break(),
+                    text("Window start is included, end is excluded."),
+                ], style="ss-window-note"),
+            ]),
+        ], style="ss-window-grid"),
+            prose("Event time is when the event happened. Processing time is when Spark handles it.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("93"),
+        ]),
+        ],
+        notes="""Explicitly introduce a new timestamped example. The original text source had only value; it did not contain event_time. Here events is a streaming DataFrame with event_time TIMESTAMP and word STRING. For a Parquet source, the reader would be events = spark.readStream.schema("event_time TIMESTAMP, word STRING").parquet("data/timed-words"). This path and the timestamped rows are illustrative, separate from the supplied plain-text word-count files. No new Spark run or timed Parquet fixture is claimed. All displayed times share the same date and session time zone. F is the functions alias introduced earlier. This query counts rows per tumbling ten-minute event-time window, not per word. Adding word to groupBy would instead count each word within each interval. No watermark has been configured yet, so old windows can continue to change and their state is retained. A window alone does not make a count final.
+
+Read the arrivals in order. Cat at12:01 and dog at12:04 make two events in the first interval. Owl at12:12 belongs to the next. The last-arriving cat carries event time12:03, so it raises the earlier interval to3. The arrival index is explanatory ordering, not an extra source column or a batch number. Late means event-time order differs from arrival order; it does not mean invalid. The displayed totals are aggregate state after the arrivals. If publishing the evolving result, this no-watermark query can use Update with a compatible sink. Now ask how long Spark should keep accepting changes to that older interval.
+
+https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.functions.window.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#handling-late-data-and-watermarking""",
+    )
+
+pub def slide_streaming_watermarks() -> Slide:
+    return Slide(
+        slug="streaming-watermarks",
+        title="When can an old window close?",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-watermark-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("When can an old window close?", level=1),
+            group([
+            group([
+                node(NodeKind.Preformatted, children=[
+                    code("""window_counts = (
+    events
+    .withWatermark("event_time", "10 minutes")
+    .groupBy(
+        F.window("event_time", "10 minutes")
+    )
+    .count()
+)"""),
+                ], style="language-python"),
+                paragraph([
+                    text("This run uses "),
+                    code(".outputMode(\"append\")"),
+                    text("."),
+                    line_break(),
+                    text("It publishes a window once its count is final."),
+                ], style="ss-watermark-output"),
+            ]),
+            group([
+                heading("Later, event time reaches 12:21", level=2),
+                node(NodeKind.DefinitionList, children=[
+                    group([
+                        node(NodeKind.Term, content="Greatest event time observed"),
+                        node(NodeKind.Definition, content="12:21"),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="Allowed delay"),
+                        node(NodeKind.Definition, content="− 10 min"),
+                    ]),
+                    group([
+                        node(NodeKind.Term, content="Watermark advances to"),
+                        node(NodeKind.Definition, content="12:11"),
+                    ]),
+                ], style="ss-watermark-math"),
+                group([
+                    strong("12:00–12:10 · count 3"),
+                    span("Once Spark applies that watermark:"),
+                    span("Publish the final count and remove its state."),
+                ], style="ss-final-window"),
+                prose("A later arrival for this closed window will no longer revise its count.", style="ss-watermark-late"),
+            ], style="ss-watermark-example"),
+        ], style="ss-watermark-grid"),
+            paragraph([
+            text("The watermark follows event-time progress, not the wall clock."),
+            line_break(),
+            span("A longer delay allows more late data, but keeps state longer and delays final Append results."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("94"),
+        ]),
+        ],
+        notes="""This is an alternative run of the timestamped query, configured before start, with a ten-minute delay and Append output. It is not an in-place edit to a running query. Return to the first interval whose count became3. The late12:03 cat was nine minutes behind the then-greatest observed time12:12, inside this allowance. Later input with event time12:21 permits the single-stream watermark to advance to12:11. Once that watermark is applied in a subsequent micro-batch and the first window is finalized, Append emits count3 and its aggregation state can be removed. A future event for that already-closed window cannot revise the published count. The new12:21 event belongs to a later window, omitted from this close-up.
+
+Do not equate the window width with the watermark delay: both happen to be ten minutes here, but they are separate settings. Window width defines groups; delay defines lateness tolerance relative to observed event time. Watermark advancement and cleanup happen through query execution, not at an exact wall-clock instant. Idle input may leave a window open. Data within the threshold is guaranteed inclusion; data beyond it may or may not be processed, depending on watermark/state progress. Do not teach the delay as a universal exact cutoff for individual records.
+
+withWatermark must precede the aggregation and use its event-time column. Append waits for finality, Update can publish provisional counts before cleanup, and Complete retains all aggregate groups instead of cleaning them up this way. Return to these distinctions in the following compatibility table. The state-store backend and multiple-input watermark policies are outside this single-stream example.
+
+https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.withWatermark.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#conditions-for-watermarking-to-clean-aggregation-state""",
+    )
+
+pub def slide_streaming_output_compatibility() -> Slide:
+    return Slide(
+        slug="streaming-output-compatibility",
+        title="Which output modes can the query use?",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-compat",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Which output modes can the query use?", level=1),
+            prose("Micro-batch execution · common query shapes in Apache Spark 4.2", style="ss-output-scope"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Output-mode compatibility for representative micro-batch queries", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, attributes=[attr("style", "width:568px")]),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Query", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Append", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Update", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Complete", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("select / filter"),
+                        span("No aggregation"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Running word count"),
+                        span("No time window"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Windowed count + watermark"),
+                        span("Tumbling or sliding event-time window"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="Yes"),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, children=[
+                        text("Stream–stream join"),
+                        span("A supported join and condition"),
+                    ], attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Yes"),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                    node(NodeKind.Cell, content="No", style="ss-output-no"),
+                ]),
+            ]),
+        ], style="ss-output-compat-table"),
+            paragraph([
+            text("The query, sink and execution mode must all support the choice."),
+            line_break(),
+            span("Real-time mode currently supports Update only."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("95"),
+        ]),
+        ],
+        notes="""This is a focused compatibility check, not every combination of stateful operators. The window row assumes withWatermark precedes the aggregation on the same event-time column. Session windows and custom stateful APIs have additional restrictions. Append and Update emit equivalent rows for the simple stateless example. Unsupported choices fail validation; Spark does not quietly change modes.
+
+Append waits until event-time progress finalizes a window. Update can publish provisional counts and later revise them. Complete keeps all aggregate groups, including older windows. Refer back to the late cat and the finalized12:00–12:10 window. Complete retains older groups; it does not get the same state cleanup as Append or Update.
+
+Sink support is a separate check, shown on the upcoming sink slide. Output mode alone does not establish retry or delivery guarantees. Real-time's current Update-only restriction is independent of this micro-batch table; runtime operator support must also be checked.
+
+Query compatibility: https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes
+Window finality and cost: https://docs.databricks.com/aws/en/structured-streaming/output-mode
+Real-time restriction: https://docs.databricks.com/aws/en/structured-streaming/real-time/reference#execution-modes ; https://apache.github.io/spark/streaming/real-time-mode.html#requirements (in-progress documentation)""",
+    )
+
+pub def slide_streaming_output_recap() -> Slide:
+    return Slide(
+        slug="streaming-output-recap",
+        title="Output modes: recap",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-output-recap",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Output modes: recap", level=1),
+            group([
+            group([
+                span("01"),
+                heading("Complete", level=2),
+                prose("The whole current result, including unchanged rows."),
+            ]),
+            group([
+                span("02"),
+                heading("Append", level=2),
+                prose("Only new, final rows. This is the default."),
+            ]),
+            group([
+                span("03"),
+                heading("Update", level=2),
+                prose("Only new or updated result rows, carrying their new values."),
+            ]),
+        ], style="ss-recap"),
+            prose("The output mode selects rows. The sink decides how they are stored.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("96"),
+        ]),
+        ],
+        notes="""Close the output-mode explanation before introducing sources and sinks. Complete repeats the current result; Append adds final rows; Update emits the rows the query updated, with their new values. Update is not a delta and does not automatically merge a destination table. Complete is not a universal instruction to overwrite a destination.
+
+The mode must be supported by the query, execution mode and chosen sink. The examples here used micro-batch execution; Real-time currently requires Update. Ask which rows would be sent after the third word-count batch, then move on to where input comes from and where output goes.
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.outputMode.html
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-modes""",
+    )
+
+pub def slide_streaming_sources() -> Slide:
+    return Slide(
+        slug="streaming-sources",
+        title="Streaming sources",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming sources", level=1),
+            group([
+            group([
+                group([
+                    heading("Files and folders", level=2),
+                    prose("Text · CSV · JSON · ORC · Parquet"),
+                ]),
+                group([
+                    prose("New files arriving in a directory."),
+                    code_block("spark.readStream.text(\"data/words\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+            group([
+                group([
+                    heading("Kafka", level=2),
+                    prose("Topics and partitions"),
+                ]),
+                group([
+                    prose("Read records as they arrive."),
+                    code_block("spark.readStream.format(\"kafka\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+            group([
+                group([
+                    heading("Socket", level=2),
+                    prose("Demonstrations only"),
+                ]),
+                group([
+                    prose("A simple source without fault tolerance."),
+                    code_block("spark.readStream.format(\"socket\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+            group([
+                group([
+                    heading("Rate", level=2),
+                    prose("Testing and benchmarks"),
+                ]),
+                group([
+                    prose("Generate timestamp and value rows."),
+                    code_block("spark.readStream.format(\"rate\")", style="language-python"),
+                ]),
+            ], style="ss-io-row"),
+        ], style="ss-io-table"),
+            prose("The source supplies new input rows to the query.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("97"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 13. Retain the original source inventory. File source: files must arrive atomically; do not teach appending to an existing file as a way to add records. Formats other than fixed-schema text generally need a declared schema in the streaming example. Kafka requires its connector and options; these lines are API entry points, not complete configurations. Socket and rate are for development/testing. Rate behaviour is generated input, not a real external event stream. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )
+
+pub def slide_streaming_sinks() -> Slide:
+    return Slide(
+        slug="streaming-sinks",
+        title="Streaming sinks",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Streaming sinks", level=1),
+            group([
+            group([
+                span("Destination"),
+                span("What happens to the output"),
+                span("Micro-batch modes"),
+            ], style="ss-sink-head"),
+            group([
+                heading("Files", level=2),
+                prose("Write results to storage."),
+                span("Append"),
+            ], style="ss-sink-row"),
+            group([
+                heading("Kafka", level=2),
+                prose("Publish result records to a topic."),
+                span("Append · Update · Complete"),
+            ], style="ss-sink-row"),
+            group([
+                heading("foreach / foreachBatch", level=2),
+                prose("Send output through your own writer."),
+                span("Append · Update · Complete"),
+            ], style="ss-sink-row"),
+            group([
+                heading("Console", level=2),
+                prose("Print results for debugging."),
+                span("Append · Update · Complete"),
+            ], style="ss-sink-row"),
+            group([
+                heading("Memory", level=2),
+                prose("Query a small in-memory table for debugging."),
+                span("Append · Complete"),
+            ], style="ss-sink-row"),
+        ], style="ss-sink-table"),
+            prose("Choose an output mode that the query and destination both support.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("98"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.2 Spark Structured Streaming, slide 14. Keep the original destination list. Kafka does not by itself turn all end-to-end effects into exactly-once delivery. foreach is row-oriented; foreachBatch receives each micro-batch as a DataFrame and the batch ID. Its external writes need appropriate retry/idempotence handling. Memory sink supports Append and Complete, and is not fault-tolerant; console and memory are for small debugging examples. File sink supports Append. These are built-in micro-batch sink modes; operator restrictions still apply. Real-time has a different connector matrix and does not support foreachBatch. Do not treat Complete as a universal overwrite operation or Update as automatic upsert. Other table connectors can have different support. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )
+
+pub def slide_streaming_start() -> Slide:
+    return Slide(
+        slug="streaming-start",
+        title="Configuring the streaming query",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-code-slide",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Configuring the streaming query", level=1),
+            group([
+            group([
+                code_block("""checkpoint_path = "checkpoints/word-counts"
+query = (
+    counts.writeStream
+    .outputMode("complete")
+    .format("memory")
+    .queryName("word_counts")
+    .trigger(processingTime="5 seconds")
+    .option("checkpointLocation", checkpoint_path)
+    .start()
+)""", style="language-python"),
+            ]),
+            group([
+                heading("Return to the word-count example", level=2),
+                paragraph([
+                    code("writeStream"),
+                    text(" configures the output."),
+                ]),
+                paragraph([
+                    code("start()"),
+                    text(" starts processing and returns a "),
+                    code("StreamingQuery"),
+                    text("."),
+                ]),
+                prose("The memory sink and local checkpoint path are for this demonstration.", style="ss-small"),
+            ], style="ss-start-copy"),
+        ], style="ss-start-grid"),
+            group([
+            heading("Read the current result", level=2),
+            code_block("spark.table(\"word_counts\").orderBy(\"word\").show()", style="language-python"),
+            prose("The table contains the latest completed batch’s word counts."),
+        ], style="ss-result-read"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("99"),
+        ]),
+        ],
+        notes="We already started a minimal console query. Stop that run with query.stop() before starting this separate classroom demonstration. Return to the original unwindowed counts DataFrame; window_counts belonged to the separate timestamped example. Now collect the choices just explained: sink, output mode, trigger and checkpoint. Original corpus: Section 8, 8.3 recording around07:00 and11:00. Keep the writer → start → inspect result progression. queryName names the memory table in this example; it is not universally required for every query/sink. Memory output is deliberately small and is not a durable production destination. Configure checkpointLocation before start(). This local path persists progress and aggregation state for the demonstration; in a cluster, choose durable shared storage accessible after application replacement. The following slides explain what is saved and how a compatible query resumes. In Complete mode, a restarted memory query can recreate its full result table, but that does not make driver memory durable. The five-second trigger is an interval, not a promise to finish every five seconds. Use separate arriving files to reproduce the three moments; placing all files in the input directory before start may process them together. A driver-side spark.table read inspects results, not execution metrics. Use query.lastProgress for progress. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",
+    )
+
+pub def slide_streaming_checkpointing() -> Slide:
+    return Slide(
+        slug="streaming-checkpointing",
+        title="Checkpointing a streaming query",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-checkpoint-overview",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Checkpointing a streaming query", level=1),
+            node(NodeKind.Preformatted, children=[
+            code(".option(\"checkpointLocation\", \"checkpoints/word-counts\")"),
+        ], style="language-python ss-checkpoint-option"),
+            paragraph([
+            text("Set this on "),
+            code("writeStream"),
+            text(" before "),
+            code("start()"),
+            text(". Local demonstration path shown."),
+        ], style="ss-checkpoint-code-note"),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The information Spark retains for recovery", style="sr-only"),
+            node(NodeKind.TableHead, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="What Spark saves", attributes=[attr("scope", "col")]),
+                    node(NodeKind.HeaderCell, content="Why it matters after a restart", attributes=[attr("scope", "col")]),
+                ]),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Source progress", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Recover the input range that needs processing."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Completed batches", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Know which work is already committed."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Operator state", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Restore the counts or other state the query needs next."),
+                ]),
+            ]),
+        ], style="ss-checkpoint-contents"),
+            paragraph([
+            text("Use durable storage, with one checkpoint location per query."),
+            line_break(),
+            span("Restart with that same location and a compatible query."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("100"),
+        ]),
+        ],
+        notes="""Connect the explicit checkpointLocation on the previous writer example to the word-count state the audience already knows. A checkpoint directory contains input progress logs, completed-batch records, operator state for stateful queries, and query metadata such as query identity. Those pieces work together for recovery. It is not a copy of every source record or a backup of the destination, nor a serialized Python process. Stateless queries still need progress tracking. This is Structured Streaming query checkpointing, distinct from DataFrame.checkpoint() for truncating a batch execution plan and from cache/persist.
+
+Use durable, supported shared storage in a cluster. The relative path is only for the local classroom example. Keep it stable across restarts and exclusive to one logical query; never run two active queries against it. A new or deleted checkpoint means a fresh query, which can replay input according to the source's starting rules while old sink output remains. Do not teach checkpoint deletion as a routine fix. Keep required source data available for recovery.
+
+Reusing a checkpoint requires a compatible query. Changing grouping keys, aggregates, state schemas, sources or sinks can require a migration or a new checkpoint; supported changes depend on the release and connector. The checkpoint does not deploy or restart the application for you. Relaunch the application and reconstruct the compatible query with the same location. Real-time mode also checkpoints progress periodically; the next example specifically follows micro-batch recovery.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#recovering-from-failures-with-checkpointing
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#recovery-semantics-after-changes-in-a-streaming-query
+https://docs.databricks.com/aws/en/structured-streaming/checkpoints""",
+    )
+
+pub def slide_streaming_checkpoint_recovery() -> Slide:
+    return Slide(
+        slug="streaming-checkpoint-recovery",
+        title="Restarting from a checkpoint",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-checkpoint-recovery",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Restarting from a checkpoint", level=1),
+            prose("The same word count · micro-batch execution", style="ss-checkpoint-scope"),
+            group([
+            group([
+                heading("Saved after Batch 2", level=2),
+                prose("Last committed state", style="ss-recovery-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Word counts saved after Batch 2", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="count", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="3"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="1"),
+                        ]),
+                    ]),
+                ], style="ss-recovery-state"),
+                prose("Files 01.txt and 02.txt processed", style="ss-recovery-input-note"),
+            ], style="ss-recovery-saved"),
+            group([
+                text("→"),
+            ], style="ss-recovery-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Batch 3 interrupted", level=2),
+                prose("Commit not recorded", style="ss-recovery-label"),
+                group([
+                    code("dog"),
+                    code("owl"),
+                ], style="ss-recovery-records"),
+                prose("Input from 03.txt", style="ss-recovery-input-note"),
+            ], style="ss-recovery-interrupted"),
+            group([
+                text("→"),
+            ], style="ss-recovery-arrow", attributes=[attr("aria-hidden", "true")]),
+            group([
+                heading("Restart and replay Batch 3", level=2),
+                prose("Reuse the same checkpoint", style="ss-recovery-label"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.Caption, content="Recovered counts and counts after replaying Batch 3", style="sr-only"),
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="word", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="Restored", attributes=[attr("scope", "col")]),
+                            node(NodeKind.HeaderCell, content="After replay", attributes=[attr("scope", "col")]),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="cat", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="2"),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="dog", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="3"),
+                            node(NodeKind.Cell, content="4"),
+                        ]),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="owl", attributes=[attr("scope", "row")]),
+                            node(NodeKind.Cell, content="1"),
+                            node(NodeKind.Cell, content="2"),
+                        ]),
+                    ]),
+                ], style="ss-recovery-result"),
+                prose("Continue from the recovered counts", style="ss-recovery-input-note"),
+            ], style="ss-recovery-resumed"),
+        ], style="ss-recovery-flow"),
+            paragraph([
+            text("An unfinished batch can run again."),
+            line_break(),
+            span("The source must support replay, and the sink must handle retries correctly."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("101"),
+        ]),
+        ],
+        notes="""A concrete failure scenario using the same prepared word-count files. Batch 2 has committed. Its input progress and state are recoverable: cat 2, dog 3, owl 1. Batch 3 selects file 03.txt, containing dog and owl, but the application is interrupted before completion is recorded. On restart with the same compatible query and checkpoint, Spark recovers the committed state and replays the unfinished batch. The recovered state plus that input produces cat 2, dog 4, owl 2. It does not start the counts at zero or add the same failed batch twice to the committed aggregation. The displayed batch numbers are teaching labels; actual batch IDs are normally zero-based.
+
+This is an ordering example, not a time scale or a promise that recovery is instant. Internally, offset, commit and state-store logs participate in recovery; partially written files are not equivalent to a committed batch. New executors can load saved state. Keep the required source data available: checkpointing cannot restore Kafka records that retention removed or input files that were deleted.
+
+The sink caveat matters. If output was written before the failure but completion was not recorded, a retry may write again. Exactly-once external effects require a compatible replayable source and a sink with the necessary transactional or idempotent behaviour; checkpointing alone is not a universal exactly-once guarantee. Kafka output is at-least-once, and custom foreachBatch writers need their own retry/deduplication design. The classroom memory sink is for inspecting small results; in Complete mode it can recreate its full table after restarting, but it is not a durable external destination. A normal stop/restart is also supported, without needing to simulate a crash.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#recovering-from-failures-with-checkpointing
+https://spark.apache.org/docs/4.2.0/streaming/getting-started.html#fault-tolerance-semantics
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html#output-sinks""",
+    )
+
+pub def slide_streaming_operation() -> Slide:
+    return Slide(
+        slug="streaming-operation",
+        title="Managing a streaming query",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Managing a streaming query", level=1),
+            group([
+            group([
+                code("lines.isStreaming"),
+                prose("Is this an unbounded DataFrame?"),
+            ]),
+            group([
+                code("query.isActive"),
+                prose("Is the query still running?"),
+            ]),
+            group([
+                code("query.lastProgress"),
+                prose("What happened in the most recent trigger?"),
+            ]),
+            group([
+                code("query.stop()"),
+                prose("Stop this running query."),
+            ]),
+            group([
+                code("query.awaitTermination()"),
+                prose("Keep the application waiting while it runs."),
+            ]),
+        ], style="ss-management"),
+            paragraph([
+            text("Keep the query handle returned by "),
+            code("start()"),
+            text("."),
+        ], style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("102"),
+        ]),
+        ],
+        notes="Original corpus: Section 8, 8.3 Managing and Converting Streams, recording around11:00. In PySpark, isStreaming, isActive and lastProgress are properties; stop and awaitTermination are methods. lastProgress can be None before a progress report is available. These are independent controls, not a script to execute sequentially: awaitTermination is normally used instead of immediately stopping. Stop ends this run; it does not mean the stream has a natural end. A compatible restart uses the same checkpoint location, as just shown. Application deployment and production supervision remain later operational topics. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html API reference: https://spark.apache.org/docs/latest/api/python/reference/pyspark.ss/query_management.html",
+    )
+
+pub def slide_streaming_recap() -> Slide:
+    return Slide(
+        slug="streaming-recap",
+        title="Structured Streaming: recap",
+        frame=Frame.Composed,
+        styles="slide streaming-slide ss-chapter-recap ss-with-time",
+        content=[
+            group([
+            text("07 / STRUCTURED STREAMING"),
+        ], style="eyebrow"),
+            heading("Structured Streaming: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="The main ideas from the Structured Streaming chapter", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column, style="ss-summary-topic"),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="DataFrame API", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        paragraph([
+                            code("readStream"),
+                            text(" and transformations describe the query."),
+                        ]),
+                        paragraph([
+                            code("writeStream.start()"),
+                            text(" begins processing and returns the running-query handle."),
+                        ]),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Execution", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        paragraph([
+                            strong("Micro-batch:"),
+                            text(" each batch processes a fixed set of input."),
+                        ]),
+                        paragraph([
+                            strong("Real-time:"),
+                            text(" running tasks can accept new records as they arrive."),
+                        ]),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Output", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        group([
+                            group([
+                                strong("Append"),
+                                span("New, final rows"),
+                            ]),
+                            group([
+                                strong("Update"),
+                                span("Changed rows"),
+                            ]),
+                            group([
+                                strong("Complete"),
+                                span("The whole result"),
+                            ]),
+                        ], style="ss-summary-modes"),
+                        prose("The sink determines where those rows go.", style="ss-summary-sink"),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="State & time", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        prose("State carries results between batches. Event time places records in windows."),
+                        prose("A watermark lets eligible old windows close, trading lateness tolerance for retained state."),
+                    ]),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Recovery", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, children=[
+                        prose("Reuse a durable checkpoint to restore progress and state on a compatible restart."),
+                        prose("Unfinished work may be replayed; the sink must handle retries."),
+                    ]),
+                ]),
+            ]),
+        ], style="ss-chapter-summary"),
+            prose("The query, execution mode, output mode and sink must be compatible.", style="ss-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("103"),
+        ]),
+        ],
+        notes="""We began with familiar DataFrame code. A growing input makes execution, emitted results and recovery explicit choices. Recall record C: a micro-batch fixes its input; Real-time tasks can accept later arrivals. Keep runtime-specific support qualified. Output mode selects rows; it does not guarantee delivery. Restart requires the same checkpoint and a compatible query. Unfinished work can replay. Use the handle returned by start() to monitor lastProgress or stop the run. Recall the late12:03 cat: arrival order does not determine its window. Under Append, finalization and state removal wait for watermark progress. Complete preserves aggregate groups. The delay is measured against event time, not wall-clock waiting. State-store implementation details remain outside this introduction.
+
+https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html
+https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.ss/api/pyspark.sql.streaming.DataStreamWriter.trigger.html
+https://docs.databricks.com/aws/en/structured-streaming/real-time/concepts""",
+    )
+
+pub def chapter_07_chapter() -> Chapter:
+    return Chapter(number="7", title="07 / STRUCTURED STREAMING", first_page=1, slides=[
+        slide_section_7(),
+        slide_streaming_model(),
+        slide_streaming_conversion(),
+        slide_streaming_sql(),
+        slide_streaming_unbounded(),
+        slide_streaming_first_query(),
+        slide_streaming_execution_modes(),
+        slide_streaming_programming_model(),
+        slide_streaming_microbatch_triggers(),
+        slide_streaming_real_time(),
+        slide_streaming_arrival_comparison(),
+        slide_streaming_output_modes(),
+        slide_streaming_complete(),
+        slide_streaming_append(),
+        slide_streaming_update(),
+        slide_streaming_word_count(),
+        slide_streaming_state(),
+        slide_streaming_event_time(),
+        slide_streaming_watermarks(),
+        slide_streaming_output_compatibility(),
+        slide_streaming_output_recap(),
+        slide_streaming_sources(),
+        slide_streaming_sinks(),
+        slide_streaming_start(),
+        slide_streaming_checkpointing(),
+        slide_streaming_checkpoint_recovery(),
+        slide_streaming_operation(),
+        slide_streaming_recap(),
+    ])

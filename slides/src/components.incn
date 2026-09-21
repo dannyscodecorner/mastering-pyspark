@@ -1,0 +1,70 @@
+"""Reusable teaching components composed from the experimental surface."""
+
+from surface import TeachingStep, Attribute, NodeKind, Surface, cell, code, code_block, group, heading, paragraph, row, span, strong, table, text
+
+pub model ApiRow:
+    pub operation: str
+    pub pandas: str
+    pub spark: str
+
+pub model CodeExample:
+    pub code: str
+    pub answer: str
+    pub explanation: str
+
+pub model Takeaway:
+    pub label: str
+    pub explanation: list[Surface]
+
+pub model Phase:
+    pub label: str
+    pub title: str
+    pub description: list[Surface]
+
+pub def api_comparison(examples: list[ApiRow]) -> Surface:
+    header = Surface(kind=NodeKind.TableHead, children=[row([cell([], header=true), cell([text("pandas")], header=true), cell([text("PySpark")], header=true)])])
+    mut rows: list[Surface] = []
+    for example in examples:
+        rows.append(row([cell([text(example.operation)], header=true), cell([code(example.pandas)]), cell([code(example.spark)])]))
+    return table([header, Surface(kind=NodeKind.TableBody, children=rows)], style="lazy-comparison")
+
+pub def code_question(left: CodeExample, right: CodeExample) -> Surface:
+    return group([
+        group([code_block(left.code), paragraph([strong(left.answer), text(left.explanation)], style="operator-answer transform-answer")]),
+        group([code_block(right.code), paragraph([strong(right.answer), text(right.explanation)], style="operator-answer action-answer")]),
+    ], style="lazy-operator-grid")
+
+pub def recap_table(takeaways: list[Takeaway], caption: str) -> Surface:
+    mut rows: list[Surface] = []
+    for takeaway in takeaways:
+        rows.append(row([cell([text(takeaway.label)], header=true, attributes=[Attribute(name="scope", value="row")]), cell(takeaway.explanation)]))
+    return table([
+        Surface(kind=NodeKind.Caption, content=caption, style="sr-only"),
+        Surface(kind=NodeKind.Columns, children=[Surface(kind=NodeKind.Column), Surface(kind=NodeKind.Column)]),
+        Surface(kind=NodeKind.TableBody, children=rows),
+    ], style="chapter-recap-table")
+
+pub def flow(phases: list[Phase]) -> Surface:
+    mut nodes: list[Surface] = []
+    mut first = true
+    for phase in phases:
+        if not first:
+            nodes.append(Surface(kind=NodeKind.Bold, content="→"))
+        nodes.append(group([span(phase.label), heading(phase.title), paragraph(phase.description)]))
+        first = false
+    return group(nodes, style="lazy-benefit-flow")
+
+
+pub def step_rail(steps: list[TeachingStep]) -> Surface:
+    mut labels: list[Surface] = []
+    for step in steps:
+        labels.append(Surface(kind=NodeKind.ListItem, content=step.label))
+    return Surface(kind=NodeKind.OrderedList, style="lesson-rail", children=labels)
+
+pub def step_cues(steps: list[TeachingStep]) -> Surface:
+    mut cues: list[Surface] = []
+    for step in steps:
+        cues.append(Surface(kind=NodeKind.Paragraph,
+            attributes=[Attribute(name="data-cue", value=step.cue_key, boolean=not step.numbered)],
+            children=[strong(step.heading), span(step.explanation)]))
+    return group(cues, style="lesson-cues")

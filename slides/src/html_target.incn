@@ -1,0 +1,167 @@
+"""Lower the experimental typed surface to the existing DCC browser target."""
+
+from surface import Chapter, Frame, NodeKind, Slide, Surface, TeachingStep
+
+def escape(value: str) -> str:
+    return value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace("\"", "&quot;").replace("'", "&#39;")
+
+def tag(node: Surface) -> str:
+    match node.kind:
+        NodeKind.Text => return ""
+        NodeKind.Group => return "div"
+        NodeKind.Paragraph => return "p"
+        NodeKind.Heading => return f"h{node.level}"
+        NodeKind.Strong => return "strong"
+        NodeKind.Emphasis => return "em"
+        NodeKind.Code => return "code"
+        NodeKind.CodeBlock => return "pre"
+        NodeKind.Image => return "img"
+        NodeKind.Break => return "br"
+        NodeKind.Table => return "table"
+        NodeKind.TableHead => return "thead"
+        NodeKind.TableBody => return "tbody"
+        NodeKind.Row => return "tr"
+        NodeKind.HeaderCell => return "th"
+        NodeKind.Cell => return "td"
+        NodeKind.Caption => return "caption"
+        NodeKind.Span => return "span"
+        NodeKind.Bold => return "b"
+        NodeKind.Link => return "a"
+        NodeKind.Columns => return "colgroup"
+        NodeKind.Column => return "col"
+        NodeKind.TableFoot => return "tfoot"
+        NodeKind.Preformatted => return "pre"
+        NodeKind.Footer => return "footer"
+        NodeKind.Aside => return "aside"
+        NodeKind.Figure => return "figure"
+        NodeKind.FigureCaption => return "figcaption"
+        NodeKind.Header => return "header"
+        NodeKind.OrderedList => return "ol"
+        NodeKind.UnorderedList => return "ul"
+        NodeKind.ListItem => return "li"
+        NodeKind.DefinitionList => return "dl"
+        NodeKind.Term => return "dt"
+        NodeKind.Definition => return "dd"
+        NodeKind.Small => return "small"
+        NodeKind.Italic => return "i"
+        NodeKind.Button => return "button"
+        NodeKind.Rule => return "hr"
+        NodeKind.Svg => return "svg"
+        NodeKind.SvgTitle => return "title"
+        NodeKind.SvgDescription => return "desc"
+        NodeKind.SvgDefinitions => return "defs"
+        NodeKind.SvgGroup => return "g"
+        NodeKind.SvgMarker => return "marker"
+        NodeKind.SvgPath => return "path"
+        NodeKind.SvgRectangle => return "rect"
+        NodeKind.SvgText => return "text"
+        NodeKind.SvgEllipse => return "ellipse"
+        NodeKind.SvgCircle => return "circle"
+        NodeKind.SvgLinearGradient => return "linearGradient"
+        NodeKind.SvgStop => return "stop"
+        NodeKind.SvgClipPath => return "clipPath"
+        NodeKind.SvgLine => return "line"
+        NodeKind.SvgTextSpan => return "tspan"
+        NodeKind.SvgPolygon => return "polygon"
+        NodeKind.SvgPolyline => return "polyline"
+        NodeKind.SvgImage => return "image"
+        NodeKind.SvgUse => return "use"
+
+def resource(path: str) -> str:
+    # The built site carries assets, references and labs together at its root.
+    return path
+
+def render_node(node: Surface) -> str:
+    name = tag(node)
+    if name == "":
+        return escape(node.content)
+    mut attributes = ""
+    if node.style != "":
+        attributes += " class=\"" + escape(node.style) + "\""
+    for attribute in node.attributes:
+        value = attribute.value
+        if attribute.boolean:
+            attributes += " " + attribute.name
+        elif attribute.name == "src" or attribute.name == "href" or attribute.name == "xlink:href":
+            attributes += " " + attribute.name + '="' + escape(resource(value)) + '"'
+        else:
+            attributes += " " + attribute.name + '="' + escape(value) + '"'
+    opening = "<" + name + attributes + ">"
+    if name == "img" or name == "br" or name == "col" or name == "hr":
+        return opening
+    if node.kind == NodeKind.CodeBlock:
+        return opening + '<code class="language-python">' + escape(node.content) + "</code></pre>"
+    return opening + escape(node.content) + render_nodes(node.children) + "</" + name + ">"
+
+def render_nodes(nodes: list[Surface]) -> str:
+    mut output = ""
+    for node in nodes:
+        output += render_node(node)
+    return output
+
+def frame_style(frame: Frame) -> str:
+    match frame:
+        Frame.Cover => return "slide lazy-intro-art"
+        Frame.Lesson => return "slide lesson-slide lazy-content"
+        Frame.Definition => return "slide dictionary-definition"
+        Frame.ActionDetail => return "slide lesson-slide lazy-content action-detail"
+        Frame.Recap => return "slide chapter-recap"
+        Frame.Composed => return ""
+
+def render_lesson(slide: Slide) -> str:
+    last = len(slide.steps) - 1
+    style = escape(slide.lesson_style)
+    mut output = f'<div class="lesson {style}" data-lesson data-point="{last}"><ol class="lesson-rail">'
+    for step in slide.steps:
+        output += "<li>" + escape(step.label) + "</li>"
+    output += "</ol>" + render_nodes(slide.content) + '<div class="lesson-cues">'
+    mut index = 0
+    for step in slide.steps:
+        output += f'<p data-cue="{index}"><strong>' + escape(step.heading) + "</strong><span>" + escape(step.explanation) + "</span></p>"
+        index += 1
+    output += '</div><div class="lesson-controls"><button data-lesson-prev>Previous point</button><button data-lesson-next>Next point</button><button data-lesson-reset>Replay</button><span class="lesson-position" aria-live="polite"></span></div></div>'
+    return output
+
+def render_slide(slide: Slide, chapter: Chapter, page: int) -> str:
+    mut style = frame_style(slide.frame)
+    if slide.frame == Frame.Composed:
+        style = escape(slide.styles)
+    slug = escape(slide.slug)
+    title = escape(slide.title)
+    eyebrow = '<div class="eyebrow">' + escape(chapter.number + " / " + chapter.title) + "</div>"
+    # The HTML target uses the original numeric chapter selector for its theme.
+    mut section_number = chapter.number
+    if len(section_number) > 1 and section_number.startswith("0"):
+        section_number = section_number[1:]
+    mut output = f'<section class="{style}" id="{slug}" data-section="{section_number}" aria-label="{title}">'
+    for attribute in slide.attributes:
+        output = output[:-1] + " " + attribute.name + '="' + escape(attribute.value) + '">'
+    match slide.frame:
+        Frame.Composed =>
+            output += render_nodes(slide.content)
+        Frame.Cover =>
+            output += render_node(slide.content[0]) + render_node(slide.content[1]) + eyebrow
+            output += render_node(slide.content[2])
+        Frame.Definition =>
+            output += eyebrow + render_nodes(slide.content)
+        _ =>
+            output += eyebrow + "<h1>" + title + "</h1>"
+            if slide.subtitle != "":
+                output += '<p class="subtitle">' + escape(slide.subtitle) + "</p>"
+            if len(slide.steps) > 0:
+                output += render_lesson(slide)
+            else:
+                output += render_nodes(slide.content)
+    if slide.frame != Frame.Composed:
+        output += f'<footer><span>Danny’s Code Corner</span><span>{page}</span></footer>'
+    output += '<aside class="speaker-notes">' + escape(slide.notes) + "</aside></section>"
+    return output
+
+pub def render_chapters(chapters: list[Chapter]) -> str:
+    mut slides = ""
+    for chapter in chapters:
+        mut page = chapter.first_page
+        for slide in chapter.slides:
+            slides += render_slide(slide, chapter, page) + "\n"
+            page += 1
+    return slides

@@ -1,0 +1,146 @@
+"""Editable Incan content migrated from the captured core-abstractions-reference.html."""
+
+from surface import Attribute, Chapter, Frame, NodeKind, Slide, Surface, TeachingStep, attr, code, code_block, emphasis, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_welcome() -> Slide:
+    return Slide(
+        slug="welcome",
+        title="Mastering PySpark",
+        frame=Frame.Composed,
+        styles="slide dark",
+        content=[
+            group([
+            text("DCC / SPARK TRAINING"),
+        ], style="eyebrow"),
+            group([
+            group([
+                prose("A WORKSHOP", style="kicker"),
+                rich_heading([
+                    text("Mastering"),
+                    line_break(),
+                    emphasis("PySpark"),
+                ], level=1),
+                prose("Big Data Analytics with PySpark", style="lead"),
+                prose("Danny Meijer", style="byline"),
+            ]),
+            image("assets/dcc-logo.svg", "Danny’s Code Corner logo"),
+        ], style="cover"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("01"),
+        ]),
+        ],
+        notes="Welcome. This is a presentation skeleton with sample layouts, not the migrated course.",
+    )
+
+pub def slide_about_me() -> Slide:
+    return Slide(
+        slug="about-me",
+        title="About Me — Danny Meijer",
+        frame=Frame.Composed,
+        styles="slide about-editorial",
+        content=[
+            image("assets/about-me-portland.png", "Danny Meijer with colourful curly hair and glasses, seated with a coffee, beside his professional introduction.", style="about-editorial-art"),
+            group([
+            heading("About Me — Danny Meijer", level=1),
+            prose("Independent data & software engineer."),
+            prose("20 years of experience in Software engineering, Data Engineering and Cloud."),
+            heading("Large-scale data platforms", level=2),
+            prose("Previously Principal Software Engineer at Nike."),
+            heading("Core technologies", level=2),
+            prose("Spark, Databricks, Python, SQL and AWS."),
+            heading("Teaching PySpark", level=2),
+            prose("Creator of Mastering Big Data Analytics with PySpark."),
+            heading("Creator of Incan", level=2),
+            prose("A Python-readable, Rust-native programming language."),
+            prose("Curious. Pragmatic. Always learning."),
+            prose("Danny’s Code Corner"),
+        ], style="sr-only"),
+        ],
+        notes="Introduce yourself as an independent data and software engineer with 20 years of experience (confirmed by Danny for this slide). Previously Principal Software Engineer at Nike; Nike employment ended March 2026. Briefly connect your data-platform experience and original PySpark course to today’s workshop. No need to enumerate a CV: these are short points to introduce your background. Portrait artwork updated using Danny’s supplied Portland coffee-shop photograph as the image-editing reference. Background facts checked against the May 2026 CV source material; current role and experience total confirmed by Danny in this conversation. Introduce yourself as an independent data and software engineer, with 20 years across software, data and cloud. Nike is a previous role. Connect the course to your teaching experience; briefly introduce Incan as a Python-readable, Rust-native language you created. Artwork follows the selected third visual direction, with mountains removed. The visual typography is part of the full-slide artwork; the biography is also provided as accessible HTML.",
+    )
+
+pub def slide_roadmap() -> Slide:
+    return Slide(
+        slug="roadmap",
+        title="Agenda",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("DCC / SPARK TRAINING"),
+        ], style="eyebrow"),
+            heading("Agenda", level=1),
+            group([
+            node(NodeKind.Link, children=[
+                span("01"),
+                group([
+                    heading("Spark vs. Python", level=2),
+                    prose("How Python and Spark work together"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-1"), attr("style", "--item-accent:var(--s1)")]),
+            node(NodeKind.Link, children=[
+                span("02"),
+                group([
+                    heading("Introducing Spark", level=2),
+                    prose("A brief history of Spark"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#history-intro"), attr("style", "--item-accent:var(--s2)")]),
+            node(NodeKind.Link, children=[
+                span("03"),
+                group([
+                    heading("Spark’s Core Abstractions", level=2),
+                    prose("Putting data into perspective"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-3"), attr("style", "--item-accent:var(--s3)")]),
+            node(NodeKind.Link, children=[
+                span("04"),
+                group([
+                    heading("Lazy Pandas …", level=2),
+                    prose("Transformations and actions"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-4"), attr("style", "--item-accent:var(--s4)")]),
+            node(NodeKind.Link, children=[
+                span("05"),
+                group([
+                    heading("Spark Execution Model", level=2),
+                    prose("Query planning and distributed execution"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-5"), attr("style", "--item-accent:var(--s5)")]),
+            node(NodeKind.Link, children=[
+                span("06"),
+                group([
+                    heading("Batch vs. Streaming", level=2),
+                    prose("What changes when data keeps arriving"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-6"), attr("style", "--item-accent:var(--s6)")]),
+            node(NodeKind.Link, children=[
+                span("07"),
+                group([
+                    heading("Working with PySpark", level=2),
+                    prose("Data preparation, Spark Connect and deployment"),
+                ]),
+                node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
+            ], attributes=[attr("href", "#section-7"), attr("style", "--item-accent:var(--s7)")]),
+        ], style="roadmap"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("03"),
+        ]),
+        ],
+        notes="",
+    )
+
+pub def core_reference_00_chapter() -> Chapter:
+    return Chapter(number="0", title="DCC / SPARK TRAINING", first_page=1, slides=[
+        slide_welcome(),
+        slide_about_me(),
+        slide_roadmap(),
+    ])

@@ -1,0 +1,168 @@
+"""Experimental presentation surface. This is not a Pallay public API."""
+
+pub enum NodeKind:
+    Text
+    Group
+    Paragraph
+    Heading
+    Strong
+    Emphasis
+    Code
+    CodeBlock
+    Image
+    Break
+    Table
+    TableHead
+    TableBody
+    Row
+    HeaderCell
+    Cell
+    Caption
+    Span
+    Bold
+    Link
+    Columns
+    Column
+    TableFoot
+    Preformatted
+    Footer
+    Aside
+    Figure
+    FigureCaption
+    Header
+    OrderedList
+    UnorderedList
+    ListItem
+    DefinitionList
+    Term
+    Definition
+    Small
+    Italic
+    Button
+    Rule
+    Svg
+    SvgTitle
+    SvgDescription
+    SvgDefinitions
+    SvgGroup
+    SvgMarker
+    SvgPath
+    SvgRectangle
+    SvgText
+    SvgEllipse
+    SvgCircle
+    SvgLinearGradient
+    SvgStop
+    SvgClipPath
+    SvgLine
+    SvgTextSpan
+    SvgPolygon
+    SvgPolyline
+    SvgImage
+    SvgUse
+
+pub model Attribute:
+    pub name: str
+    pub value: str
+    pub boolean: bool = false
+
+pub model Surface:
+    pub kind: NodeKind
+    pub content: str = ""
+    pub style: str = ""
+    pub children: list[Surface] = []
+    pub attributes: list[Attribute] = []
+    pub level: int = 2
+
+pub model TeachingStep:
+    pub label: str
+    pub heading: str
+    pub explanation: str
+    pub cue_key: str = ""
+    pub numbered: bool = true
+
+pub enum Frame:
+    Cover
+    Lesson
+    Definition
+    ActionDetail
+    Recap
+    Composed
+
+pub model Slide:
+    pub slug: str
+    pub title: str
+    pub frame: Frame
+    pub content: list[Surface]
+    pub notes: str
+    pub subtitle: str = ""
+    pub lesson_style: str = ""
+    pub steps: list[TeachingStep] = []
+    pub styles: str = ""
+    pub attributes: list[Attribute] = []
+
+pub model Chapter:
+    pub number: str
+    pub title: str
+    pub first_page: int
+    pub slides: list[Slide]
+
+pub def text(value: str) -> Surface:
+    return Surface(kind=NodeKind.Text, content=value)
+
+pub def group(children: list[Surface], style: str = "", attributes: list[Attribute] = []) -> Surface:
+    return Surface(kind=NodeKind.Group, children=children, style=style, attributes=attributes)
+
+pub def paragraph(children: list[Surface], style: str = "") -> Surface:
+    return Surface(kind=NodeKind.Paragraph, children=children, style=style)
+
+pub def prose(value: str, style: str = "") -> Surface:
+    return Surface(kind=NodeKind.Paragraph, content=value, style=style)
+
+pub def heading(value: str, level: int = 2) -> Surface:
+    return Surface(kind=NodeKind.Heading, content=value, level=level)
+
+pub def rich_heading(children: list[Surface], level: int = 1) -> Surface:
+    return Surface(kind=NodeKind.Heading, children=children, level=level)
+
+pub def strong(value: str) -> Surface:
+    return Surface(kind=NodeKind.Strong, content=value)
+
+pub def emphasis(value: str) -> Surface:
+    return Surface(kind=NodeKind.Emphasis, content=value)
+
+pub def code(value: str) -> Surface:
+    return Surface(kind=NodeKind.Code, content=value)
+
+pub def code_block(value: str, style: str = "") -> Surface:
+    return Surface(kind=NodeKind.CodeBlock, content=value, style=style)
+
+pub def line_break() -> Surface:
+    return Surface(kind=NodeKind.Break)
+
+pub def span(value: str, style: str = "", attributes: list[Attribute] = []) -> Surface:
+    return Surface(kind=NodeKind.Span, content=value, style=style, attributes=attributes)
+
+pub def cell(children: list[Surface], header: bool = false, attributes: list[Attribute] = []) -> Surface:
+    if header:
+        return Surface(kind=NodeKind.HeaderCell, children=children, attributes=attributes)
+    return Surface(kind=NodeKind.Cell, children=children, attributes=attributes)
+
+pub def row(cells: list[Surface]) -> Surface:
+    return Surface(kind=NodeKind.Row, children=cells)
+
+pub def table(rows: list[Surface], style: str = "") -> Surface:
+    return Surface(kind=NodeKind.Table, children=rows, style=style)
+
+pub def image(path: str, description: str, style: str = "") -> Surface:
+    return Surface(kind=NodeKind.Image, style=style, attributes=[Attribute(name="src", value=path), Attribute(name="alt", value=description)])
+
+pub def link(label: str, url: str) -> Surface:
+    return Surface(kind=NodeKind.Link, content=label, attributes=[Attribute(name="href", value=url), Attribute(name="target", value="_blank"), Attribute(name="rel", value="noopener noreferrer")])
+
+
+pub def attr(name: str, value: str = "", flag: bool = false) -> Attribute:
+    return Attribute(name=name, value=value, boolean=flag)
+
+pub def node(kind: NodeKind, content: str = "", children: list[Surface] = [], style: str = "", attributes: list[Attribute] = [], level: int = 2) -> Surface:
+    return Surface(kind=kind, content=content, children=children, style=style, attributes=attributes, level=level)

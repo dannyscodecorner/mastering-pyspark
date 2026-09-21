@@ -1,0 +1,43 @@
+"""Editable Incan content migrated from the captured index.html."""
+
+from surface import Attribute, Chapter, Frame, NodeKind, Slide, Surface, TeachingStep, attr, code, code_block, emphasis, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_closing() -> Slide:
+    return Slide(
+        slug="closing",
+        title="Recap and Questions",
+        frame=Frame.Composed,
+        styles="slide ",
+        content=[
+            group([
+            text("DCC / SPARK TRAINING"),
+        ], style="eyebrow"),
+            heading("Recap and Questions", level=1),
+            group([
+            paragraph([
+                span("01"),
+                text("Where does this code execute?"),
+            ]),
+            paragraph([
+                span("02"),
+                text("What work causes data to move?"),
+            ]),
+            paragraph([
+                span("03"),
+                text("What evidence explains the behaviour?"),
+            ]),
+        ], style="closing-prompts"),
+            prose("Discussion · recap · next steps", style="takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("123"),
+        ]),
+        ],
+        notes="Whole-course discussion after the final AWS Glue chapter. Revisit execution location, data movement and runtime evidence across the course. Resources and client-specific follow-up links to be added.",
+    )
+
+pub def closing_chapter() -> Chapter:
+    return Chapter(number="0", title="DCC / SPARK TRAINING", first_page=1, slides=[
+        slide_closing(),
+    ])

@@ -1,0 +1,925 @@
+"""Editable Incan content migrated from the captured index.html."""
+
+from surface import Attribute, Chapter, Frame, NodeKind, Slide, Surface, TeachingStep, attr, code, code_block, emphasis, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_section_3() -> Slide:
+    return Slide(
+        slug="section-3",
+        title="Spark’s Core Abstractions",
+        frame=Frame.Composed,
+        styles="slide core-intro-art",
+        content=[
+            image("assets/core-abstractions-two-apis.png", "Illustrated numbered tiles and a table represent RDDs and DataFrames against a dark charcoal background.", style="core-intro-image"),
+            group([
+            prose("03 / Spark’s Core Abstractions"),
+            heading("Spark’s Core Abstractions", level=1),
+            prose("Putting data into perspective"),
+            prose("RDDs · DataFrames"),
+            prose("Danny’s Code Corner"),
+        ], style="sr-only"),
+        ],
+        notes="This section focuses on RDDs and DataFrames. The history chapter established where Hadoop and Spark came from. Now follow one MapReduce calculation to see why reuse matters, explain recovery with RDDs, then show what schema-aware DataFrame expressions let Spark optimise. Typed Dataset details are in the reference deck if questions arise.",
+    )
+
+pub def slide_hadoop_mapreduce() -> Slide:
+    steps = [
+        TeachingStep(label="Input",
+            heading="Start with the question",
+            explanation="What is the total per category? The input is split so tasks can work in parallel.",
+            cue_key="0", numbered=true),
+        TeachingStep(label="Map",
+            heading="Map · emit a common key",
+            explanation="Each map task emits category–amount pairs from its own input split.",
+            cue_key="1", numbered=true),
+        TeachingStep(label="Shuffle",
+            heading="Shuffle · matching keys must meet",
+            explanation="The books records came from different tasks. Bring their amounts together before adding them.",
+            cue_key="2", numbered=true),
+        TeachingStep(label="Reduce",
+            heading="Reduce · combine each group",
+            explanation="Add the amounts for each category: books 40, games 40, music 10.",
+            cue_key="3", numbered=true),
+        TeachingStep(label="Write",
+            heading="Finish this job",
+            explanation="Write the output to HDFS so another job can use it.",
+            cue_key="4", numbered=true),
+        TeachingStep(label="Read again",
+            heading="Now do another calculation",
+            explanation="That next job reads the intermediate output back. Repeated jobs repeat this storage round trip.",
+            cue_key="5", numbered=true),
+    ]
+    return Slide(
+        slug="hadoop-mapreduce",
+        title="How MapReduce works",
+        frame=Frame.Composed,
+        styles="slide lesson-slide ",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("How MapReduce works", level=1),
+            group([
+            prose("What is the total per category?", style="subtitle"),
+            step_rail(steps),
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="mapreduce job", attributes=[attr("id", "mapreduce-job-title")]),
+                node(NodeKind.SvgDescription, content="Four records are mapped in two tasks, shuffled by category, reduced to totals, written to HDFS and read by a later job.", attributes=[attr("id", "mapreduce-job-desc")]),
+                node(NodeKind.SvgText, content="Input records", style="scene-heading", attributes=[attr("x", "20"), attr("y", "28")]),
+                node(NodeKind.SvgText, content="Parallel map tasks", style="scene-heading mid-heading", attributes=[attr("x", "462"), attr("y", "28")]),
+                node(NodeKind.SvgText, content="Group by key → reduce", style="scene-heading right-heading", attributes=[attr("x", "934"), attr("y", "28")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "8"), attr("y", "52"), attr("width", "278"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "8"), attr("y", "228"), attr("width", "278"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgText, content="Input split A", style="tiny", attributes=[attr("x", "22"), attr("y", "71")]),
+                node(NodeKind.SvgText, content="Input split B", style="tiny", attributes=[attr("x", "22"), attr("y", "247")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 78)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record games source-tile", attributes=[attr("transform", "translate(24 140)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 252)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music source-tile", attributes=[attr("transform", "translate(24 314)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "434"), attr("y", "52"), attr("width", "288"), attr("height", "160"), attr("rx", "10")]),
+                    node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "434"), attr("y", "228"), attr("width", "288"), attr("height", "160"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Map task A", style="tiny", attributes=[attr("x", "448"), attr("y", "71")]),
+                    node(NodeKind.SvgText, content="Map task B", style="tiny", attributes=[attr("x", "448"), attr("y", "247")]),
+                ], style="map-boundaries"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, style="books", attributes=[attr("d", "M702 105H786Q806 105 826 105H918")]),
+                    node(NodeKind.SvgPath, style="books", attributes=[attr("d", "M702 279H764C838 279 786 155 854 155H918")]),
+                    node(NodeKind.SvgPath, style="games", attributes=[attr("d", "M702 167H762C828 167 788 239 854 239H918")]),
+                    node(NodeKind.SvgPath, style="music", attributes=[attr("d", "M702 341H800Q820 341 840 329H918")]),
+                ], style="shuffle-paths"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="books group-box", attributes=[attr("x", "922"), attr("y", "63"), attr("width", "362"), attr("height", "117"), attr("rx", "10")]),
+                    node(NodeKind.SvgRectangle, style="games group-box", attributes=[attr("x", "922"), attr("y", "209"), attr("width", "362"), attr("height", "63"), attr("rx", "10")]),
+                    node(NodeKind.SvgRectangle, style="music group-box", attributes=[attr("x", "922"), attr("y", "299"), attr("width", "362"), attr("height", "63"), attr("rx", "10")]),
+                ], style="group-shells"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(books,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="25)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(games,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-1"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(books,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="15)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-2"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="(music,", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="10)", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record music ", attributes=[attr("transform", "translate(0 0)")]),
+                ], style="moving-record moving-3"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(944 89)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(944 213)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record music ", attributes=[attr("transform", "translate(944 303)")]),
+                    node(NodeKind.SvgText, content="25 + 15", style="tiny", attributes=[attr("x", "962"), attr("y", "167")]),
+                ], style="sum-results"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="storage-box", attributes=[attr("x", "458"), attr("y", "62"), attr("width", "374"), attr("height", "302"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="HDFS · job output", style="scene-heading", attributes=[attr("x", "480"), attr("y", "102")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(484 127)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(484 197)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record music ", attributes=[attr("transform", "translate(484 267)")]),
+                ], style="storage-result"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "924"), attr("y", "102"), attr("width", "362"), attr("height", "210"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Next calculation", style="scene-heading", attributes=[attr("x", "948"), attr("y", "146")]),
+                    node(NodeKind.SvgText, content="Read the stored output", style="small", attributes=[attr("x", "948"), attr("y", "191")]),
+                    node(NodeKind.SvgText, content="Process it again", style="small", attributes=[attr("x", "948"), attr("y", "234")]),
+                    node(NodeKind.SvgPath, style="read-route", attributes=[attr("d", "M832 207H919")]),
+                ], style="next-job"),
+            ], attributes=[attr("viewBox", "0 0 1308 410"), attr("role", "img"), attr("aria-labelledby", "mapreduce-job-title mapreduce-job-desc")]),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson", attributes=[attr("data-lesson", "mapreduce"), attr("data-point", "5")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("27"),
+        ]),
+        ],
+        notes="Source: original course 2.1 slides 7–9 and https://hadoop.apache.org/docs/r3.2.2/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduceTutorial.html . Start by asking attendees to predict where the two books records must meet. Advance one step at a time. Input split A/B are teaching examples; an HDFS block is not automatically one input split. Map tasks process independently; shuffle transfers and sorts intermediate pairs so equal keys reach the same reducer. Groups shown do not imply one reducer per key. Omit combiners for clarity. Map output is buffered/spilled locally, not necessarily written to HDFS. The HDFS write shown is job output between jobs. MapReduce also provides task retries and fault tolerance; Spark did not invent those. End with why this is useful AND costly for iterative or interactive reuse. No claim that all disk use disappears in Spark.",
+    )
+
+pub def slide_spark_performance() -> Slide:
+    return Slide(
+        slug="spark-performance",
+        title="Hadoop worked, but it was slow",
+        frame=Frame.Composed,
+        styles="slide lesson-slide",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Hadoop worked, but it was slow", level=1),
+            prose("Run another calculation on the same data.", style="subtitle"),
+            group([
+            node(NodeKind.OrderedList, children=[
+                node(NodeKind.ListItem, content="Read the data"),
+                node(NodeKind.ListItem, content="Use it again"),
+                node(NodeKind.ListItem, content="Keep it in memory"),
+            ], style="lesson-rail"),
+            group([
+                group([
+                    span(""),
+                    node(NodeKind.Bold, content="FIRST CALCULATION"),
+                    node(NodeKind.Bold, content="SECOND CALCULATION"),
+                    node(NodeKind.Bold, content="THIRD CALCULATION"),
+                ], style="reuse-head"),
+                group([
+                    rich_heading([
+                        text("Hadoop"),
+                        line_break(),
+                        text("MapReduce"),
+                    ], level=2),
+                    group([
+                        span("Read from disk", style="disk-read"),
+                        span("Compute", style="work-step"),
+                    ]),
+                    group([
+                        span("Read again", style="disk-read"),
+                        span("Compute", style="work-step"),
+                    ], style="repeat-step"),
+                    group([
+                        span("Read again", style="disk-read"),
+                        span("Compute", style="work-step"),
+                    ], style="repeat-step"),
+                ], style="reuse-row"),
+                group([
+                    heading("Spark", level=2),
+                    group([
+                        span("Read from disk", style="disk-read"),
+                        span("Compute", style="work-step"),
+                        span("Persist in memory", style="memory-store"),
+                    ]),
+                    group([
+                        span("Reuse from memory", style="memory-reuse"),
+                        span("Compute", style="work-step"),
+                    ], style="warm-step"),
+                    group([
+                        span("Reuse from memory", style="memory-reuse"),
+                        span("Compute", style="work-step"),
+                    ], style="warm-step"),
+                ], style="reuse-row spark-reuse"),
+                prose("Same reusable working set · persisted partitions fit and remain in memory · schematic, not a timing chart", style="reuse-assumption"),
+            ], style="reuse-board"),
+            group([
+                node(NodeKind.Paragraph, children=[
+                    strong("Both start by reading the data"),
+                    text("The first load still has a cost. Spark does not make the underlying disk faster."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("What if we need that same data again?"),
+                    text("Separate MapReduce jobs read their input again. What could Spark avoid?"),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("Read once. Reuse in memory."),
+                    text("With persistence, later calculations can skip rereading and rebuilding the same working set."),
+                ], attributes=[attr("data-cue", flag=true)]),
+            ], style="lesson-cues"),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson reuse-comparison", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("28"),
+        ]),
+        ],
+        notes="The comparison is repeated calculations over a reusable working set, not every Hadoop or Spark workload. First show both reading from disk: we are not claiming Spark disk reads are inherently faster, nor asserting identical measured I/O speeds. Advance to Hadoop reading again, then pause: What could Spark do differently? Reveal persistence and the two memory reuse steps. Once computed and retained, Spark can avoid rereading and recomputing these partitions. This is the in-memory story behind the historical performance gains; no numeric speedup is asserted. Hadoop/OS caching can also affect physical disk I/O. Spark still uses disk for initial input and may use it for shuffle, spill, persistence or recovery. Reuse here assumes explicitly persisted partitions fit and remain in memory. Transition: how can distributed data be retained and recovered safely? That leads to RDDs. Source: https://spark.apache.org/docs/0.7.0/scala-programming-guide.html#rdd-persistence",
+    )
+
+pub def slide_spark_speedup() -> Slide:
+    return Slide(
+        slug="spark-speedup",
+        title="How much faster?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide speed-evidence",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("How much faster?", level=1),
+            prose("A historical example: logistic regression in Hadoop and Spark.", style="subtitle"),
+            group([
+            node(NodeKind.Figure, children=[
+                group([
+                    heading("Hadoop", level=2),
+                    group([
+                        span("", attributes=[attr("style", "width:100%")]),
+                    ], style="speed-track"),
+                    node(NodeKind.Bold, content="110 s"),
+                ], style="speed-row"),
+                group([
+                    heading("Spark", level=2),
+                    group([
+                        span("", attributes=[attr("style", "width:0.8181818%")]),
+                    ], style="speed-track"),
+                    node(NodeKind.Bold, content="0.9 s"),
+                ], style="speed-row spark-speed"),
+                node(NodeKind.FigureCaption, content="Running time · seconds · lower is better"),
+            ], style="speed-bars", attributes=[attr("aria-label", "Reported running time: Hadoop 110 seconds, Spark 0.9 seconds. Bars use the same linear scale.")]),
+            group([
+                strong("≈122×"),
+                prose("faster in this example"),
+                span("110 ÷ 0.9"),
+            ], style="speed-ratio"),
+        ], style="speed-layout"),
+            prose("Repeated work is where reusing data can make a dramatic difference.", style="speed-bridge"),
+            paragraph([
+            text("Source: "),
+            node(NodeKind.Link, content="Apache Spark · MLlib performance example", attributes=[attr("href", "https://spark.apache.org/mllib/"), attr("target", "_blank"), attr("rel", "noopener")]),
+            line_break(),
+            text("Historical result, not a general speed guarantee. Loading costs and test setup are not specified on the source page."),
+        ], style="speed-source"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("29"),
+        ]),
+        ],
+        notes="Use after the in-memory explanation. Ask: How big a difference can this make? Apache Spark’s own MLlib page shows Hadoop 110 seconds and Spark 0.9 seconds for logistic regression. The ratio calculated from those labels is approximately 122.2. This recovers the figures from the original course, using a primary source instead of the rejected July 2013 PySpark talk. Explain that iterative algorithms reuse a working set, so the previous slide explains an important reason such gains are possible. Do not claim this graphic isolates persistence, measures only warm iterations, includes or excludes initial loading, or benchmarks the Python API specifically: the page and image do not specify those details, versions, hardware or dataset size. No benchmark date is asserted. This is a historical illustration, not a current benchmark or a promise for every workload. If asked for a production estimate, explain that reuse, memory capacity, I/O, shuffle and workload all matter. End with: But, how does Spark do this? Pause, then advance to the RDD-only slide. Do not expand the acronym yet. Sources: https://spark.apache.org/mllib/ and https://spark.apache.org/images/logistic-regression.png . Source image retained in assets/history/spark-logistic-regression-source.png.",
+    )
+
+pub def slide_rdd_prompt() -> Slide:
+    return Slide(
+        slug="rdd-prompt",
+        title="RDD",
+        frame=Frame.Composed,
+        styles="slide rdd-prompt",
+        content=[
+            heading("RDD", level=1),
+        ],
+        notes="Let the acronym sit on screen. Ask: Who has come across RDDs? Can anyone tell me what RDD stands for? How might it relate to the performance difference we just saw? Pause and invite answers before advancing. The next slide expands the acronym and explains partitioned data, persistence and recovery. Keep the distinction clear: RDDs support this model, but reuse across calculations requires persistence; merely creating an RDD does not cache it.",
+    )
+
+pub def slide_rdd_foundation() -> Slide:
+    steps = [
+        TeachingStep(label="Source",
+            heading="A different way to reuse the same sales",
+            explanation="The source stays available. Spark describes partitioned collections and their transformations.",
+            cue_key="0", numbered=true),
+        TeachingStep(label="Partitions",
+            heading="Distributed · one collection, multiple partitions",
+            explanation="Parse the records into RDD partitions. This is a plan until an action requests computation.",
+            cue_key="1", numbered=true),
+        TeachingStep(label="Persist",
+            heading="Reuse · keep a useful intermediate RDD",
+            explanation="After it is computed, persist these partitions for later calculations. Here they fit in memory.",
+            cue_key="2", numbered=true),
+        TeachingStep(label="Reuse",
+            heading="Another calculation, the same persisted data",
+            explanation="Sum and count can reuse the parsed records rather than read and parse the source again.",
+            cue_key="3", numbered=true),
+        TeachingStep(label="Loss",
+            heading="Resilient · a partition becomes unavailable",
+            explanation="The stored copy of P0 is lost. P1 remains available; the source and lineage remain.",
+            cue_key="4", numbered=true),
+        TeachingStep(label="Recover",
+            heading="Lineage · rebuild the missing partition",
+            explanation="Read source P0 and replay its parse. This narrow dependency lets us rebuild only P0.",
+            cue_key="5", numbered=true),
+        TeachingStep(label="Why?",
+            heading="Pause · why does this matter?",
+            explanation="Partitions explain parallel work. Dependencies explain required work. Recovery can explain repeated work.",
+            cue_key="6", numbered=true),
+    ]
+    return Slide(
+        slug="rdd-foundation",
+        title="Resilient Distributed Dataset",
+        frame=Frame.Composed,
+        styles="slide lesson-slide ",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Resilient Distributed Dataset", level=1),
+            group([
+            prose("Reuse distributed data, and retain how it was derived.", style="subtitle"),
+            step_rail(steps),
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="rdd walk", attributes=[attr("id", "rdd-walk-title")]),
+                node(NodeKind.SvgDescription, content="The same sales are parsed into two RDD partitions, persisted for sum and count, and P0 is recovered from its source if lost.", attributes=[attr("id", "rdd-walk-desc")]),
+                node(NodeKind.SvgText, content="Same sales · source data", style="scene-heading", attributes=[attr("x", "20"), attr("y", "28")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 78)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record games source-tile", attributes=[attr("transform", "translate(24 140)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 252)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music source-tile", attributes=[attr("transform", "translate(24 314)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M270 108H442M270 284H442")]),
+                    node(NodeKind.SvgText, content="parse", style="tiny", attributes=[attr("x", "300"), attr("y", "91")]),
+                    node(NodeKind.SvgText, content="parse", style="tiny", attributes=[attr("x", "300"), attr("y", "267")]),
+                ], style="rdd-lineage"),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "440"), attr("y", "52"), attr("width", "314"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "440"), attr("y", "228"), attr("width", "314"), attr("height", "160"), attr("rx", "10")]),
+                node(NodeKind.SvgText, content="Partition P0", style="tiny", attributes=[attr("x", "460"), attr("y", "76")]),
+                node(NodeKind.SvgText, content="Partition P1", style="tiny", attributes=[attr("x", "460"), attr("y", "252")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record books ", attributes=[attr("transform", "translate(466 84)")]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                        node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                        node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                    ], style="record games ", attributes=[attr("transform", "translate(466 144)")]),
+                ], style="cached-p0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books ", attributes=[attr("transform", "translate(466 260)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music ", attributes=[attr("transform", "translate(466 320)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Persisted after computation", style="small", attributes=[attr("x", "468"), attr("y", "37")]),
+                ], style="cache-label"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="books group-box", attributes=[attr("x", "930"), attr("y", "75"), attr("width", "352"), attr("height", "114"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Total sales", style="small", attributes=[attr("x", "952"), attr("y", "113")]),
+                    node(NodeKind.SvgText, content="90", style="result-big", attributes=[attr("x", "952"), attr("y", "167")]),
+                    node(NodeKind.SvgRectangle, style="music group-box", attributes=[attr("x", "930"), attr("y", "243"), attr("width", "352"), attr("height", "114"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Number of sales", style="small", attributes=[attr("x", "952"), attr("y", "281")]),
+                    node(NodeKind.SvgText, content="4", style="result-big", attributes=[attr("x", "952"), attr("y", "337")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M754 134H824V300H754M824 217H874V132H924M874 217V300H924")]),
+                ], style="rdd-outputs"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="lost-box", attributes=[attr("x", "462"), attr("y", "84"), attr("width", "268"), attr("height", "114"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="P0 unavailable", style="small", attributes=[attr("x", "482"), attr("y", "124")]),
+                    node(NodeKind.SvgText, content="Recompute from source", style="tiny", attributes=[attr("x", "482"), attr("y", "165")]),
+                ], style="lost-p0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M146 134V408H592V200")]),
+                    node(NodeKind.SvgText, content="Replay the parse for P0", style="tiny", attributes=[attr("x", "304"), attr("y", "392")]),
+                ], style="recovery-route"),
+            ], attributes=[attr("viewBox", "0 0 1308 410"), attr("role", "img"), attr("aria-labelledby", "rdd-walk-title rdd-walk-desc")]),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson", attributes=[attr("data-lesson", "rdd"), attr("data-point", "6")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("31"),
+        ]),
+        ],
+        notes="Start by reconnecting to the benchmark: repeated calculations on the same data can reuse a persisted intermediate result. Our tiny sales sum/count example illustrates reuse, not the logistic-regression benchmark. An RDD is an immutable, partitioned collection. Parsing creates a dependency on source data; transformations are lazy and actions request work. persist/cache alone does not materialise anything. At Persist, explicitly say an action has now computed the partitions; the visual uses an in-memory storage choice and assumes the data fits. Memory/disk storage levels vary; Spark still uses disk for shuffle, spill and storage. Reuse does not guarantee cache availability. Loss represents an unavailable cached partition, not permanent loss of the source. P0 parse is a narrow deterministic dependency; joins/shuffles can require more extensive recovery. Source is assumed available. Sum/count shown are application results combining partition contributions, not necessarily one task each. Stop at Why and let attendees answer before proceeding to DataFrames. References: https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf ; https://spark.apache.org/docs/latest/rdd-programming-guide.html",
+    )
+
+pub def slide_dataframe_meaning() -> Slide:
+    steps = [
+        TeachingStep(label="RDD",
+            heading="RDDs gave us distributed collections",
+            explanation="But an arbitrary Python function does not expose its column-level meaning to Spark SQL.",
+            cue_key="0", numbered=true),
+        TeachingStep(label="Schema",
+            heading="Give the values names and types",
+            explanation="category is a string; amount is a number. The rows still belong to distributed partitions.",
+            cue_key="1", numbered=true),
+        TeachingStep(label="Request",
+            heading="Use built-in expressions",
+            explanation="Request amount values above 20. Spark can analyse this request and plan the computation.",
+            cue_key="2", numbered=true),
+        TeachingStep(label="Prune",
+            heading="Why this helps · read only required columns",
+            explanation="With a suitable columnar source, the unused category column can be pruned from the read.",
+            cue_key="3", numbered=true),
+        TeachingStep(label="Execute",
+            heading="Execute the plan across partitions",
+            explanation="For this example, the requested values are 25 and 40. Supported filters may also be pushed toward the source.",
+            cue_key="4", numbered=true),
+        TeachingStep(label="Why?",
+            heading="Why learn the lower layers?",
+            explanation="A DataFrame query becomes an execution plan over partitions. Shuffles, persistence and recovery still matter.",
+            cue_key="5", numbered=true),
+    ]
+    return Slide(
+        slug="dataframe-meaning",
+        title="Give Spark more information",
+        frame=Frame.Composed,
+        styles="slide lesson-slide ",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Give Spark more information", level=1),
+            group([
+            prose("A schema and expressions make the request visible to the optimiser.", style="subtitle"),
+            step_rail(steps),
+            node(NodeKind.Svg, children=[
+                node(NodeKind.SvgTitle, content="dataframe walk", attributes=[attr("id", "dataframe-walk-title")]),
+                node(NodeKind.SvgDescription, content="The sales become named columns; an amount-only filter permits column pruning with a supporting source and executes across partitions.", attributes=[attr("id", "dataframe-walk-desc")]),
+                node(NodeKind.SvgText, content="Same sales · Parquet source", style="scene-heading", attributes=[attr("x", "20"), attr("y", "28")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="25", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 78)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="games", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="40", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record games source-tile", attributes=[attr("transform", "translate(24 140)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="books", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="15", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record books source-tile", attributes=[attr("transform", "translate(24 252)")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, attributes=[attr("x", "0"), attr("y", "0"), attr("width", "244"), attr("height", "54"), attr("rx", "10"), attr("class", "")]),
+                    node(NodeKind.SvgText, content="music", style="record-key", attributes=[attr("x", "18"), attr("y", "35")]),
+                    node(NodeKind.SvgText, content="10", style="record-value", attributes=[attr("x", "190"), attr("y", "35")]),
+                ], style="record music source-tile", attributes=[attr("transform", "translate(24 314)")]),
+                node(NodeKind.SvgText, content="Rows + schema", style="scene-heading", attributes=[attr("x", "446"), attr("y", "28")]),
+                node(NodeKind.SvgRectangle, style="worker-boundary", attributes=[attr("x", "440"), attr("y", "52"), attr("width", "314"), attr("height", "336"), attr("rx", "10")]),
+                node(NodeKind.SvgText, content="category", style="small column-cat", attributes=[attr("x", "460"), attr("y", "82")]),
+                node(NodeKind.SvgText, content="amount", style="small", attributes=[attr("x", "632"), attr("y", "82")]),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="books", style="small column-cat", attributes=[attr("x", "462"), attr("y", "132")]),
+                    node(NodeKind.SvgText, content="25", style="small", attributes=[attr("x", "654"), attr("y", "132")]),
+                ], style="df-row row-0"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="games", style="small column-cat", attributes=[attr("x", "462"), attr("y", "194")]),
+                    node(NodeKind.SvgText, content="40", style="small", attributes=[attr("x", "654"), attr("y", "194")]),
+                ], style="df-row row-1"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="books", style="small column-cat", attributes=[attr("x", "462"), attr("y", "294")]),
+                    node(NodeKind.SvgText, content="15", style="small", attributes=[attr("x", "654"), attr("y", "294")]),
+                ], style="df-row row-2"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="music", style="small column-cat", attributes=[attr("x", "462"), attr("y", "356")]),
+                    node(NodeKind.SvgText, content="10", style="small", attributes=[attr("x", "654"), attr("y", "356")]),
+                ], style="df-row row-3"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="query-box", attributes=[attr("x", "830"), attr("y", "53"), attr("width", "462"), attr("height", "105"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="select(\"amount\")", style="code-label", attributes=[attr("x", "850"), attr("y", "88")]),
+                    node(NodeKind.SvgText, content="filter(col(\"amount\") > 20)", style="code-label", attributes=[attr("x", "850"), attr("y", "126")]),
+                ], style="df-query"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgRectangle, style="music group-box", attributes=[attr("x", "930"), attr("y", "202"), attr("width", "352"), attr("height", "184"), attr("rx", "10")]),
+                    node(NodeKind.SvgText, content="Requested result", style="small", attributes=[attr("x", "952"), attr("y", "240")]),
+                    node(NodeKind.SvgText, content="25", style="result-big", attributes=[attr("x", "966"), attr("y", "298")]),
+                    node(NodeKind.SvgText, content="40", style="result-big", attributes=[attr("x", "966"), attr("y", "359")]),
+                ], style="df-result"),
+                node(NodeKind.SvgGroup, children=[
+                    node(NodeKind.SvgText, content="Tasks still process partitions", style="tiny", attributes=[attr("x", "446"), attr("y", "405")]),
+                    node(NodeKind.SvgPath, attributes=[attr("d", "M754 262H924")]),
+                ], style="df-execution"),
+            ], attributes=[attr("viewBox", "0 0 1308 410"), attr("role", "img"), attr("aria-labelledby", "dataframe-walk-title dataframe-walk-desc")]),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson", attributes=[attr("data-lesson", "dataframe"), attr("data-point", "5")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("32"),
+        ]),
+        ],
+        notes="Keep the scene fixed while changing what Spark knows about the request. A DataFrame is not a wrapper around a Python RDD: Spark SQL builds logical and physical plans and uses internal row/columnar representations. The lower-level concepts of partitions, dependencies and tasks remain useful. Compare rdd.filter(lambda sale: sale[1] > 20) with a built-in col(\"amount\") > 20 expression verbally. Python UDFs may again hide logic. This demonstration changes the data source representation to Parquet explicitly so column pruning is meaningful; CSV cannot generally avoid reading physical bytes for unused columns in the same way. At Request no execution has happened; show results only at Execute. Filter pushdown depends on source capabilities and statistics; not every rejected row can be skipped at read. A residual filter may remain. Original category values remain as faint explanatory context after pruning. Explain the relationship explicitly: the RDD API lets you specify functions on distributed elements; the DataFrame API lets you specify schema-aware expressions that Catalyst can optimise. Spark SQL physical execution uses internal RDDs of rows or columnar batches, not a Python RDD wrapped in column names. A groupBy may introduce a shuffle; a skewed partition can delay the job; repeated actions can recompute work unless retained appropriately. These are why the RDD mental model still matters when writing DataFrame code. Calling df.rdd in classic PySpark exposes Python Row objects and subsequent arbitrary Python transformations are outside Catalyst relational optimisation. It is not necessary to call df.rdd for DataFrames to execute. Spark Connect does not expose this RDD API. Next, show that a transformation describes a new DataFrame and that assigning it to the same Python name does not mutate the original. The API overview then connects these interfaces to distributed execution. Dataset details are reference material only. Source: https://spark.apache.org/docs/latest/sql-programming-guide.html ; https://spark.apache.org/docs/latest/sql-data-sources-parquet.html",
+    )
+
+pub def slide_immutable_definition() -> Slide:
+    return Slide(
+        slug="immutable-definition",
+        title="Immutable — a definition",
+        frame=Frame.Composed,
+        styles="slide immutable-definition",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            group([
+            heading("immutable", level=1),
+            paragraph([
+                span("/ɪˈmjuːtəbl/"),
+                emphasis("adjective"),
+            ], style="id-pronunciation"),
+            paragraph([
+                text("that cannot be changed;"),
+                line_break(),
+                text("that will never change"),
+            ], style="id-definition"),
+            paragraph([
+                node(NodeKind.Link, content="Oxford Learner’s Dictionaries", attributes=[attr("href", "https://www.oxfordlearnersdictionaries.com/definition/english/immutable"), attr("target", "_blank"), attr("rel", "noopener noreferrer")]),
+            ], style="id-source"),
+        ], style="id-entry"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("33"),
+        ]),
+        ],
+        notes="""Adapted from the dictionary opening in the original corpus: Section 2, 2.4 Spark Dataframes, slide 8. Danny requested the adjective immutable here; the original slide used the noun immutability. Pause on the meaning of the word before explaining why this property matters in Spark. The following slide introduces sharing, reuse and recovery; the next demonstrates a transformation and Python reassignment. Keep the technical explanation on those slides.
+
+Definition and pronunciation: Oxford Advanced Learner’s Dictionary, immutable (adjective), checked 21 September 2026. https://www.oxfordlearnersdictionaries.com/definition/english/immutable""",
+    )
+
+pub def slide_immutability() -> Slide:
+    return Slide(
+        slug="immutability",
+        title="Why Spark uses immutability",
+        frame=Frame.Composed,
+        styles="slide core-slide immutability-why",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Why Spark uses immutability", level=1),
+            prose("A transformation does not modify its input.", style="im-lead"),
+            node(NodeKind.DefinitionList, children=[
+            group([
+                node(NodeKind.Term, content="Share an input"),
+                node(NodeKind.Definition, content="Independent computations can use the same input without one transformation changing it for the others."),
+            ]),
+            group([
+                node(NodeKind.Term, content="Reuse results"),
+                node(NodeKind.Definition, content="When you persist a result, Spark can reuse its partitions from memory or disk."),
+            ]),
+            group([
+                node(NodeKind.Term, content="Recover lost work"),
+                node(NodeKind.Definition, content="With lineage and available inputs, Spark can recompute missing partitions."),
+            ]),
+        ], style="im-reasons"),
+            paragraph([
+            text("How can Spark transform data"),
+            line_break(),
+            text("if the input cannot change?"),
+        ], style="im-question"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("34"),
+        ]),
+        ],
+        notes="""Original corpus: Section 2, 2.4 Spark Dataframes, slide 9 and its speaker notes. The teaching purpose is to explain why Spark's immutable transformation model is useful before demonstrating it in Python. We have just seen how Spark describes work over distributed partitions. Those partitions may be used by different computations: an operation produces a derived dataset instead of editing the shared input in place. This removes the need to coordinate such in-place edits to the input. It does not mean Spark has no coordination, mutable internal buffers, or external side effects.
+
+Reuse: explicitly request persistence when computed partitions should be retained. The storage level determines memory and/or disk use; eviction and failure can still require recomputation. Reusing a DataFrame variable by itself does not guarantee reuse of computed rows. Immutability supports this model but does not automatically cache anything.
+
+Recovery: connect to the earlier RDD explanation. Lineage describes how a partition was derived. Spark can recompute a missing partition when its required inputs are accessible. Reproducing the same values also requires stable inputs and deterministic computation; immutability is not a snapshot guarantee for external files or a promise that all user functions are deterministic. Avoid the original notes' claim that immutability alone makes data reproducible at any time, and avoid implying that every transformation copies all rows.
+
+Finish with the audience question: "How can Spark transform data if the input cannot change?" Pause here. The next slide demonstrates the answer: select returns a new DataFrame, and assigning that result to df changes the Python binding. Keep that reveal on the following slide rather than repeating its code here.
+
+Sources: https://spark.apache.org/docs/latest/rdd-programming-guide.html#rdd-operations ; https://spark.apache.org/docs/latest/rdd-programming-guide.html#rdd-persistence ; https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.select.html""",
+    )
+
+pub def slide_immutability_reference() -> Slide:
+    return Slide(
+        slug="immutability-reference",
+        title="df = df.select(…)",
+        frame=Frame.Composed,
+        styles="slide core-slide lesson-slide",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("df = df.select(…)", level=1),
+            group([
+            node(NodeKind.Preformatted, children=[
+                node(NodeKind.Code, children=[
+                    span("df", style="rb-code-part rb-lhs"),
+                    text(" "),
+                    span("=", style="token operator"),
+                    text(" "),
+                    node(NodeKind.Span, children=[
+                        text("df."),
+                        span("select", style="token function"),
+                        text("("),
+                        span("\"amount\"", style="token string"),
+                        text(")"),
+                    ], style="rb-code-part rb-rhs"),
+                ]),
+            ], style="rb-code"),
+            node(NodeKind.OrderedList, children=[
+                node(NodeKind.ListItem, content="Before the statement"),
+                node(NodeKind.ListItem, content="Evaluate the right-hand side"),
+                node(NodeKind.ListItem, content="Assign the result"),
+            ], style="lesson-rail", attributes=[attr("aria-label", "Assignment steps")]),
+            node(NodeKind.Figure, children=[
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgTitle, content="A new DataFrame, followed by a new binding for df", attributes=[attr("id", "rb-title")]),
+                    node(NodeKind.SvgDescription, content="Initially the Python name df refers to DataFrame A, with category and amount columns. Evaluating df.select(\"amount\") creates DataFrame B, describing the amount column from A. Assignment then moves the df binding from A to B. Both DataFrame descriptions stay in place; A is unchanged. These are descriptions of data, not copies of its rows.", attributes=[attr("id", "rb-desc")]),
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, style="rb-arrowhead", attributes=[attr("d", "M0 0L8 4L0 8Z")]),
+                        ], attributes=[attr("id", "rb-arrow"), attr("markerWidth", "8"), attr("markerHeight", "8"), attr("refX", "7"), attr("refY", "4"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, style="rb-connector", attributes=[attr("d", "M520 222H776"), attr("marker-end", "url(#rb-arrow)")]),
+                        node(NodeKind.SvgText, content="select", style="rb-mono", attributes=[attr("x", "654"), attr("y", "200"), attr("text-anchor", "middle")]),
+                    ], style="rb-created"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, style="rb-card", attributes=[attr("x", "80"), attr("y", "92"), attr("width", "440"), attr("height", "224"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="DataFrame A", style="rb-heading", attributes=[attr("x", "108"), attr("y", "136")]),
+                        node(NodeKind.SvgText, content="Columns", style="rb-column-label", attributes=[attr("x", "108"), attr("y", "174")]),
+                        node(NodeKind.SvgRectangle, style="rb-column", attributes=[attr("x", "108"), attr("y", "188"), attr("width", "180"), attr("height", "48"), attr("rx", "3")]),
+                        node(NodeKind.SvgRectangle, style="rb-column", attributes=[attr("x", "300"), attr("y", "188"), attr("width", "180"), attr("height", "48"), attr("rx", "3")]),
+                        node(NodeKind.SvgText, content="category", style="rb-mono", attributes=[attr("x", "126"), attr("y", "220")]),
+                        node(NodeKind.SvgText, content="amount", style="rb-mono", attributes=[attr("x", "318"), attr("y", "220")]),
+                        node(NodeKind.SvgText, content="Original DataFrame", style="rb-detail", attributes=[attr("x", "108"), attr("y", "284")]),
+                    ], style="rb-original"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgRectangle, style="rb-card rb-card-b", attributes=[attr("x", "788"), attr("y", "92"), attr("width", "440"), attr("height", "224"), attr("rx", "6")]),
+                        node(NodeKind.SvgText, content="DataFrame B", style="rb-heading", attributes=[attr("x", "816"), attr("y", "136")]),
+                        node(NodeKind.SvgText, content="Columns", style="rb-column-label", attributes=[attr("x", "816"), attr("y", "174")]),
+                        node(NodeKind.SvgRectangle, style="rb-column", attributes=[attr("x", "816"), attr("y", "188"), attr("width", "180"), attr("height", "48"), attr("rx", "3")]),
+                        node(NodeKind.SvgText, content="amount", style="rb-mono", attributes=[attr("x", "834"), attr("y", "220")]),
+                        node(NodeKind.SvgText, content="Select amount from A", style="rb-detail", attributes=[attr("x", "816"), attr("y", "284")]),
+                    ], style="rb-created"),
+                    node(NodeKind.SvgGroup, children=[
+                        node(NodeKind.SvgPath, style="rb-connector", attributes=[attr("d", "M300 60V84"), attr("marker-end", "url(#rb-arrow)")]),
+                        node(NodeKind.SvgRectangle, style="rb-binding-box", attributes=[attr("x", "216"), attr("y", "0"), attr("width", "168"), attr("height", "60"), attr("rx", "5")]),
+                        node(NodeKind.SvgText, content="Python name", style="rb-binding-label", attributes=[attr("x", "300"), attr("y", "23")]),
+                        node(NodeKind.SvgText, content="df", style="rb-binding-name", attributes=[attr("x", "300"), attr("y", "49")]),
+                    ], style="rb-binding"),
+                ], style="rb-diagram", attributes=[attr("viewBox", "0 0 1308 320"), attr("role", "img"), attr("aria-labelledby", "rb-title rb-desc")]),
+            ], style="rb-figure"),
+            group([
+                node(NodeKind.Paragraph, children=[
+                    strong("df refers to DataFrame A."),
+                    span("Its columns are category and amount."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("select returns a new DataFrame."),
+                    span("B describes the amount column from A. The name df still refers to A."),
+                ], attributes=[attr("data-cue", flag=true)]),
+                node(NodeKind.Paragraph, children=[
+                    strong("The name df now refers to B."),
+                    span("select created B from A; the assignment leaves A unchanged. No data copy is implied."),
+                ], attributes=[attr("data-cue", flag=true)]),
+            ], style="lesson-cues", attributes=[attr("aria-live", "polite"), attr("aria-atomic", "true")]),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("type", "button"), attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("type", "button"), attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("type", "button"), attr("data-lesson-reset", flag=true)]),
+                span("3 / 3", style="lesson-position"),
+            ], style="lesson-controls", attributes=[attr("role", "group"), attr("aria-label", "Assignment walkthrough")]),
+        ], style="lesson rb-lesson", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("35"),
+        ]),
+        ],
+        notes="Original corpus: Section 2, 2.4 Spark Dataframes, slide 10. Rebuilt as a three-step assignment walkthrough. First establish that df refers to A. Then highlight and evaluate the right-hand expression: select returns B, while df still refers to A. Finally highlight the left-hand name and move the single df marker to B. Only one current binding is ever shown. A and B stay fixed so the audience can see that A's columns never change. The boxes depict DataFrame descriptions and schemas, not materialised rows or a complete physical execution plan. A and B are teaching labels, not Spark IDs. Do not use df.rdd.id() to establish DataFrame identity; it identifies an RDD and is unavailable in Spark Connect. The snippet keeps no separate Python name for A after assignment; B retains a plan derived from its input. Keeping A in this illustration explains the derivation, not a guarantee about object lifetime. Ask: have we actually processed the rows yet? Carry that question through the API overview and recap into Lazy Pandas. Manual Next/Previous/Replay controls let the instructor pause between evaluation and assignment. Static, print and reduced-motion views show the final binding and the complete explanation. Reference: https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.select.html",
+    )
+
+pub def slide_api_overview() -> Slide:
+    return Slide(
+        slug="api-overview",
+        title="How the APIs fit together",
+        frame=Frame.Composed,
+        styles="slide lesson-slide",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("How the APIs fit together", level=1),
+            prose("Different ways to describe work. The same distributed foundations.", style="subtitle"),
+            node(NodeKind.Figure, children=[
+            group([
+                heading("RDD API", level=2),
+                prose("Elements + your functions"),
+                group([
+                    text("↓"),
+                ], style="api-down"),
+                prose("You specify the transformations", style="api-direct-caption"),
+            ], style="api-direct"),
+            group([
+                group([
+                    group([
+                        heading("DataFrame", level=2),
+                        paragraph([
+                            text("Named columns + expressions"),
+                            line_break(),
+                            node(NodeKind.Bold, content="Our PySpark interface"),
+                        ]),
+                    ]),
+                    node(NodeKind.Small, children=[
+                        node(NodeKind.Link, content="Reference: typed Datasets in Scala / Java ↗", attributes=[attr("href", "core-abstractions-reference.html#dataset-context")]),
+                    ]),
+                ], style="api-family"),
+                group([
+                    text("↓"),
+                ], style="api-down"),
+                group([
+                    node(NodeKind.Bold, content="Spark SQL / Catalyst"),
+                    span("Logical plan → optimised physical plan"),
+                ], style="api-planner"),
+                group([
+                    text("↓"),
+                ], style="api-down"),
+            ], style="api-structured"),
+            group([
+                strong("Distributed execution · RDDs underneath"),
+                span("Partitions   →   tasks on executors   ·   dependencies   ·   recovery"),
+            ], style="api-runtime"),
+        ], style="api-map", attributes=[attr("aria-label", "RDD operations go to distributed execution. DataFrame operations go through Spark SQL planning and optimisation before distributed execution.")]),
+            group([
+            group([
+                strong("groupBy / join"),
+                span("May move data between partitions: a shuffle."),
+            ]),
+            group([
+                strong("One slow partition"),
+                span("Uneven work can hold up the whole stage."),
+            ]),
+            group([
+                strong("Use the result again"),
+                span("Persistence can avoid repeating earlier work."),
+            ]),
+        ], style="api-why"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("36"),
+        ]),
+        ],
+        notes="Recap the two interfaces in this course: RDDs and DataFrames. Start at DataFrame: we describe what we want using schema-aware expressions. Catalyst analyses and optimises that query and produces a physical plan. Spark SQL uses internal row/columnar representations and RDD-based execution beneath those operators. Compare the left RDD API path: users supply transformations directly; arbitrary functions do not give Catalyst equivalent relational information. Do not call a DataFrame merely an RDD with column names. Both paths rely on partitions and dependencies and run tasks on executors. That is why learning the lower layer helps diagnose a shuffle, skew, repeated computation and recovery. A DataFrame can be created from an RDD plus a schema, but need not originate from a Python RDD. No manual conversion to RDD is needed. In classic PySpark, df.rdd exposes Python Rows; moving to arbitrary Python RDD transformations leaves Spark SQL relational optimisation for those transformations. Spark Connect does not support the RDD API. If asked about the reference link: Spark 2.0 unified DataFrame/Dataset in Scala/Java; Scala DataFrame is Dataset[Row], Java uses Dataset<Row>. Python has no typed Dataset[T] API. Source: https://spark.apache.org/releases/spark-release-2-0-0.html ; https://spark.apache.org/docs/latest/sql-programming-guide.html ; https://github.com/apache/spark/blob/v4.0.0/sql/core/src/main/scala/org/apache/spark/sql/execution/SparkPlan.scala . End by pointing to Catalyst: “This is Catalyst, Spark’s query optimiser. I’ll come back to that.” Then say “But first…” and advance to the Lazy Pandas cover. Leave the execution question open for the audience.",
+    )
+
+pub def slide_abstractions_recap() -> Slide:
+    return Slide(
+        slug="abstractions-recap",
+        title="Core abstractions: recap",
+        frame=Frame.Composed,
+        styles="slide chapter-recap",
+        content=[
+            group([
+            text("03 / SPARK’S CORE ABSTRACTIONS"),
+        ], style="eyebrow"),
+            heading("Core abstractions: recap", level=1),
+            node(NodeKind.Table, children=[
+            node(NodeKind.Caption, content="Core abstractions: recap: key takeaways", style="sr-only"),
+            node(NodeKind.Columns, children=[
+                node(NodeKind.Column),
+                node(NodeKind.Column),
+            ]),
+            node(NodeKind.TableBody, children=[
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="RDDs", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Immutable, partitioned collections. Lineage records how their partitions were derived."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="DataFrames", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Transformations describe new DataFrames. Named columns and expressions help Spark SQL optimise the work."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Persistence", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Computed partitions can be kept for reuse. Defining an RDD or DataFrame does not cache it."),
+                ]),
+                node(NodeKind.Row, children=[
+                    node(NodeKind.HeaderCell, content="Recovery", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Lost RDD partitions can be recomputed from their dependencies, while the required input remains available."),
+                ]),
+            ]),
+        ], style="chapter-recap-table"),
+            prose("A DataFrame is still distributed data: its rows are processed in partitions.", style="chapter-recap-takeaway"),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("37"),
+        ]),
+        ],
+        notes="""Return to the same sales and the recovered P0. Immutability applies to transformations: select creates a new DataFrame description, and reassignment changes a Python binding. It does not eagerly duplicate rows. Reuse avoids work only while the persisted data is available. Recovery depends on available input and recomputable lineage; it is not a backup of arbitrary external changes. Typed Datasets remain a Scala/Java reference topic.
+
+https://spark.apache.org/docs/4.2.0/rdd-programming-guide.html
+https://spark.apache.org/docs/4.2.0/sql-programming-guide.html""",
+    )
+
+pub def chapter_03_chapter() -> Chapter:
+    return Chapter(number="3", title="Spark’s Core Abstractions", first_page=1, slides=[
+        slide_section_3(),
+        slide_hadoop_mapreduce(),
+        slide_spark_performance(),
+        slide_spark_speedup(),
+        slide_rdd_prompt(),
+        slide_rdd_foundation(),
+        slide_dataframe_meaning(),
+        slide_immutable_definition(),
+        slide_immutability(),
+        slide_immutability_reference(),
+        slide_api_overview(),
+        slide_abstractions_recap(),
+    ])

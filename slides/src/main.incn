@@ -1,0 +1,13 @@
+from std.environ import get_or
+from documents import main_document, core_reference_document, joins_reference_document
+
+def main() -> None:
+    target = get_or("INCAN_DECK", "index")
+    if target == "index":
+        println(main_document())
+    elif target == "core-reference":
+        println(core_reference_document())
+    elif target == "joins-reference":
+        println(joins_reference_document())
+    else:
+        assert false, "INCAN_DECK must be index, core-reference or joins-reference"

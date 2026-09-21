@@ -1,0 +1,25 @@
+# Built presentation and compiler state
+/dist/
+/.build/
+.incan/
+.incan-home/
+
+# Python environments and workshop runs
+.venv/
+__pycache__/
+.ipynb_checkpoints/
+**/runs/
+**/artifacts/
+**/spark-warehouse/
+**/metastore_db/
+derby.log
+*.pyc
+*.crc
+/labs/*.zip
+
+# Machine-local files
+.DS_Store
+Thumbs.db
+.env
+.env.*
+!.env.example

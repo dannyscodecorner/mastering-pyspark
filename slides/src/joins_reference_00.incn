@@ -1,0 +1,682 @@
+"""Editable Incan content migrated from the captured joins-reference.html."""
+
+from surface import Attribute, Chapter, Frame, NodeKind, Slide, Surface, TeachingStep, attr, code, code_block, emphasis, group, heading, image, line_break, node, paragraph, prose, rich_heading, span, strong, text
+from components import step_rail, step_cues
+
+pub def slide_join_rows() -> Slide:
+    steps = [
+        TeachingStep(label="Two datasets",
+            heading="We want to enrich sales with product categories.",
+            explanation="For example, B1 links a sale to books. The lookup has one row per product_id.",
+            cue_key="", numbered=false),
+        TeachingStep(label="One missing match",
+            heading="Sale s4 exists, but its product M1 is missing from the lookup.",
+            explanation="Pause: should we omit the sale, or keep it without a category?",
+            cue_key="", numbered=false),
+        TeachingStep(label="INNER",
+            heading="INNER keeps only sales with a matching product.",
+            explanation="s4 is absent from the result. The source sales data is unchanged.",
+            cue_key="", numbered=false),
+        TeachingStep(label="LEFT",
+            heading="LEFT keeps every sale, including s4.",
+            explanation="Only the missing product category becomes NULL. Next, watch these same five sales pass through both rules.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-rows",
+        title="Add a category to each sale",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide boat-lesson-slide",
+        content=[
+            group([
+            text("06 / JOINS"),
+        ], style="eyebrow"),
+            heading("Add a category to each sale", level=1),
+            group([
+            step_rail(steps),
+            group([
+                paragraph([
+                    text("Our sales have a "),
+                    code("product_id"),
+                    text(". The product lookup tells us its "),
+                    code("category"),
+                    text("."),
+                ], style="context-goal"),
+                group([
+                    group([
+                        rich_heading([
+                            text("Sales "),
+                            node(NodeKind.Small, content="one row per sale"),
+                        ], level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="sale_id"),
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s1"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="25"),
+                                ], attributes=[attr("class", "")]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s2"),
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="40"),
+                                ], attributes=[attr("class", "")]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s3"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="15"),
+                                ], attributes=[attr("class", "")]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s4"),
+                                    node(NodeKind.Cell, content="M1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="context-missing"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s5"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], attributes=[attr("class", "")]),
+                            ]),
+                        ]),
+                    ], style="context-sales"),
+                    group([
+                        span("Match on"),
+                        code("product_id"),
+                        span("→", style="context-arrow"),
+                        paragraph([
+                            node(NodeKind.Bold, content="M1"),
+                            text(" has no match"),
+                        ], style="context-no-match"),
+                    ], style="context-key"),
+                    group([
+                        rich_heading([
+                            text("Products "),
+                            node(NodeKind.Small, content="one row per product"),
+                        ], level=2),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="books"),
+                                ]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="games"),
+                                ]),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="X1"),
+                                    node(NodeKind.Cell, content="accessories"),
+                                ]),
+                            ]),
+                        ]),
+                        paragraph([
+                            text("What should happen to sale "),
+                            node(NodeKind.Bold, content="s4"),
+                            text("?"),
+                        ], style="context-question"),
+                    ], style="context-products"),
+                ], style="context-inputs"),
+                group([
+                    group([
+                        node(NodeKind.Bold, content="INNER"),
+                        span("Omit s4 from the result."),
+                    ], style="context-inner"),
+                    group([
+                        node(NodeKind.Bold, content="LEFT"),
+                        span("Keep s4; its category is NULL."),
+                        code("s4 | M1 | 10 | NULL"),
+                    ], style="context-left"),
+                ], style="context-answer"),
+            ], style="context-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson boat-lesson join-context", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("1"),
+        ]),
+        ],
+        notes="Establish the business task before the metaphor: sales records need categories from a product lookup. Read the three sales fields and the two product fields. Each product ID is unique in this lookup. B1 maps to books; G1 maps to games. Reveal the unmatched M1 sale and ask the audience what should happen to it. INNER omits it from output; LEFT retains all its original values and supplies NULL for category. These exact records become boats on the next slide; the boats represent rows, not Spark's physical execution.",
+    )
+
+pub def slide_join_all_sales() -> Slide:
+    steps = [
+        TeachingStep(label="Five sales",
+            heading="Now bring all five sales to the same lookup.",
+            explanation="The lookup has unique product IDs. Four sales can find a product; M1 cannot.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Match product_id",
+            heading="The matching condition is product_id equality.",
+            explanation="B1 gets books and G1 gets games. M1 has no matching product row.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Run INNER",
+            heading="INNER keeps only matching pairs.",
+            explanation="Four rows remain. Their amounts sum to 90.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Rewind · run LEFT",
+            heading="LEFT keeps every sale in this example.",
+            explanation="All five rows remain, totalling 100. M1 has a NULL category.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-all-sales",
+        title="Same inputs. Different rules.",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide boat-lesson-slide",
+        content=[
+            group([
+            text("06 / JOINS"),
+        ], style="eyebrow"),
+            heading("Same inputs. Different rules.", level=1),
+            group([
+            step_rail(steps),
+            group([
+                image("assets/join-station-scene.png", "A canal passing through a central matching station.", style="boat-scenery"),
+                group([
+                    text("Sales · 5 rows · total 100"),
+                ], style="station-input"),
+                group([
+                    text("Match on "),
+                    code("product_id"),
+                    node(NodeKind.Small, content="B1 → books · G1 → games · X1 → accessories"),
+                ], style="station-name"),
+                group([
+                    text("Joined result"),
+                ], style="station-output"),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s1 · B1 · 25", style="barge-cargo"),
+                    span("category = books", style="barge-category"),
+                ], style="record-barge barge-B1", attributes=[attr("data-sale", "s1"), attr("data-category", "books"), attr("style", "--row:0")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s2 · G1 · 40", style="barge-cargo"),
+                    span("category = games", style="barge-category"),
+                ], style="record-barge barge-G1", attributes=[attr("data-sale", "s2"), attr("data-category", "games"), attr("style", "--row:1")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s3 · B1 · 15", style="barge-cargo"),
+                    span("category = books", style="barge-category"),
+                ], style="record-barge barge-B1", attributes=[attr("data-sale", "s3"), attr("data-category", "books"), attr("style", "--row:2")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s4 · M1 · 10", style="barge-cargo"),
+                    span("category = NULL", style="barge-category"),
+                ], style="record-barge barge-M1", attributes=[attr("data-sale", "s4"), attr("data-category", ""), attr("style", "--row:3")]),
+                group([
+                    image("assets/join-record-barge.png", ""),
+                    span("s5 · B1 · 10", style="barge-cargo"),
+                    span("category = books", style="barge-category"),
+                ], style="record-barge barge-B1", attributes=[attr("data-sale", "s5"), attr("data-category", "books"), attr("style", "--row:4")]),
+                group([
+                    text("M1 has no match"),
+                ], style="station-missing"),
+            ], style="boat-scene station-scene"),
+            group([
+                span("Same five sales. One unique product lookup.", style="whole-rule"),
+                node(NodeKind.Strong, style="whole-count", attributes=[attr("aria-live", "polite")]),
+            ], style="boat-outcome whole-outcome"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson boat-lesson boat-whole", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("2"),
+        ]),
+        ],
+        notes="Carry the same s4/M1/10 boat from the close-up. One canal, two alternative runs: do not imply the output splits simultaneously into inner and left. Next runs INNER; next rewinds the same inputs and runs LEFT. Join choice changes the population of your dataset: totals 90 versus 100 are analytically consequential. This left join preserves five rows because right keys are unique; duplicate matches are explored later. Ordering and sequential boat movement are illustrative, not actual Spark execution. Input data is never deleted.",
+    )
+
+pub def slide_join_as_data() -> Slide:
+    steps = [
+        TeachingStep(label="The same records",
+            heading="A join produces matching row pairs.",
+            explanation="Here the product lookup has one row per key, so each sale has at most one match.",
+            cue_key="", numbered=false),
+        TeachingStep(label="INNER result",
+            heading="INNER requires a matching product.",
+            explanation="s4 / M1 is omitted from the result; the other four sales acquire their categories.",
+            cue_key="", numbered=false),
+        TeachingStep(label="LEFT result",
+            heading="LEFT retains s4 / M1 and sets category to NULL.",
+            explanation="KEEP describes the row. NULL describes its missing right-side value.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-as-data",
+        title="Now express it as data",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide boat-lesson-slide",
+        content=[
+            group([
+            text("06 / JOINS"),
+        ], style="eyebrow"),
+            heading("Now express it as data", level=1),
+            group([
+            step_rail(steps),
+            group([
+                prose("Each boat was a sale. The join adds its matching product category.", style="formal-caption"),
+                node(NodeKind.Table, children=[
+                    node(NodeKind.TableHead, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.HeaderCell, content="sale"),
+                            node(NodeKind.HeaderCell, content="product_id"),
+                            node(NodeKind.HeaderCell, content="amount"),
+                            node(NodeKind.HeaderCell, content="Product match"),
+                            node(NodeKind.HeaderCell, content="INNER", style="formal-inner"),
+                            node(NodeKind.HeaderCell, content="LEFT", style="formal-left"),
+                        ]),
+                    ]),
+                    node(NodeKind.TableBody, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s1"),
+                            node(NodeKind.Cell, content="B1"),
+                            node(NodeKind.Cell, content="25"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-left"),
+                        ], style="formal-B1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s2"),
+                            node(NodeKind.Cell, content="G1"),
+                            node(NodeKind.Cell, content="40"),
+                            node(NodeKind.Cell, content="games"),
+                            node(NodeKind.Cell, content="KEEP · games", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · games", style="formal-left"),
+                        ], style="formal-G1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s3"),
+                            node(NodeKind.Cell, content="B1"),
+                            node(NodeKind.Cell, content="15"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-left"),
+                        ], style="formal-B1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s4"),
+                            node(NodeKind.Cell, content="M1"),
+                            node(NodeKind.Cell, content="10"),
+                            node(NodeKind.Cell, content="No match"),
+                            node(NodeKind.Cell, content="OMIT", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · category = NULL", style="formal-left"),
+                        ], style="formal-M1"),
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="s5"),
+                            node(NodeKind.Cell, content="B1"),
+                            node(NodeKind.Cell, content="10"),
+                            node(NodeKind.Cell, content="books"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-inner"),
+                            node(NodeKind.Cell, content="KEEP · books", style="formal-left"),
+                        ], style="formal-B1"),
+                    ]),
+                    node(NodeKind.TableFoot, children=[
+                        node(NodeKind.Row, children=[
+                            node(NodeKind.Cell, content="Result rows / sum(amount)", attributes=[attr("colspan", "4")]),
+                            node(NodeKind.Cell, content="4 / 90", style="formal-inner"),
+                            node(NodeKind.Cell, content="5 / 100", style="formal-left"),
+                        ]),
+                    ]),
+                ], style="formal-join-table"),
+                group([
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"inner\")", style="formal-code-inner"),
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"left\")", style="formal-code-left"),
+                ], style="formal-code"),
+            ], style="formal-scene"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson boat-lesson boat-formal", attributes=[attr("data-lesson", flag=true), attr("data-point", "2")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("3"),
+        ]),
+        ],
+        notes="End by asking: we know which rows belong together, but what if they live on different machines? Transition directly to shuffle and then skew. Explicitly remove the metaphor. Sale IDs s1–s5 and all amounts are unchanged from the boats. KEEP is an explanation of retention, not a literal output column; product category is the value added by the join. For a USING-style join on product_id, only one key column remains. Unique right keys are critical to these counts. Ordinary equality and missing matches shown; NULL keys, duplicate keys and semi/anti are later topics. Input setup remains joins-example.py. Official reference: https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-join.html",
+    )
+
+pub def slide_join_existence() -> Slide:
+    steps = [
+        TeachingStep(label="Keep matches",
+            heading="Semi answers “is there a match?”",
+            explanation="Keep the matching sales, without adding product columns or multiplying them by right-side duplicates.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Find missing",
+            heading="Anti answers “which sales have no match?”",
+            explanation="This is a useful reconciliation check before trusting an enrichment join.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="join-existence",
+        title="Sometimes we only need to know: does it match?",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide",
+        content=[
+            group([
+            text("06 / JOINS · MATCHING ROWS, MOVING DATA"),
+        ], style="eyebrow"),
+            heading("Sometimes we only need to know: does it match?", level=1),
+            group([
+            step_rail(steps),
+            group([
+                group([
+                    group([
+                        heading("sales", level=2),
+                        prose("The same five amounts · total 100", style="join-label"),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="sale"),
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="amount"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s1"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="25"),
+                                ], style="key-B1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s2"),
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="40"),
+                                ], style="key-G1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s3"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="15"),
+                                ], style="key-B1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s4"),
+                                    node(NodeKind.Cell, content="M1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="key-M1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="s5"),
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="10"),
+                                ], style="key-B1"),
+                            ]),
+                        ], style="join-table"),
+                    ], style="join-panel"),
+                    group([
+                        heading("products", level=2),
+                        prose("One row per product_id", style="join-label"),
+                        node(NodeKind.Table, children=[
+                            node(NodeKind.TableHead, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.HeaderCell, content="product_id"),
+                                    node(NodeKind.HeaderCell, content="category"),
+                                ]),
+                            ]),
+                            node(NodeKind.TableBody, children=[
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="B1"),
+                                    node(NodeKind.Cell, content="books"),
+                                ], style="key-B1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="G1"),
+                                    node(NodeKind.Cell, content="games"),
+                                ], style="key-G1"),
+                                node(NodeKind.Row, children=[
+                                    node(NodeKind.Cell, content="X1"),
+                                    node(NodeKind.Cell, content="accessories"),
+                                ], style="key-X1"),
+                            ]),
+                        ], style="join-table"),
+                    ], style="join-panel"),
+                    group([
+                        heading("Sales only", level=2),
+                        group([
+                            node(NodeKind.Table, children=[
+                                node(NodeKind.TableHead, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.HeaderCell, content="sale"),
+                                        node(NodeKind.HeaderCell, content="id"),
+                                        node(NodeKind.HeaderCell, content="amount"),
+                                    ]),
+                                ]),
+                                node(NodeKind.TableBody, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s1"),
+                                        node(NodeKind.Cell, content="B1"),
+                                        node(NodeKind.Cell, content="25"),
+                                    ], style="key-B1"),
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s2"),
+                                        node(NodeKind.Cell, content="G1"),
+                                        node(NodeKind.Cell, content="40"),
+                                    ], style="key-G1"),
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s3"),
+                                        node(NodeKind.Cell, content="B1"),
+                                        node(NodeKind.Cell, content="15"),
+                                    ], style="key-B1"),
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s5"),
+                                        node(NodeKind.Cell, content="B1"),
+                                        node(NodeKind.Cell, content="10"),
+                                    ], style="key-B1"),
+                                ]),
+                            ], style="join-table"),
+                            prose("4 known-product sales", style="join-stat"),
+                        ], style="join-state j0"),
+                        group([
+                            node(NodeKind.Table, children=[
+                                node(NodeKind.TableHead, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.HeaderCell, content="sale"),
+                                        node(NodeKind.HeaderCell, content="id"),
+                                        node(NodeKind.HeaderCell, content="amount"),
+                                    ]),
+                                ]),
+                                node(NodeKind.TableBody, children=[
+                                    node(NodeKind.Row, children=[
+                                        node(NodeKind.Cell, content="s4"),
+                                        node(NodeKind.Cell, content="M1"),
+                                        node(NodeKind.Cell, content="10"),
+                                    ], style="key-M1"),
+                                ]),
+                            ], style="join-table"),
+                            prose("1 unmatched sale", style="join-stat"),
+                        ], style="join-state j1"),
+                    ], style="join-panel"),
+                ], style="join-three"),
+                group([
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"left_semi\")", style="join-state j0"),
+                    node(NodeKind.Code, content="sales.join(products, \"product_id\", \"left_anti\")", style="join-state j1"),
+                ], style="join-code-strip"),
+            ], style="joins-canvas"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson joins-lesson join-existence", attributes=[attr("data-lesson", flag=true), attr("data-point", "1")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("4"),
+        ]),
+        ],
+        notes="Semi and anti return only the left columns. Semi preserves left-side duplicates, but matching duplicates on the right do not multiply the output. Anti is useful for coverage checks. Null keys do not match under ordinary equality; a null left key is retained by anti for this ordinary equi-join. Do not equate this mechanically with SQL NOT IN and its null semantics. Source: https://spark.apache.org/docs/latest/sql-ref-syntax-qry-select-join.html",
+    )
+
+pub def slide_shuffle_cost() -> Slide:
+    steps = [
+        TeachingStep(label="Follow one sale",
+            heading="Follow B1 / 10 along the Worker C → Worker A arrow.",
+            explanation="We have chosen one remote transfer from the diagram you just saw.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Prepare & write",
+            heading="The source has to prepare and store the data for its destinations.",
+            explanation="Even before matching rows, Spark has partitioned, serialized and written shuffle data.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Fetch & read",
+            heading="The destination fetches its blocks, then reads and decodes the records.",
+            explanation="At scale, the bytes written, read and transferred compete for finite disk and network bandwidth.",
+            cue_key="", numbered=false),
+        TeachingStep(label="Now join locally",
+            heading="The join task can now match this sale with its product.",
+            explanation="The cost depends on how much data must move, how it is processed, and how evenly the work is spread.",
+            cue_key="", numbered=false),
+    ]
+    return Slide(
+        slug="shuffle-cost",
+        title="The work hidden in one arrow",
+        frame=Frame.Composed,
+        styles="slide lesson-slide join-slide shuffle-cost-slide",
+        content=[
+            group([
+            text("REFERENCE / SHUFFLE CLOSE-UP"),
+        ], style="eyebrow"),
+            heading("The work hidden in one arrow", level=1),
+            group([
+            step_rail(steps),
+            group([
+                node(NodeKind.Span, children=[
+                    node(NodeKind.Bold, content="B1"),
+                    span("10"),
+                ], style="sc-sale"),
+                node(NodeKind.Span, children=[
+                    text("The same sale on "),
+                    strong("Worker C"),
+                    text(", needed by the join task on "),
+                    strong("Worker A"),
+                ]),
+            ], style="sc-thread"),
+            group([
+                group([
+                    heading("Worker C", level=2),
+                    prose("Produces shuffle data", style="sc-machine-role"),
+                ], style="sc-source sc-machine"),
+                group([
+                    heading("Worker A", level=2),
+                    prose("Runs this join task", style="sc-machine-role"),
+                ], style="sc-target sc-machine"),
+                node(NodeKind.Svg, children=[
+                    node(NodeKind.SvgDefinitions, children=[
+                        node(NodeKind.SvgMarker, children=[
+                            node(NodeKind.SvgPath, attributes=[attr("d", "M0 0 L10 5 L0 10 Z")]),
+                        ], attributes=[attr("id", "sc-arrow"), attr("viewBox", "0 0 10 10"), attr("refX", "9"), attr("refY", "5"), attr("markerWidth", "6"), attr("markerHeight", "6"), attr("orient", "auto")]),
+                    ]),
+                    node(NodeKind.SvgPath, style="sc-link sc-write-reveal", attributes=[attr("pathLength", "1"), attr("d", "M268 181 H366")]),
+                    node(NodeKind.SvgPath, style="sc-link sc-fetch-reveal sc-remote-link", attributes=[attr("pathLength", "1"), attr("d", "M588 181 H858")]),
+                    node(NodeKind.SvgPath, style="sc-link sc-join-reveal", attributes=[attr("pathLength", "1"), attr("d", "M1086 181 H1148")]),
+                ], style="sc-links", attributes=[attr("viewBox", "0 0 1308 300"), attr("aria-hidden", "true"), attr("focusable", "false")]),
+                group([
+                    span("Read the record", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="B1"),
+                        span("10"),
+                    ], style="ss-record ss-key-B1"),
+                    prose("From its input partition"),
+                ], style="sc-input"),
+                group([
+                    span("Prepare a shuffle block", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="For partition 0"),
+                        span("Encoded B1 records"),
+                        emphasis("Local shuffle storage"),
+                    ], style="sc-block"),
+                ], style="sc-write sc-write-reveal"),
+                group([
+                    node(NodeKind.Bold, content="Fetch the block"),
+                    span("Across the network"),
+                ], style="sc-fetch-label sc-fetch-reveal"),
+                group([
+                    span("Read + decode", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="B1"),
+                        span("10"),
+                    ], style="ss-record ss-key-B1"),
+                    prose("Alongside the other B1 inputs"),
+                ], style="sc-read sc-fetch-reveal"),
+                group([
+                    span("Join", style="sc-node-label"),
+                    group([
+                        node(NodeKind.Bold, content="B1"),
+                        span("10"),
+                        strong("books"),
+                    ], style="sc-joined"),
+                ], style="sc-join sc-join-reveal"),
+                group([
+                    rich_heading([
+                        text("What does it take"),
+                        line_break(),
+                        text("to get this record there?"),
+                    ], level=2),
+                ], style="sc-question"),
+            ], style="sc-scene"),
+            group([
+                group([
+                    node(NodeKind.Bold, content="CPU"),
+                    span("Partitioning and serialization"),
+                ], style="sc-resource sc-write-reveal"),
+                group([
+                    node(NodeKind.Bold, content="Disk I/O"),
+                    span("Writing and reading shuffle blocks"),
+                ], style="sc-resource sc-write-reveal"),
+                group([
+                    node(NodeKind.Bold, content="Network I/O"),
+                    span("Fetching blocks held remotely"),
+                ], style="sc-resource sc-fetch-reveal"),
+            ], style="sc-resources"),
+            step_cues(steps),
+            group([
+                node(NodeKind.Button, content="Previous point", attributes=[attr("data-lesson-prev", flag=true)]),
+                node(NodeKind.Button, content="Next point", attributes=[attr("data-lesson-next", flag=true)]),
+                node(NodeKind.Button, content="Replay", attributes=[attr("data-lesson-reset", flag=true)]),
+                node(NodeKind.Link, content="Back to the chapter", style="sc-reference-return", attributes=[attr("href", "index.html#shuffle-cost-alternative")]),
+                span("", style="lesson-position", attributes=[attr("aria-live", "polite")]),
+            ], style="lesson-controls"),
+        ], style="lesson shuffle-cost-walk", attributes=[attr("data-lesson", flag=true), attr("data-point", "3")]),
+            node(NodeKind.Footer, children=[
+            span("Danny’s Code Corner"),
+            span("5"),
+        ]),
+        ],
+        notes="""Optional reference close-up for the main chapter’s shuffle lesson. Return to the chapter using the link beside Replay. Keep the audience on the exact B1 sale with amount10 from Worker C, going to the join task on Worker A. Do not introduce new data or a benchmark.
+
+1. “Let’s open just one of those arrows.” 2. The source task assigns records to destination partitions, encodes them, and writes intermediate shuffle output. A block contains records for one destination; the pictured B1 sale is one representative record, not a separate network request or file per row. Batches/blocks are transferred. 3. The downstream task fetches the blocks for its partition from their source locations, then reads and deserializes the data. The remote part crosses the network; local blocks do not. Explain WHY this costs time: extra passes over data, CPU for encoding/decoding, storage I/O and network transfer. Larger volumes compete for finite bandwidth and can add memory pressure; sorting or hashing inside the local join contributes additional work. The transfer arrow is not a fixed-duration timeline, and the picture does not model concurrent pipelining. 4. The selected sale is matched with B1/books, giving B1/10/books. The other B1 records and product record come from the preceding diagram. Do not say all cluster tasks must wait until every transfer in the cluster has finished.
+
+This is the conventional Spark shuffle with worker-local shuffle storage; it is not another Parquet/HDFS source scan. Input caching does not remove a required exchange. Implementations with remote shuffle services differ. A compatible existing distribution or a broadcast strategy may avoid the illustrated exchanges. Partial aggregation can reduce the records/bytes sent for suitable aggregate functions. This is not a claim that grouping must transfer every raw row. End with: “Now we can compare strategies by asking what they move and what they do once it arrives. Then: what happens if one destination receives most of it?” Continue into sort-merge and shuffled hash; broadcast changes how matching data is made available, and the existing skew lesson shows the long tail.
+
+Sources: https://spark.apache.org/docs/latest/rdd-programming-guide.html#shuffle-operations ; https://spark.apache.org/docs/latest/sql-performance-tuning.html . Visual continuity inspired by UW-Madison CS544 https://ms.sites.cs.wisc.edu/cs544/s24/lec/25-spark/slides.pdf#page=35 .""",
+    )
+
+pub def joins_reference_00_chapter() -> Chapter:
+    return Chapter(number="6", title="06 / JOINS", first_page=1, slides=[
+        slide_join_rows(),
+        slide_join_all_sales(),
+        slide_join_as_data(),
+        slide_join_existence(),
+        slide_shuffle_cost(),
+    ])
