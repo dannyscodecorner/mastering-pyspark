@@ -1,45 +1,156 @@
 """General-purpose helpers for presentation authoring."""
 
+# Python whitespace adds U+001C, U+001D, U+001E and U+001F to Unicode White_Space.
+# These are literal characters: Incan 0.5.1 does not interpret text hex escapes.
+const _PYTHON_SEPARATORS: str = ""
+
+
 pub def dedent(value: str) -> str:
-    """Remove the common space/tab prefix of nonblank lines.
+    """Remove the common space/tab prefix, following Python 3.14 textwrap.dedent.
 
-    Relative indentation and nonblank-line content are preserved. Tabs are
-    compared literally, not expanded into spaces. Whitespace-only lines become
-    empty lines and do not determine the margin. Leading/trailing newlines are
-    retained; callers can strip them separately when appropriate.
-
-    This is a local text utility, independent of rendering, for eventual reuse
-    in the Incan standard library.
+    Tabs are literal characters, not expanded spaces. Blank lines are normalized
+    to empty lines using Python's Unicode whitespace rules. Other content,
+    relative indentation and boundary newlines are preserved. Only LF separates
+    lines; CR is preserved on content lines, including CRLF endings.
     """
-    mut margin = ""
-    mut found_content = false
-    mut lines: list[str] = []
-    for line in value.split("\n"):
-        if line.strip() == "":
-            lines.append("")
-            continue
-        lines.append(line)
-        mut end = 0
-        while end < len(line):
-            if line[end] != " " and line[end] != "\t":
-                break
-            end += 1
-        indent = line[:end]
-        if not found_content:
-            margin = indent
-            found_content = true
-        else:
-            mut common = 0
-            while common < len(margin) and common < end:
-                if margin[common] != indent[common]:
-                    break
-                common += 1
-            margin = margin[:common]
+    if value == "":
+        return value
 
-    mut result: list[str] = []
-    for line in lines:
-        if line == "":
-            result.append("")
-        else:
-            result.append(line[len(margin):])
-    return "\n".join(result)
+    mut lines = value.split("\n")
+    mut prefix: list[str] = []
+    mut margin = -1  # No nonblank line has supplied an indentation yet.
+
+    for index in range(len(lines)):
+        line = lines[index]
+        mut blank = true
+        for char in line:
+            if char == " " or char == "\t":
+                continue
+            if char.strip() != "" and char not in _PYTHON_SEPARATORS:
+                blank = false
+                break
+        if blank:
+            lines[index] = ""
+            continue
+        if margin == 0:
+            continue  # Still normalize later blank lines, but the margin is fixed.
+
+        # Traverse characters once. A list gives constant-time prefix lookups;
+        # repeated Unicode string indexing would rescan the line on Incan 0.5.1.
+        mut common = 0
+        for char in line:
+            if char != " " and char != "\t":
+                break
+            if margin < 0:
+                prefix.append(char)
+            elif common == margin or char != prefix[common]:
+                break
+            common += 1
+        margin = common
+
+    if margin > 0:
+        for index in range(len(lines)):
+            line = lines[index]
+            if line != "":
+                lines[index] = line[margin:]
+    return "\n".join(lines)
+
+
+module tests:
+    from std.testing import assert_eq
+    from surface import code_block
+
+    def test_dedent_preserves_nested_code() -> None:
+        source = "    if ready:\n        run()\n    done()"
+        assert_eq(dedent(source), "if ready:\n    run()\ndone()")
+
+    def test_dedent_uses_all_nonblank_lines() -> None:
+        source = "        nested()\n    outer()"
+        assert_eq(dedent(source), "    nested()\nouter()")
+
+    def test_dedent_leaves_unindented_text_alone() -> None:
+        source = "first\n    second"
+        assert_eq(dedent(source), source)
+
+    def test_dedent_ignores_blank_lines_and_keeps_boundary_newlines() -> None:
+        source = "\n    first\n \t \n    second\n    "
+        assert_eq(dedent(source), "\nfirst\n\nsecond\n")
+
+    def test_dedent_empty_and_whitespace_only_input() -> None:
+        assert_eq(dedent(""), "")
+        assert_eq(dedent("   \t"), "")
+        assert_eq(dedent("  \n\t\n"), "\n\n")
+
+    def test_dedent_preserves_relative_tabs() -> None:
+        source = "\tfirst\n\t\tsecond"
+        assert_eq(dedent(source), "first\n\tsecond")
+
+    def test_dedent_does_not_equate_tabs_and_spaces() -> None:
+        source = "\tfirst\n    second"
+        assert_eq(dedent(source), source)
+        assert_eq(dedent(" \tfirst\n  second"), "\tfirst\n second")
+
+    def test_dedent_preserves_unicode_and_content_whitespace() -> None:
+        source = "    café  \n        日本語\t\n    🐍"
+        assert_eq(dedent(source), "café  \n    日本語\t\n🐍")
+
+    def test_dedent_preserves_crlf_on_content_lines() -> None:
+        assert_eq(dedent("    first\r\n    second\r\n"), "first\r\nsecond\r\n")
+        assert_eq(dedent("    first\r\n    \r\n    second"), "first\r\n\nsecond")
+
+    def test_dedent_normalizes_unicode_whitespace_only_lines() -> None:
+        assert_eq(dedent("    café\n \n    日本語"), "café\n\n日本語")
+
+    def test_dedent_single_line_and_repeated_application() -> None:
+        assert_eq(dedent("    first  "), "first  ")
+        source = "\n    first\n        second\n"
+        assert_eq(dedent(dedent(source)), dedent(source))
+
+    def test_code_block_only_dedents_when_requested() -> None:
+        source = "    first\n        second"
+        assert_eq(code_block(source).content, source)
+        assert_eq(code_block(dedent(source)).content, "first\n    second")
+
+    def test_dedent_accepts_two_and_four_space_indentation() -> None:
+        assert_eq(dedent("  first\n    nested\n  last"), "first\n  nested\nlast")
+        assert_eq(dedent("    first\n        nested\n    last"), "first\n    nested\nlast")
+
+    def test_dedent_normalizes_python_control_separators() -> None:
+        separators = ""
+        for separator in separators:
+            assert_eq(dedent("  first\n" + separator + "\n  last"), "first\n\nlast")
+            assert_eq(dedent(separator), "")
+            # These are blank-line whitespace, not indentation on a content line.
+            source = separator + "first\n  last"
+            assert_eq(dedent(source), source)
+
+    def test_dedent_preserves_whitespace_inside_content() -> None:
+        controls = ""
+        for control in controls:
+            assert_eq(dedent("  a" + control + "b\n  c"), "a" + control + "b\nc")
+        assert_eq(dedent("  a\rb\n  c"), "a\rb\nc")
+        assert_eq(dedent("  a b\n  c"), "a b\nc")
+
+    def test_dedent_does_not_strip_unicode_indentation_from_content() -> None:
+        assert_eq(dedent("  first\n   last"), " first\n  last")
+        assert_eq(dedent(" first\n  last"), " first\n  last")
+
+    def test_dedent_preserves_non_whitespace_format_characters() -> None:
+        # U+200B zero-width space and U+FEFF BOM are not Python whitespace.
+        for marker in "​﻿":
+            source = "  first\n" + marker + "\n  last"
+            assert_eq(dedent(source), source)
+
+    def test_dedent_still_normalizes_blanks_after_margin_reaches_zero() -> None:
+        assert_eq(dedent("  first\nlast\n  \t\n \n"), "  first\nlast\n\n\n")
+
+    def test_dedent_handles_deep_indentation_and_long_unicode_content() -> None:
+        mut indentation: list[str] = []
+        mut words: list[str] = []
+        for _ in range(4096):
+            indentation.append(" ")
+        for _ in range(128):
+            words.append("café 日本語 🐍 ")
+        indent = "".join(indentation)
+        content = "".join(words)
+        assert_eq(dedent(indent + content + "\n" + indent + "  tail"), content + "\n  tail")
