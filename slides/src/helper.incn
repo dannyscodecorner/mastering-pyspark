@@ -43,4 +43,3 @@ pub def dedent(value: str) -> str:
         else:
             result.append(line[len(margin):])
     return "\n".join(result)
-
