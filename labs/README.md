@@ -7,7 +7,7 @@ Read and clean Parquet data, build a sales report, then run the same pipeline as
 1. **Java 21 (JDK)** — follow the [Java installation steps](TROUBLESHOOTING.md#java) for your operating system.
 2. **[VS Code](https://code.visualstudio.com/download)** — enable the **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** and **[Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)** extensions.
 3. **[Git](https://git-scm.com/install/)** — needed to clone the repository; optional if you download the ZIP instead.
-4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)** — install uv; it downloads Python 3.12 during setup if needed.
+4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)** — install uv ([Windows steps](TROUBLESHOOTING.md#uv-on-windows)); it downloads Python 3.12 during setup if needed.
 
 The setup below installs PySpark 4.2.0 and the notebook kernel into the lab's environment.
 

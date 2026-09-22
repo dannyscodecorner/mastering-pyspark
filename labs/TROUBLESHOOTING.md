@@ -65,6 +65,24 @@ The command pins Temurin 21. If that patch becomes unavailable, use `sdk list ja
 
 Install a 64-bit [JDK 21](https://adoptium.net/temurin/releases/?version=21) matching your computer. Reopen VS Code and check `java -version` in its terminal; it should report version 21.
 
+## uv on Windows
+
+Open **PowerShell** and install uv using [WinGet](https://docs.astral.sh/uv/getting-started/installation/#winget):
+
+```powershell
+winget install --id astral-sh.uv --exact
+```
+
+Close PowerShell and fully exit VS Code. Reopen VS Code, choose **Terminal → New Terminal**, and check that uv is available:
+
+```powershell
+uv --version
+```
+
+This should print the installed uv version. If WinGet is unavailable, use the [official Windows installer](https://docs.astral.sh/uv/getting-started/installation/#standalone-installer).
+
+Then continue with [creating the lab's virtual environment](README.md#2-create-the-virtual-environment).
+
 ## Windows status
 
 **The full lab has not yet been validated on native Windows.** The instructor has confirmed the Java installation command above; the setup check is still pending. Jupyter in VS Code supports Windows; the remaining risk is Spark's Hadoop filesystem support. The bundled Spark 4.2 distribution uses Hadoop 3.5.0. Hadoop's [Windows build documentation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/BUILDING.txt#L615-L618) states that its native Windows components are required. Python, uv and Java alone may therefore be insufficient for Parquet/checkpoint writes on a clean machine.
