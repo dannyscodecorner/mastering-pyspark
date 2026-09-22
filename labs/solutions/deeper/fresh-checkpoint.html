@@ -1,6 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Compare with a fresh checkpoint</title><link rel="stylesheet" href="../../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Deeper-investigation-%E2%80%94-Compare-with-a-fresh-checkpoint">Deeper investigation — Compare with a fresh checkpoint<a class="anchor-link" href="#Deeper-investigation-%E2%80%94-Compare-with-a-fresh-checkpoint">¶</a></h1><p><strong>Worked solution</strong> · <a href="../../index.html">All exercises</a> · <a href="../../README.md">Setup</a></p>
+<h2 id="What-you%E2%80%99ll-learn">What you’ll learn<a class="anchor-link" href="#What-you%E2%80%99ll-learn">¶</a></h2><ul>
+<li>Compare resuming an existing query with starting one from a fresh checkpoint.</li>
+<li>Predict and check the result when a new query processes files that are already available.</li>
+</ul>
 <p>Optional. Complete <a href="../07-checkpoint.html">Exercise 7</a> and its <strong>Save and finish</strong> cell first. This investigation uses the same saved work; it does not replace your core pipeline.</p>
 <p>Completed answers use a separate solution workspace and do not replace participant work.</p>
 <p>Run the supplied setup first. End with <strong>Save and finish</strong>; the next notebook loads your saved functions, so this kernel can be closed.</p>
@@ -78,7 +82,7 @@
 <pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
 Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-26/09/22 19:24:26 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/09/22 19:34:48 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 </pre>
 </div>
 </div>
@@ -189,7 +193,7 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="output">
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Session stopped; exercise files are under runs/run-93ecbaa88b
+<pre>Session stopped; exercise files are under runs/run-b2a8fe5973
 </pre>
 </div>
 </div>

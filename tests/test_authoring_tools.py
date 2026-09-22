@@ -174,6 +174,12 @@ class NotebookTests(unittest.TestCase):
         for exercise in lesson.exercise_ids():
             cells = lesson.exercise_cells(script, exercise)
             identifiers = [cell["id"] for cell in cells]
+            introduction = cells[0]["source"]
+            self.assertEqual(cells[0]["kind"], "markdown")
+            self.assertIn("## What you’ll learn\n\n- ", introduction)
+            solved_intro = lesson.exercise_cells(script, exercise, solved=True)[0]["source"]
+            outcomes = [line for line in introduction.splitlines() if line.startswith("- ")]
+            self.assertTrue(all(line in solved_intro for line in outcomes))
             self.assertIn("notebook-setup", identifiers)
             self.assertIn("save-and-finish", identifiers)
             self.assertEqual(

@@ -1,8 +1,12 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Create a SparkSession</title><link rel="stylesheet" href="../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Exercise-0-%E2%80%94-Create-a-SparkSession">Exercise 0 — Create a SparkSession<a class="anchor-link" href="#Exercise-0-%E2%80%94-Create-a-SparkSession">¶</a></h1><p><strong>Worked solution</strong> · <a href="../index.html">All exercises</a> · <a href="../README.md">Setup</a></p>
+<h2 id="What-you%E2%80%99ll-learn">What you’ll learn<a class="anchor-link" href="#What-you%E2%80%99ll-learn">¶</a></h2><ul>
+<li>Create a local SparkSession and explain how it differs from the notebook’s Python kernel.</li>
+<li>Run a small DataFrame job, recognise session reuse, and stop Spark when finished.</li>
+</ul>
 <p><strong>Core: about 5 minutes.</strong> The same baseline for everyone.</p>
-<p>Create a local SparkSession, run a small job, then stop Spark. Saved output labels the author's interpreter path as <code>&lt;validation-python&gt;</code>; running the cell yourself prints your actual path. Run cells in order and end with <strong>Finish — stop Spark</strong>. This exercise does not save pipeline functions.</p>
+<p>Saved output labels the author's interpreter path as <code>&lt;validation-python&gt;</code>; running the cell yourself prints your actual path. Run cells in order and end with <strong>Finish — stop Spark</strong>. This exercise does not save pipeline functions.</p>
 </div>
 </div>
 </div>
@@ -118,7 +122,7 @@
 <pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
 Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-26/09/22 19:22:58 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/09/22 19:33:22 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 </pre>
 </div>
 </div>

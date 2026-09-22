@@ -35,6 +35,12 @@ from workshop_runtime import DATA_ROOT, create_spark, finish_query, new_run, spa
 # In this lab, Spark runs locally on your laptop. PySpark starts the Java-based Spark runtime when we create the session. This is why both Python and Java were needed during installation.
 
 
+# %% [markdown] id=learning-0 role=learning
+# ## What you’ll learn
+#
+# - Create a local SparkSession and explain how it differs from the notebook’s Python kernel.
+# - Run a small DataFrame job, recognise session reuse, and stop Spark when finished.
+
 # %% [markdown] id=session-settings-label
 # ### Supplied local settings
 #
@@ -147,6 +153,12 @@ print(f"Spark {spark.version}; inputs: {DATA_ROOT.name}; fresh run prepared")
 # Read `data/sales.parquet` into `raw` and `data/products.parquet` into `raw_products`. Paths are supplied below. Inspect their schemas and a small sample of their rows before deciding what to clean.
 
 
+# %% [markdown] id=learning-1 role=learning
+# ## What you’ll learn
+#
+# - Read Parquet into DataFrames and inspect schemas and sample rows.
+# - Describe what one row represents in each input and spot data quality problems before cleaning.
+
 # %% id=input-paths
 SALES_PATH = spark_path(DATA_ROOT / "sales.parquet")
 PRODUCTS_PATH = spark_path(DATA_ROOT / "products.parquet")
@@ -242,6 +254,12 @@ check.inputs(raw, raw_products)
 #
 # Success examples: `" b1 "` → `B1`, `"g1"` → `G1`, `" Books "` → `books`. Keep the original inputs available.
 
+
+# %% [markdown] id=learning-2 role=learning
+# ## What you’ll learn
+#
+# - Compose built-in Spark functions to normalise product keys.
+# - Reuse a Column expression in DataFrame transformations while keeping the raw inputs available.
 
 # %% [markdown] id=functions-note
 # `F` is the alias from `from pyspark.sql import functions as F`. These functions build Spark expressions. `F.col(...)` selects a column; `F.lit(...)` describes a literal value.
@@ -364,6 +382,12 @@ check.projection(raw, exploration)
 #
 # Parse amounts as `DECIMAL(12, 2)` and timestamps with `yyyy-MM-dd HH:mm:ss`. Parsing failures should become null, so we can explain them. Do not silently turn missing amounts into zero.
 
+
+# %% [markdown] id=learning-3 role=learning
+# ## What you’ll learn
+#
+# - Interpret parsed values and rejection reasons from the supplied cleaning step.
+# - Separate accepted and rejected sales and account for every input row.
 
 # %% [markdown] id=predict-rejects role=response
 # ### Predict before running
@@ -529,6 +553,12 @@ check.same_rows(cleaned.select("sale_id", "amount", "sold_at"), parsed_preview)
 # Implement `enrich_sales` and `category_totals`; they will also be used for the stream.
 
 
+# %% [markdown] id=learning-4 role=learning
+# ## What you’ll learn
+#
+# - Choose a join that meets the reporting requirement for sales with no matching product.
+# - Group sales by category, calculate counts and totals, and check that the report preserves the accepted sales.
+
 # %% [markdown] id=lookup-label
 # ### Supplied — check the lookup first
 #
@@ -665,6 +695,12 @@ check.inner_join(inner_sales)
 # Save the category report and rejected rows to the supplied fresh paths. Read the report back as `saved_report` and verify its values. The write/read steps are supplied for the core. Explain which operations actually execute work; the optional section investigates the physical plan.
 
 
+# %% [markdown] id=learning-5 role=learning
+# ## What you’ll learn
+#
+# - Save the report and rejected rows as Parquet, then read them back to check their values.
+# - Identify which operations describe work and which actions execute it.
+
 # %% [markdown] id=plan-label role=response depth=zoom
 # ### Inspect the plan
 #
@@ -747,6 +783,12 @@ saved_report.orderBy("category").show()
 #
 # Start a named memory sink for the changing aggregate. The supplied Complete mode publishes the whole current report. Paths, query name and trigger are supplied.
 
+
+# %% [markdown] id=learning-6 role=learning
+# ## What you’ll learn
+#
+# - Reuse your batch cleaning, join and aggregation functions on arriving files.
+# - Start a streaming query and observe how the category report changes as new input arrives.
 
 # %% [markdown] id=stream-reader-label
 # ### Your code — change the reader, reuse your transformations
@@ -904,6 +946,12 @@ print("Source descriptions:", [item["description"] for item in progress["sources
 # This demonstrates an orderly restart in the same environment. It does not test an arbitrary crash, and it does not turn the memory sink into durable storage.
 
 
+# %% [markdown] id=learning-7 role=learning
+# ## What you’ll learn
+#
+# - Resume a stopped streaming query from its existing checkpoint in a new SparkSession.
+# - Check that the next arrival updates the report without counting earlier input again.
+
 # %% [markdown] id=restart-prediction role=response
 # ### Your prediction
 #
@@ -1011,6 +1059,12 @@ print(
 # Then read `data/extras/invalid_sales.csv` with that same schema into `extra_raw`. Apply your `clean_sales` and inspect the reasons. These extra rows are separate from the eight core inputs.
 
 
+# %% [markdown] id=learning-schemas role=learning
+# ## What you’ll learn
+#
+# - Compare CSV and Parquet reads using an explicit schema.
+# - Distinguish stored data types from valid business values by testing extra malformed inputs.
+
 # %% [starter] id=csv-experiment-starter replaces=csv-experiment
 # csv_sales = todo("Read the CSV with header=True and raw.schema")
 # extra_raw = todo("Read the separate invalid-sales CSV with the same schema")
@@ -1055,6 +1109,12 @@ check.extra_rejects(extra_cleaned)
 # Expected: six product/tag associations and five distinct tags. Explain what one output row means. Do not join this result into the sales report and sum amounts without deciding how multi-tag sales should be attributed.
 
 
+# %% [markdown] id=learning-tags role=learning
+# ## What you’ll learn
+#
+# - Turn a list of tags in one field into individual product/tag rows.
+# - Explain how reshaping changes what one row represents and why this matters when joining and summing sales.
+
 # %% id=tag-input
 tag_input = (
     spark.read.option("header", True)
@@ -1097,6 +1157,12 @@ check.tags(product_tags, distinct_tags)
 # Then duplicate the B1 lookup row in a separate `duplicate_products` DataFrame. Make an unchecked left join called `multiplied`. Inspect its count and amount sum. Why does the lookup validation matter? Do not replace `products`.
 
 
+# %% [markdown] id=learning-joins role=learning
+# ## What you’ll learn
+#
+# - Use semi and anti joins to investigate which sales have a product match.
+# - Trace how duplicate lookup keys affect the number of joined rows and the sales total.
+
 # %% [starter] id=join-experiment-starter replaces=join-experiment
 # unmatched = todo("Find accepted sales with no product match")
 # matched = todo("Find accepted sales with a product match, retaining only sales columns")
@@ -1136,6 +1202,12 @@ check.lookup(products)
 # You should have four date/category rows whose totals still sum to 100.00. Explain how `largest_sale` differs from `total`.
 
 
+# %% [markdown] id=learning-daily role=learning
+# ## What you’ll learn
+#
+# - Group sales by both date and category.
+# - Calculate multiple aggregates for each group and explain the different questions they answer.
+
 # %% [starter] id=daily-experiment-starter replaces=daily-experiment
 # daily = todo("Group by date and category; calculate total and largest_sale")
 
@@ -1170,6 +1242,12 @@ check.daily(daily)
 #
 # Make `cached_report = report.cache()`, request its rows, then inspect its plan. Finally release it with `unpersist()`. Compare values before and after. Do not use timings from this tiny fixture as evidence of a speedup.
 
+
+# %% [markdown] id=learning-plans role=learning
+# ## What you’ll learn
+#
+# - Read formatted plans to locate the work introduced by joins and aggregation.
+# - Request caching, materialise the report, inspect the cached plan, and release the cached data.
 
 # %% [starter] id=plan-experiment-starter replaces=plan-experiment
 # todo("Inspect the three plans, then cache, materialise, check and unpersist the report")
@@ -1209,6 +1287,12 @@ assert not report.is_cached, "Release the cached report before continuing."
 #
 # This query processes the three files already present, then stops. Read its output as `stored_rows`. Verify five distinct sale IDs and a report equal to the batch result. The aggregate memory sink remains separate.
 
+
+# %% [markdown] id=learning-output role=learning
+# ## What you’ll learn
+#
+# - Write accepted streaming rows to Parquet using a separate query and checkpoint.
+# - Process the currently available files, then verify the saved output against the batch result.
 
 # %% id=file-paths
 ROWS_CHECKPOINT = spark_path(RUN_ROOT / "rows-checkpoint")
@@ -1263,6 +1347,12 @@ check.same_report(report, category_totals(stored_rows))
 #
 # Predict its final total. Does starting a fresh aggregate necessarily double the previous aggregate? The supplied check waits, compares and stops this independent query.
 
+
+# %% [markdown] id=learning-checkpoint role=learning
+# ## What you’ll learn
+#
+# - Compare resuming an existing query with starting one from a fresh checkpoint.
+# - Predict and check the result when a new query processes files that are already available.
 
 # %% id=fresh-paths
 FRESH_TABLE = "fresh_" + uuid4().hex[:10]

@@ -1,6 +1,10 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Investigating joins</title><link rel="stylesheet" href="../../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Deeper-investigation-%E2%80%94-Investigating-joins">Deeper investigation — Investigating joins<a class="anchor-link" href="#Deeper-investigation-%E2%80%94-Investigating-joins">¶</a></h1><p><strong>Worked solution</strong> · <a href="../../index.html">All exercises</a> · <a href="../../README.md">Setup</a></p>
+<h2 id="What-you%E2%80%99ll-learn">What you’ll learn<a class="anchor-link" href="#What-you%E2%80%99ll-learn">¶</a></h2><ul>
+<li>Use semi and anti joins to investigate which sales have a product match.</li>
+<li>Trace how duplicate lookup keys affect the number of joined rows and the sales total.</li>
+</ul>
 <p>Optional. Complete <a href="../04-join-aggregate.html">Exercise 4</a> and its <strong>Save and finish</strong> cell first. This investigation uses the same saved work; it does not replace your core pipeline.</p>
 <p>Completed answers use a separate solution workspace and do not replace participant work.</p>
 <p>Run the supplied setup first. End with <strong>Save and finish</strong>; the next notebook loads your saved functions, so this kernel can be closed.</p>
@@ -71,7 +75,7 @@
 <pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
 Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-26/09/22 19:23:36 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/09/22 19:33:57 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 </pre>
 </div>
 </div>
@@ -149,7 +153,12 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Duplicate lookup demonstrated: eight joined rows, total 150.00.
-Lookup check passed: one row per product key.
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Lookup check passed: one row per product key.
 </pre>
 </div>
 </div>
@@ -187,7 +196,7 @@ Lookup check passed: one row per product key.
 <div class="output">
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Session stopped; exercise files are under runs/run-8e92d670f7
+<pre>Session stopped; exercise files are under runs/run-1633ef004f
 </pre>
 </div>
 </div>

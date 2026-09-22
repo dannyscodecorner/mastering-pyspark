@@ -328,7 +328,7 @@ def rewrite_links(source: str, exercise: str, *, solved: bool) -> str:
     return re.sub(r"\(\{\{solution\}\}\.ipynb(?:#[^)]+)?\)", f"({solution})", source)
 
 
-def introduction(exercise: str, *, solved: bool) -> dict[str, str]:
+def introduction(exercise: str, learning: str, *, solved: bool) -> dict[str, str]:
     """Make the goal and optional depth visible before the setup code."""
     spec = EXERCISES[exercise]
     edition = "Worked solution" if solved else "Learner exercise"
@@ -338,6 +338,7 @@ def introduction(exercise: str, *, solved: bool) -> dict[str, str]:
         else f"Deeper investigation — {spec.title}"
     )
     source = f"# {title}\n\n**{edition}** · [All exercises]({relative_link(exercise, 'index.html', solved=solved)}) · [Setup](README.md)\n\n"
+    source += learning + "\n\n"
     if exercise.isdigit():
         source += f"**Core: about {spec.minutes[0]} minutes.** The same baseline for everyone."
         if spec.minutes[1]:
@@ -352,7 +353,6 @@ def introduction(exercise: str, *, solved: bool) -> dict[str, str]:
         )
         source += f"Optional. Complete [Exercise {spec.after}]({link}) and its **Save and finish** cell first. This investigation uses the same saved work; it does not replace your core pipeline.\n\n"
     if exercise == "0":
-        source += "Create a local SparkSession, run a small job, then stop Spark. "
         if solved:
             source += "Saved output labels the author's interpreter path as `<validation-python>`; running the cell yourself prints your actual path. "
         else:
@@ -421,6 +421,10 @@ def exercise_cells(script: str, exercise: str, *, solved: bool = False) -> list[
     if exercise not in EXERCISES:
         raise ValueError(f"Unknown exercise: {exercise}")
     body = teaching_groups(lesson_cells(script, solved=solved))[exercise]
+    learning = [cell for cell in body if cell["role"] == "learning"]
+    if len(learning) != 1 or learning[0]["kind"] != "markdown":
+        raise ValueError(f"Exercise {exercise} needs one Markdown learning summary")
+    body = [cell for cell in body if cell["role"] != "learning"]
     # The notebook introduction already supplies the exercise title.
     body[0] = dict(
         body[0],
@@ -443,7 +447,7 @@ def exercise_cells(script: str, exercise: str, *, solved: bool = False) -> list[
         setup_heading = "## Setup — check the Python kernel\n\nComplete the [installation and setup check](README.md#2-create-the-virtual-environment) first. Select the lab's `.venv` kernel, then run this cell. On Windows the printed path should end in `labs\\.venv\\Scripts\\python.exe`; on macOS/Linux, `labs/.venv/bin/python`. If it points at uv's base Python instead, use [kernel selection help](README.md#4-open-exercise-0-and-select-the-kernel). Importing `SparkSession` makes the class available; this cell does not start Spark."
         finish_heading = '<a id="finish"></a>\n## Finish — stop Spark\n\nRun the cell below after the checks. In this local lab, `spark.stop()` stops the underlying SparkContext and releases its resources. The Python kernel keeps running, but the stopped session and its DataFrames cannot run more work. To repeat this exercise, run the builder and following cells again. [SparkSession.stop documentation](https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.SparkSession.stop.html).'
     cells = [
-        introduction(exercise, solved=solved),
+        introduction(exercise, learning[0]["source"], solved=solved),
         notebook_cell(
             "setup-heading",
             "markdown",
