@@ -13,32 +13,62 @@ The setup below installs PySpark 4.2.0 and the notebook kernel into the lab's en
 
 ## 1. Open the lab
 
-Clone the repository and open **mastering-pyspark/labs** in VS Code. Skip cloning if you already have it.
+In a terminal, clone the repository. Skip this if you already have it:
 
 ```text
 git clone https://github.com/dannyscodecorner/mastering-pyspark.git
 ```
 
+In VS Code, choose **File → Open Folder** and select **mastering-pyspark/labs**. You should see `pyproject.toml`, `hands_on.py` and the `data` folder in the Explorer sidebar.
+
 Alternatively, [download the lab from the latest GitHub Release](https://github.com/dannyscodecorner/mastering-pyspark/releases/latest/download/pyspark-labs.zip), extract it and open the **labs** folder inside.
 
-## 2. Run setup
+## 2. Create the virtual environment
 
-After installing the dependencies, reopen VS Code normally. In its terminal, make sure you are in the **labs** folder and run:
+After installing the dependencies, reopen VS Code normally. Choose **Terminal → New Terminal** and make sure the terminal is in the **labs** folder. Run:
 
 ```text
 uv sync --locked --group notebook
+```
+
+This creates **.venv** inside **labs**: the lab's own Python environment and packages. It downloads Python 3.12 if needed and installs the locked dependencies, including PySpark and the notebook kernel. Wait for the command to finish.
+
+Then check the environment:
+
+```text
 uv run --locked check_setup.py
 ```
 
-Look for **Setup check passed**. Do this before class so the downloads are ready.
+`uv run` uses this `.venv` automatically; you do not need to activate it in the terminal. Wait for **Setup check passed** before continuing. Do this before class so the downloads are ready.
 
 **Windows:** native Windows setup is not yet validated. Read the [Windows notes](TROUBLESHOOTING.md#windows-status) before class.
 
-## 3. Start the exercises
+## 3. Select the lab's Python in VS Code
 
-Open [hands_on.py](hands_on.py) and use **Run Cell**. Select the project's **.venv** as the kernel, run the **Setup** cell, then work through the exercises in order.
+Open [hands_on.py](hands_on.py) from the Explorer sidebar. Open the **Command Palette** with **Ctrl+Shift+P** on Windows/Linux or **Cmd+Shift+P** on macOS. Run **Python: Select Interpreter** and choose the **Python 3.12** environment in the lab's **.venv** folder.
 
-Prefer a notebook? Open [hands-on.ipynb](hands-on.ipynb) with the same kernel. The [executed walkthrough](hands-on.html) shows the expected results.
+Check the interpreter's path belongs to this lab:
+
+| Operating system | Python executable inside `labs` |
+| --- | --- |
+| Windows | `.venv\Scripts\python.exe` |
+| macOS / Linux | `.venv/bin/python` |
+
+If `.venv` is missing from the list, see [VS Code setup help](TROUBLESHOOTING.md#vs-code-cells-and-kernels).
+
+## 4. Run the first cell, then the exercises
+
+The `# %%` lines in `hands_on.py` divide the file into cells. Each code cell has a **Run Cell** link above it. Cells share a Python session, so later cells can use variables created earlier.
+
+1. Find **Setup** near the top of the file. Click **Run Cell** above the following code cell, which starts with `from decimal import Decimal`.
+2. VS Code opens the **Python Interactive** window. If prompted for a kernel, choose **Python Environments → .venv**. Check the kernel shown in the window's upper-right corner belongs to the same environment selected above. To change it, click its name, then **Select Another Kernel → Python Environments → .venv**.
+3. Wait for the setup cell to finish. Its output should include `Spark 4.2.0; inputs: data; fresh run prepared`.
+4. Go to **Exercise 1 — Inspect the inputs** and click **Run Cell** above its code. The schemas and tables appear in the Interactive window. Read each exercise and run its cells in order, waiting for each cell to finish.
+5. At the end, run the **Finish the exercise** cell to stop Spark.
+
+If you restart or change the kernel, run **Setup** and the earlier exercise cells again before continuing. Missing **Run Cell**, or an import error? See [VS Code setup help](TROUBLESHOOTING.md#vs-code-cells-and-kernels).
+
+**Prefer a notebook?** Open [hands-on.ipynb](hands-on.ipynb), click **Select Kernel** (or the current kernel name) at the top right, and choose the same `.venv` under **Python Environments**; use **Select Another Kernel** if needed. Run the first code cell under **Setup** with the play button beside that cell, then continue one cell at a time. The [executed walkthrough](hands-on.html) shows the expected results.
 
 Using an AI assistant? Start it in this **labs** folder. The [agent guidance](AGENTS.md) allows setup help and hints; you write the exercise answers.
 

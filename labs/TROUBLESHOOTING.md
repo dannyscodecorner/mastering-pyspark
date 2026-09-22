@@ -96,6 +96,15 @@ The project selects Python **3.12** and locks PySpark to **4.2.0**. uv creates t
 
 The setup check must finish with **Setup check passed**. It tests a Python worker, Parquet input/output, atomic arrival publication, stateful streaming, checkpoint restart and a streaming Parquet sink. The small fixture is the actual workshop data, not a test that only starts Spark.
 
+## VS Code cells and kernels
+
+- **No Run Cell links:** open `hands_on.py` in the editor and check the language mode at the bottom right says **Python**. In the Extensions view, check that **Python** and **Jupyter** are installed and enabled for this workspace. If the folder is in Restricted Mode, review [Workspace Trust](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust); enable execution only for a course copy you trust. Run **Developer: Reload Window** from the Command Palette after enabling extensions. Also check that `editor.codeLens` and `jupyter.interactiveWindow.codeLens.enable` are enabled in Settings.
+- **No .venv to select:** finish `uv sync --locked --group notebook` in **labs**, then run **Developer: Reload Window**. Open `hands_on.py` and use **Python: Select Interpreter** again. In the Interactive window or notebook, use **Select Another Kernel → Python Environments** to see environments outside the recently used list.
+- **Setup passed, but a cell cannot import pyspark or ipykernel:** the Interactive window may be using a different Python from the terminal. Choose the lab's `.venv` in its kernel picker and run the Setup cell again. Selecting the editor's interpreter alone does not change an already running kernel.
+- **NameError for spark or an earlier variable:** run the Setup cell and preceding exercise cells in the same kernel. A new or restarted kernel has no variables from the previous session.
+
+See the official [Python Interactive window guide](https://code.visualstudio.com/docs/python/jupyter-support-py) and [kernel selection guide](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management).
+
 ## Other ways to run the lesson
 
 The README's setup command includes the kernel dependencies for VS Code's Python Interactive window and notebooks. Use the project's `.venv` in both, and run cells from the top.
