@@ -1,10 +1,14 @@
-"""Build the optional notebook and HTML reference from the editable lesson.
+"""Generate one learner and one solution notebook per exercise.
 
-Run with the locked notebook and author dependency groups. Add ``--execute`` to
-run every cell using the same Python interpreter as this utility.
+Run from labs with ``uv run --locked --group notebook --group author
+-m author.build_notebook``. Add ``--execute`` to validate reference completions in
+separate kernels. Learner notebooks always have empty outputs and unfinished tasks.
 """
 
 import argparse
+import copy
+import hashlib
+import html
 import json
 import os
 import sys
@@ -18,31 +22,7 @@ from nbclient import NotebookClient
 from nbconvert import HTMLExporter
 from nbformat import NotebookNode
 
-
-def make_cell(kind: str, lines: list[str]) -> NotebookNode:
-    """Convert one VS Code cell, removing Python comments from Markdown."""
-    body = "\n".join(lines).strip()
-    if kind == "code":
-        return nbformat.v4.new_code_cell(body)
-    markdown = "\n".join(
-        line[2:] if line.startswith("# ") else line[1:] for line in body.splitlines()
-    )
-    return nbformat.v4.new_markdown_cell(markdown)
-
-
-def lesson_cells(script: str) -> Iterator[NotebookNode]:
-    """Yield marked lesson cells, ignoring any module preamble before the first marker."""
-    kind = None
-    lines = []
-    for line in script.splitlines() + ["# %%"]:
-        if line not in {"# %%", "# %% [markdown]"}:
-            if kind is not None:
-                lines.append(line)
-            continue
-        if kind is not None:
-            yield make_cell(kind, lines)
-        kind = "markdown" if "[markdown]" in line else "code"
-        lines = []
+from .lesson_source import EXERCISES, exercise_cells, exercise_ids
 
 
 def code_sources(notebook: NotebookNode) -> list[str]:
@@ -51,35 +31,75 @@ def code_sources(notebook: NotebookNode) -> list[str]:
 
 
 def preserve_cell_state(previous: NotebookNode, current: NotebookNode) -> None:
-    """Keep matching cell IDs; retain outputs only when all executable code is unchanged."""
+    """Retain matching outputs only when every executable cell is unchanged."""
     unchanged = code_sources(previous) == code_sources(current)
-    for before, after in zip(previous.cells, current.cells):
-        if before.cell_type != after.cell_type or before.source.strip() != after.source:
+    previous_cells = {cell.id: cell for cell in previous.cells}
+    for after in current.cells:
+        before = previous_cells.get(after.id)
+        if before is None or before.cell_type != after.cell_type or before.source != after.source:
             continue
-        after.id = before.id
         if unchanged and after.cell_type == "code":
             after.outputs = before.outputs
             after.execution_count = before.execution_count
 
 
-def build_notebook(root: Path) -> NotebookNode:
-    """Read the canonical lesson and preserve still-valid state from its previous notebook."""
-    script = (root / "hands_on.py").read_text(encoding="utf-8")
-    notebook = nbformat.v4.new_notebook(cells=list(lesson_cells(script)))
+def source_digest(root: Path) -> str:
+    """Invalidate all saved solution results if a lesson or supporting implementation changes."""
+    digest = hashlib.sha256()
+    for path in [*sorted(root.glob("*.py")), *sorted((root / "author").glob("*.py"))]:
+        digest.update(str(path.relative_to(root)).encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def build_notebook(root: Path, exercise: str, *, solved: bool = False) -> NotebookNode:
+    """Select one exercise's cells; never retain answers or outputs in a learner copy."""
+    selected = exercise_cells(
+        (root / "hands_on.py").read_text(encoding="utf-8"), exercise, solved=solved
+    )
+    cells = []
+    for item in selected:
+        factory = (
+            nbformat.v4.new_code_cell if item["kind"] == "code" else nbformat.v4.new_markdown_cell
+        )
+        tags = [item["role"]] + (["optional"] if item["depth"] == "zoom" else [])
+        cell = factory(item["source"], id=item["id"], metadata={"tags": tags})
+        cells.append(cell)
+    notebook = nbformat.v4.new_notebook(cells=cells)
     notebook.metadata.kernelspec = {
-        "display_name": "Python 3",
+        "display_name": "Python 3.12 (.venv)",
         "language": "python",
         "name": "python3",
     }
-    previous_path = root / "hands-on.ipynb"
-    if previous_path.exists():
-        preserve_cell_state(nbformat.read(previous_path, as_version=4), notebook)
+    notebook.metadata.workshop = {
+        "exercise": exercise,
+        "solved": solved,
+        "source_digest": source_digest(root),
+    }
+    path = notebook_path(root, exercise, solved=solved)
+    if solved and path.exists():
+        previous = nbformat.read(path, as_version=4)
+        if (
+            previous.metadata.get("workshop", {}).get("source_digest")
+            == notebook.metadata.workshop.source_digest
+        ):
+            preserve_cell_state(previous, notebook)
+            if "executed_depth" in previous.metadata.workshop:
+                notebook.metadata.workshop.executed_depth = (
+                    previous.metadata.workshop.executed_depth
+                )
     return notebook
+
+
+def notebook_path(root: Path, exercise: str, *, solved: bool) -> Path:
+    """Use parallel directories for learner exercises and deliberately separate solutions."""
+    folder = "solutions" if solved else "notebooks"
+    return root / folder / f"{EXERCISES[exercise].slug}.ipynb"
 
 
 @contextmanager
 def temporary_environment(settings: dict[str, str]) -> Iterator[None]:
-    """Apply process settings for one operation and restore their original presence and values."""
+    """Apply process settings for one operation and restore their original values."""
     previous = {name: os.environ.get(name) for name in settings}
     os.environ.update(settings)
     try:
@@ -94,7 +114,7 @@ def temporary_environment(settings: dict[str, str]) -> Iterator[None]:
 
 @contextmanager
 def notebook_kernel() -> Iterator[str]:
-    """Provide an isolated kernel for this interpreter, restoring Jupyter settings on exit."""
+    """Provide an isolated kernel for this interpreter without modifying user kernels."""
     with tempfile.TemporaryDirectory(prefix="dcc-notebook-") as temporary:
         root = Path(temporary)
         kernel_name = "dcc-workshop"
@@ -107,45 +127,131 @@ def notebook_kernel() -> Iterator[str]:
         }
         (kernel / "kernel.json").write_text(json.dumps(specification), encoding="utf-8")
         with temporary_environment(
-            {
-                "JUPYTER_PATH": str(root),
-                "JUPYTER_RUNTIME_DIR": str(root / "runtime"),
-            }
+            {"JUPYTER_PATH": str(root), "JUPYTER_RUNTIME_DIR": str(root / "runtime")}
         ):
             yield kernel_name
 
 
-def execute_notebook(notebook: NotebookNode, root: Path) -> None:
-    """Execute every cell from the lab directory with a temporary, matching Python kernel."""
+def execute_notebook(notebook: NotebookNode, directory: Path, *, core_only: bool = False) -> None:
+    """Validate a fresh kernel with all optional cells, or prove the core skips them safely."""
+    execution = copy.deepcopy(notebook)
+    if core_only:
+        execution.cells = [
+            cell for cell in execution.cells if "optional" not in cell.metadata.get("tags", [])
+        ]
     with notebook_kernel() as kernel_name:
-        client = NotebookClient(
-            notebook,
+        NotebookClient(
+            execution,
             timeout=180,
             kernel_name=kernel_name,
-            resources={"metadata": {"path": str(root)}},
-        )
-        client.execute()
+            resources={"metadata": {"path": str(directory)}},
+        ).execute()
+    completed = {cell.id: cell for cell in execution.cells if cell.cell_type == "code"}
+    for cell in notebook.cells:
+        if cell.cell_type == "code":
+            cell.outputs, cell.execution_count = [], None
+        if cell.id in completed:
+            cell.outputs = completed[cell.id].outputs
+            cell.execution_count = completed[cell.id].execution_count
+    notebook.metadata.workshop.executed_depth = "core" if core_only else "all"
 
 
-def save_notebook(notebook: NotebookNode, root: Path) -> None:
-    """Validate the notebook and write its notebook and HTML representations."""
+def normalise_output_paths(notebook: NotebookNode, root: Path) -> None:
+    """Replace this machine's lab path in recorded plan output with a labelled placeholder."""
+    for cell in notebook.cells:
+        for output in cell.get("outputs", []):
+            if "text" in output:
+                output.text = output.text.replace(str(root), "<lab-root>")
+            if "text/plain" in output.get("data", {}):
+                output.data["text/plain"] = output.data["text/plain"].replace(
+                    str(root), "<lab-root>"
+                )
+    notebook.metadata.workshop.output_path_placeholder = (
+        "<lab-root> replaces the local lab directory in saved outputs"
+    )
+
+
+def save_notebook(notebook: NotebookNode, path: Path) -> None:
+    """Save a validated notebook and a lightweight, offline HTML preview."""
+    root = next(parent for parent in path.parents if (parent / "hands_on.py").is_file())
+    normalise_output_paths(notebook, root)
     nbformat.validate(notebook)
-    html, _ = HTMLExporter(template_name="lab").from_notebook_node(notebook)
-    nbformat.write(notebook, root / "hands-on.ipynb")
-    (root / "hands-on.html").write_text(html, encoding="utf-8")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    nbformat.write(notebook, path)
+    exporter = HTMLExporter(
+        template_name="basic", exclude_input_prompt=True, exclude_output_prompt=True
+    )
+    body, _ = exporter.from_notebook_node(notebook)
+    # Preview navigation stays in HTML; the index offers explicit notebook downloads.
+    body = body.replace(".ipynb", ".html")
+    title = html.escape(EXERCISES[notebook.metadata.workshop.exercise].title)
+    stylesheet = "../" * len(path.parent.relative_to(root).parts) + "notebook.css"
+    page = f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{title}</title><link rel="stylesheet" href="{stylesheet}"></head><body><main>{body}</main></body></html>'
+    # Spark's text plans can end lines with spaces; the HTML keeps their visible content.
+    page = "\n".join(line.rstrip() for line in page.splitlines()) + "\n"
+    path.with_suffix(".html").write_text(page, encoding="utf-8")
+
+
+def save_index(root: Path) -> None:
+    """Lead with exercises and reveal optional topic depth alongside each one."""
+    sections = []
+    for key, exercise in EXERCISES.items():
+        if not key.isdigit():
+            continue
+        links = f'<a href="notebooks/{exercise.slug}.ipynb" download>Notebook</a> · <a href="notebooks/{exercise.slug}.html">Preview</a>'
+        core, zoom = exercise.minutes
+        deeper = [
+            f'<li><a href="notebooks/{item.slug}.ipynb" download>{html.escape(item.title)}</a> · <a href="notebooks/{item.slug}.html">Preview</a></li>'
+            for item in EXERCISES.values()
+            if item.after == key and "/" in item.slug
+        ]
+        extra = (
+            "<details><summary>Explore this topic further</summary><ul>"
+            + "".join(deeper)
+            + "</ul></details>"
+            if deeper
+            else ""
+        )
+        sections.append(
+            f'<section id="exercise-{key}"><h2>{key}. {html.escape(exercise.title)}</h2><p>{links}</p><p>Core: about {core} minutes · Optional zoom-in: about {zoom} more minutes, in the same notebook.</p>{extra}</section>'
+        )
+    body = '<h1>Working with PySpark</h1><p>Seven exercises. One sales pipeline, from Parquet inputs to a restarted stream.</p><p><strong>Start with Exercise 1.</strong> Each notebook has a complete core and an optional zoom-in. Choose more depth topic by topic; your saved work stays in one workspace.</p><p><strong>About 60 minutes:</strong> the seven core exercises, with time for discussion and catch-up. <strong>About 90 minutes:</strong> add the optional zoom-ins. <strong>At your own pace:</strong> follow the deeper investigation links beside each exercise. These budgets still need a classroom rehearsal; installation is pre-work.</p><p><a href="README.md">Setup</a> · <a href="RECOVERY.md">Catch-up help</a> · <a href="API-REFERENCE.md">Small API reference</a></p>'
+    body += "".join(sections)
+    body += "<p>Completed answers are separate under <code>solutions/</code>. Each notebook links to its matching solution for comparison after your attempt.</p>"
+    page = f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PySpark exercises</title><link rel="stylesheet" href="notebook.css"></head><body><main>{body}</main></body></html>'
+    (root / "index.html").write_text(page, encoding="utf-8")
+
+
+def build_exercise(root: Path, exercise: str, *, execute: bool, core_only: bool = False) -> None:
+    """Write the learner and solution editions of a single exercise."""
+    for solved in (False, True):
+        notebook = build_notebook(root, exercise, solved=solved)
+        path = notebook_path(root, exercise, solved=solved)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if solved and execute:
+            print(
+                f"Executing {path.relative_to(root)} in a fresh kernel ({'core only' if core_only else 'all sections'})",
+                flush=True,
+            )
+            execute_notebook(notebook, path.parent, core_only=core_only)
+        save_notebook(notebook, path)
+    print(f"Built exercise {exercise}", flush=True)
 
 
 def main() -> None:
-    """Build the lab reference, executing it only when explicitly requested."""
+    """Generate one tree; execute its baseline separately from optional investigations."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--execute", action="store_true")
+    parser.add_argument(
+        "--core-only",
+        action="store_true",
+        help="Validate exercises 1–7 while skipping optional zoom-ins",
+    )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
-    notebook = build_notebook(root)
-    if args.execute:
-        execute_notebook(notebook, root)
-    save_notebook(notebook, root)
-    print(f"Built {len(notebook.cells)} cells; executed: {args.execute}")
+    for exercise in exercise_ids(core_only=args.core_only):
+        build_exercise(root, exercise, execute=args.execute, core_only=args.core_only)
+    save_index(root)
 
 
 if __name__ == "__main__":

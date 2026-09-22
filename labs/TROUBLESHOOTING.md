@@ -85,7 +85,7 @@ Then continue with [creating the lab's virtual environment](README.md#2-create-t
 
 ## Windows status
 
-**The full lab has not yet been validated on native Windows.** The instructor has confirmed the Java installation command above; the setup check is still pending. Jupyter in VS Code supports Windows; the remaining risk is Spark's Hadoop filesystem support. The bundled Spark 4.2 distribution uses Hadoop 3.5.0. Hadoop's [Windows build documentation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/BUILDING.txt#L615-L618) states that its native Windows components are required. Python, uv and Java alone may therefore be insufficient for Parquet/checkpoint writes on a clean machine.
+**The full lab has not yet been validated on native Windows.** The instructor has confirmed the Java installation command and reports that the notebook runs on Windows. A recorded full setup check and execution of the redesigned exercise notebooks on native Windows are still pending. Jupyter in VS Code supports Windows; the remaining risk is Spark's Hadoop filesystem support. The bundled Spark 4.2 distribution uses Hadoop 3.5.0. Hadoop's [Windows build documentation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/BUILDING.txt#L615-L618) states that its native Windows components are required. Python, uv and Java alone may therefore be insufficient for Parquet/checkpoint writes on a clean machine.
 
 Before distributing a native Windows setup as class-ready, the instructor must supply or approve a matching Hadoop 3.5.0 Windows build (`winutils.exe` and `hadoop.dll`, with its required runtime libraries), configure `HADOOP_HOME` and its `bin` directory on PATH, and run the setup check on a representative attendee machine. This project does not download unverified native binaries. Do not mix binaries from older Hadoop releases.
 
@@ -116,22 +116,13 @@ The setup check must finish with **Setup check passed**. It tests a Python worke
 
 ## VS Code cells and kernels
 
-- **The menu says "Install the Jupyter extension":** click that item or **Install** in the Jupyter recommendation notification. This installs the VS Code extension; `uv sync` installs the Python kernel packages separately. Follow [Install the VS Code extensions](README.md#3-install-the-vs-code-extensions), then reopen `hands_on.py`.
-- **No Run Cell links:** open `hands_on.py` in the editor and check the language mode at the bottom right says **Python**. In the Extensions view, check that **Python** and **Jupyter** are installed and enabled for this workspace. If the folder is in Restricted Mode, review [Workspace Trust](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust); enable execution only for a course copy you trust. Run **Developer: Reload Window** from the Command Palette after enabling extensions. Also check that `editor.codeLens` and `jupyter.interactiveWindow.codeLens.enable` are enabled in Settings.
-- **No .venv to select:** finish `uv sync --locked --group notebook` in **labs**, then run **Developer: Reload Window**. Open `hands_on.py` and use **Python: Select Interpreter** again. In the Interactive window or notebook, use **Select Another Kernel → Python Environments** to see environments outside the recently used list.
-- **Setup passed, but a cell cannot import pyspark or ipykernel:** the Interactive window may be using a different Python from the terminal. Choose the lab's `.venv` in its kernel picker and run the Setup cell again. Selecting the editor's interpreter alone does not change an already running kernel.
-- **NameError for spark or an earlier variable:** run the Setup cell and preceding exercise cells in the same kernel. A new or restarted kernel has no variables from the previous session.
+- **The notebook opens as text or has no play buttons:** install or enable Microsoft's Python and Jupyter extensions. Follow [Install the VS Code extensions](README.md#3-install-the-vs-code-extensions), reload VS Code if prompted, and open `notebooks/01-inspect.ipynb`. The `.py` authoring file is not the participant entry point.
+- **No .venv to select:** finish `uv sync --locked --group notebook` in **labs**, then run **Developer: Reload Window**. In the notebook's kernel picker, use **Select Another Kernel → Python Environments**. Choose `labs/.venv/Scripts/python.exe` on Windows or `labs/.venv/bin/python` on macOS/Linux.
+- **Imports fail after setup passed in the terminal:** check the notebook's kernel, not just the editor's Python interpreter. Select this lab's `.venv`, restart the kernel and run the notebook's Setup cell.
+- **`todo(...)` raises NotImplementedError:** this is an unfinished exercise, not an installation error. Replace the marked call with your own code; use the task's hint if needed.
+- **A saved function is missing:** run **Save and finish** in the preceding core exercise. If you need to catch up, use the explicit [recovery instructions](RECOVERY.md).
+- **NameError after restarting a kernel:** cells in that notebook share state. Run its Setup and earlier completed cells before continuing. Each exercise notebook loads its prerequisites from saved files; another notebook's variables are not shared automatically.
+- **Spark is already active:** stop this notebook's queries and session using [safe cleanup](RECOVERY.md#stop-safely), then rerun Setup.
+- **An arrival was already published, or the checkpoint boundary is wrong:** follow [stream recovery](RECOVERY.md#exercise-6). Do not delete the checkpoint or overwrite already-consumed files.
 
-See the official [Python Interactive window guide](https://code.visualstudio.com/docs/python/jupyter-support-py) and [kernel selection guide](https://code.visualstudio.com/docs/datascience/jupyter-kernel-management).
-
-## Other ways to run the lesson
-
-The README's setup command includes the kernel dependencies for VS Code's Python Interactive window and notebooks. Use the project's `.venv` in both, and run cells from the top.
-
-To run the entire worked reference as a script instead:
-
-```text
-uv run --locked hands_on.py
-```
-
-If you interrupt a run, call `spark.stop()` before rerunning setup or switching between interactive copies. Each run creates its own output and checkpoint directories under `runs/`; prepared inputs and previous runs stay unchanged.
+If VS Code is in Restricted Mode, review [Workspace Trust](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust) and enable execution only for a course copy you trust.

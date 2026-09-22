@@ -13,7 +13,7 @@ uv sync --locked --group notebook
 uv run --locked check_setup.py
 ```
 
-Then work through the nine numbered exercises in [hands_on.py](labs/hands_on.py), using the VS Code cells. The optional [notebook](labs/hands-on.ipynb) contains the same lesson. Both start Spark locally; participants do not need Incan or Docker.
+Open [Exercise 1](labs/notebooks/01-inspect.ipynb) and select the lab’s `.venv` kernel. Each exercise has one notebook: complete the core for an approximately 60-minute lab, add optional zoom-ins for about 90 minutes, or explore the linked deeper investigations at your own pace. [The lab guide](labs/README.md) explains the flow. Completed solutions are separate; participants do not need Incan or Docker.
 
 For optional Parquet inspection in VS Code, install [Parquet Explorer](https://marketplace.visualstudio.com/items?itemName=AdamViola.parquet-explorer). The [lab setup guide](labs/README.md#explore-parquet-files--optional) explains which files to open.
 
@@ -58,9 +58,9 @@ See [authoring guidance](docs/AUTHORING.md) for the source map and lab workflow.
 python3 tools/course.py verify
 ```
 
-Verification checks that the build matches the current source files, native outputs reproduce the three documents, local HTML/SVG/CSS resources and fragments resolve inside the site, and the notebook cells match the Python lesson. It does not execute Spark or replace a visual review of changed slides.
+Verification checks that the build matches the current source files, native outputs reproduce the three documents, local HTML/SVG/CSS resources and fragments resolve inside the site, and every exercise notebook matches its authored exercise and learner copies contain no saved outputs. It does not execute Spark or replace a visual review of changed slides.
 
-For a lesson-code change, run its setup check and exercises using the lab’s locked environment, regenerate the notebook and HTML reference, then rebuild the course. Previous notebook outputs are not evidence for changed code.
+For a lesson-code change, run its setup check and exercises using the lab’s locked environment, regenerate the exercise notebooks and HTML previews, then rebuild the course. Previous notebook outputs are not evidence for changed code.
 
 ## Presenting
 

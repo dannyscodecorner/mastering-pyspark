@@ -5,14 +5,14 @@ from surface import Frame, NodeKind, Slide, attr, code, code_block, group, headi
 pub def slide_pyspark_daily_exercise() -> Slide:
     return Slide(
         slug="pyspark-daily-exercise",
-        title="Exercise 9 · Build a daily report",
+        title="Optional · Build a daily report",
         frame=Frame.Composed,
         styles="slide ho-lesson ho-exercise",
         content=[
             group([
             text("08 / WORKING WITH PYSPARK"),
         ], style="eyebrow"),
-            heading("Exercise 9 · Build a daily report", level=1),
+            heading("Optional · Build a daily report", level=1),
             group([
             group([
                 heading("Your task", level=2),
@@ -22,7 +22,7 @@ pub def slide_pyspark_daily_exercise() -> Slide:
                         code("enriched"),
                         text(" DataFrame."),
                     ]),
-                    node(NodeKind.ListItem, content="Group by date and category, then sum the amount."),
+                    node(NodeKind.ListItem, content="Group by date and category; calculate total and largest sale."),
                     node(NodeKind.ListItem, content="Check the four result rows and reconcile the total."),
                 ], style="ho-steps"),
             ]),
@@ -76,5 +76,5 @@ pub def slide_pyspark_daily_exercise() -> Slide:
             span("115"),
         ]),
         ],
-        notes="Give participants time to write this variation before opening the reference answer in Exercise9. Work on the bounded enriched DataFrame. Timestamps are UTC and all records are from September2026. The full reference checks four rows and total100. Discuss why grouping changes the grain but should not change the total. Finally run the cleanup cell to stop the local SparkSession. Keep the input, output and checkpoint folders available for inspection.",
+        notes="Give participants time to write this variation before opening the separate daily-report solution notebook. Work on the bounded enriched DataFrame. Timestamps are UTC and all records are from September2026. The full reference checks four rows and total100. Discuss why grouping changes the grain but should not change the total. Finally run the cleanup cell to stop the local SparkSession. Keep the input, output and checkpoint folders available for inspection.",
     )

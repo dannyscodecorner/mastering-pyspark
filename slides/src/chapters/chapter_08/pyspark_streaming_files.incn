@@ -5,14 +5,14 @@ from surface import Frame, NodeKind, Slide, code, code_block, group, heading, li
 pub def slide_pyspark_streaming_files() -> Slide:
     return Slide(
         slug="pyspark-streaming-files",
-        title="Exercise 8 · Write the streaming output",
+        title="Optional · Write the streaming output",
         frame=Frame.Composed,
         styles="slide ho-lesson ho-exercise",
         content=[
             group([
             text("08 / WORKING WITH PYSPARK"),
         ], style="eyebrow"),
-            heading("Exercise 8 · Write the streaming output", level=1),
+            heading("Optional · Write the streaming output", level=1),
             group([
             group([
                 heading("Your task", level=2),

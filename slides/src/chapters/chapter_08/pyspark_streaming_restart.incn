@@ -1,6 +1,6 @@
 """Pyspark streaming restart slide."""
 
-from surface import Frame, NodeKind, Slide, attr, code_block, group, heading, node, prose, span, text
+from surface import Frame, NodeKind, Slide, attr, code_block, group, heading, node, paragraph, prose, span, text
 
 pub def slide_pyspark_streaming_restart() -> Slide:
     return Slide(
@@ -17,8 +17,8 @@ pub def slide_pyspark_streaming_restart() -> Slide:
             group([
                 heading("Your task", level=2),
                 node(NodeKind.OrderedList, children=[
-                    node(NodeKind.ListItem, content="Stop the running query after file 02."),
-                    node(NodeKind.ListItem, content="Restart the same writer with the same checkpoint and unchanged inputs."),
+                    node(NodeKind.ListItem, content="Exercise 6 saved the checkpoint and stopped its query."),
+                    node(NodeKind.ListItem, content="In this notebook, restart using the saved input and checkpoint."),
                     node(NodeKind.ListItem, content="Publish file 03, compare with the batch report, then stop the query."),
                 ], style="ho-steps"),
             ]),
@@ -52,11 +52,14 @@ pub def slide_pyspark_streaming_restart() -> Slide:
                     ]),
                 ], style="ho-table"),
                 prose("Earlier arrivals must not be counted again.", style="ho-note"),
+                paragraph([
+                    node(NodeKind.Link, content="Core complete: go to the recap", attributes=[attr("href", "#working-pyspark-recap")], style="ho-recap"),
+                ], style="ho-note"),
             ]),
         ], style="ho-workgrid"),
             group([
             heading("Code to work with", level=2),
-            code_block("""query.stop()
+            code_block("""# Setup restored the saved writer configuration.
 query = writer.start()
 publish_arrival(DATA_ROOT, INCOMING, 3)"""),
         ], style="ho-hint"),
@@ -65,5 +68,5 @@ publish_arrival(DATA_ROOT, INCOMING, 3)"""),
             span("113"),
         ]),
         ],
-        notes="Ask for a prediction before running the restart. Do not rerun the Setup cell: that would create a new incoming directory and checkpoint. Keep the static lookup unchanged. The remaining cells call processAllAvailable, compare the full report and stop in finally. This demonstrates an orderly restart, not a mid-batch crash. The checkpoint retains aggregate state and source progress; the Complete-mode memory sink can reconstruct the report but is still a debugging sink, not durable external output.",
+        notes="Exercise 7 has a new notebook and kernel. Its setup loads the participant’s saved transformations and the existing stream input/checkpoint recorded at the end of Exercise 6. Start that writer, publish arrival 03, wait for input processing, and compare with the batch report. Finish saves the completed boundary for optional experiments and stops Spark. This is an orderly stop/restart, not crash injection. To finish the core, use the recap link to skip optional extensions.",
     )

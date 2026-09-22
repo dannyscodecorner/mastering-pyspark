@@ -15,6 +15,7 @@ from zipfile import ZipFile
 import nbformat
 
 from labs.author import build_notebook as notebooks
+from labs.author import lesson_source as lesson
 from labs.author import package_lab as packaging
 from tools import course
 
@@ -30,33 +31,26 @@ class NotebookTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
 
-    def test_author_and_verifier_agree_on_cell_boundaries(self) -> None:
-        """Preserve blank cells, Markdown comments, Unicode and the final unclosed cell."""
-        script = "\n".join(
-            [
-                '"""Module preamble."""',
-                "",
-                "# %% [markdown]",
-                "# Heading",
-                "#",
-                "# café",
-                "# %%",
-                "",
-                "# %%",
-                'print("# %%")',
-                "# %% [markdown]",
-                "# Done",
-            ]
+    def test_marked_source_preserves_cell_boundaries(self) -> None:
+        """Read inert starters without executing the worked reference."""
+        script = '# %% [markdown] id=goal\n# café\n#\n# Goal\n# %% id=task role=task\nprint(1)\n# %% [starter] id=start replaces=task\n# todo("Try")\n'
+        cells = lesson.lesson_cells(script)
+        self.assertEqual(
+            [(cell["kind"], cell["source"]) for cell in cells],
+            [("markdown", "café\n\nGoal"), ("code", 'todo("Try")')],
         )
-        expected = [
-            ("markdown", "Heading\n\ncafé"),
-            ("code", ""),
-            ("code", 'print("# %%")'),
-            ("markdown", "Done"),
-        ]
-        cells = list(notebooks.lesson_cells(script))
-        self.assertEqual([(cell.cell_type, cell.source) for cell in cells], expected)
-        self.assertEqual(list(course.script_cells(script)), expected)
+        self.assertEqual(lesson.lesson_cells(script, solved=True)[-1]["source"], "print(1)")
+
+    def test_missing_starter_cannot_expose_a_solution(self) -> None:
+        """A missing learner variant must fail closed, not publish the completed task."""
+        with self.assertRaisesRegex(ValueError, "no starter"):
+            lesson.lesson_cells('# %% id=answer role=task\nprint("answer")')
+
+    def test_ambiguous_starters_are_rejected(self) -> None:
+        """Two matching variants must not silently choose an arbitrary answer."""
+        script = '# %% id=task role=task\nprint(1)\n# %% [starter] id=a replaces=task\n# todo("a")\n# %% [starter] id=b replaces=task\n# todo("b")'
+        with self.assertRaisesRegex(ValueError, "ambiguous"):
+            lesson.lesson_cells(script)
 
     def previous_notebook(self) -> nbformat.NotebookNode:
         """Construct saved state with an observable output and stable cell identity."""
@@ -88,8 +82,8 @@ class NotebookTests(unittest.TestCase):
         current = nbformat.v4.new_notebook(
             cells=[
                 nbformat.v4.new_markdown_cell("New prose"),
-                nbformat.v4.new_code_cell("print(1)"),
-                nbformat.v4.new_code_cell("print(2)"),
+                nbformat.v4.new_code_cell("print(1)", id="first"),
+                nbformat.v4.new_code_cell("print(2)", id="second"),
             ]
         )
         notebooks.preserve_cell_state(previous, current)
@@ -103,8 +97,8 @@ class NotebookTests(unittest.TestCase):
         current = nbformat.v4.new_notebook(
             cells=[
                 nbformat.v4.new_markdown_cell("Old prose"),
-                nbformat.v4.new_code_cell("print(99)"),
-                nbformat.v4.new_code_cell("print(2)"),
+                nbformat.v4.new_code_cell("print(99)", id="first"),
+                nbformat.v4.new_code_cell("print(2)", id="second"),
             ]
         )
         notebooks.preserve_cell_state(self.previous_notebook(), current)
@@ -130,23 +124,115 @@ class NotebookTests(unittest.TestCase):
             self.assertNotIn("JUPYTER_RUNTIME_DIR", os.environ)
             self.assertFalse(kernel_root.exists())
 
-    def test_build_and_save_matches_independent_verifier(self) -> None:
-        """Generate real notebook and HTML files from a small marked script."""
-        (self.root / "hands_on.py").write_text("# %% [markdown]\n# Goal\n# %%\nprint(1)\n")
-        notebook = notebooks.build_notebook(self.root)
-        notebooks.save_notebook(notebook, self.root)
-        course.verify_lab(self.root)
-        self.assertIn("Goal", (self.root / "hands-on.html").read_text())
+    def test_build_and_save_matches_verifier(self) -> None:
+        """Generate a real learner notebook and HTML, with no saved answers or output."""
+        source_root = ROOT / "labs"
+        notebook = notebooks.build_notebook(source_root, "2")
+        path = self.root / "notebooks/02-clean-keys.ipynb"
+        (self.root / "hands_on.py").touch()
+        notebooks.save_notebook(notebook, path)
+        expected = lesson.exercise_cells((source_root / "hands_on.py").read_text(), "2")
+        course.verify_exercise(path, expected, solved=False)
+        preview = path.with_suffix(".html")
+        self.assertIn("Clean the keys", preview.read_text())
+        ids = course.Markup(preview).ids
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertTrue(any("todo(" in cell.source for cell in notebook.cells))
+        self.assertTrue(
+            all(
+                not cell.outputs and cell.execution_count is None
+                for cell in notebook.cells
+                if cell.cell_type == "code"
+            )
+        )
 
-    def test_verifier_rejects_missing_or_outdated_notebook(self) -> None:
-        """Fail explicitly when notebook generation has been omitted or fallen out of sync."""
+    def test_verifier_rejects_saved_answers_and_outputs(self) -> None:
+        """Participant answers and execution outputs must never enter a published starter."""
+        source_root = ROOT / "labs"
+        notebook = notebooks.build_notebook(source_root, "2")
+        expected = lesson.exercise_cells((source_root / "hands_on.py").read_text(), "2")
+        path = self.root / "test.ipynb"
+        code = next(cell for cell in notebook.cells if cell.cell_type == "code")
+        code.outputs = [nbformat.v4.new_output("stream", name="stdout", text="answer")]
+        nbformat.write(notebook, path)
+        with self.assertRaisesRegex(ValueError, "saved execution output"):
+            course.verify_exercise(path, expected, solved=False)
+        code.outputs = []
+        code.source = "print('changed')"
+        nbformat.write(notebook, path)
+        with self.assertRaisesRegex(ValueError, "cells differ"):
+            course.verify_exercise(path, expected, solved=False)
         with self.assertRaisesRegex(ValueError, "Lab needs"):
             course.verify_lab(self.root)
-        (self.root / "hands_on.py").write_text("# %%\nprint(1)\n")
-        notebook = nbformat.v4.new_notebook(cells=[nbformat.v4.new_code_cell("print(2)")])
-        nbformat.write(notebook, self.root / "hands-on.ipynb")
-        with self.assertRaisesRegex(ValueError, "cells differ"):
-            course.verify_lab(self.root)
+
+    def test_every_exercise_has_one_standalone_notebook(self) -> None:
+        """Exercises lead the structure; optional depth does not duplicate a notebook."""
+        script = (ROOT / "labs/hands_on.py").read_text()
+        self.assertEqual(lesson.exercise_ids(core_only=True), [str(i) for i in range(1, 8)])
+        slugs = [spec.slug for spec in lesson.EXERCISES.values()]
+        self.assertEqual(len(slugs), len(set(slugs)))
+        for exercise in lesson.exercise_ids():
+            cells = lesson.exercise_cells(script, exercise)
+            identifiers = [cell["id"] for cell in cells]
+            self.assertIn("notebook-setup", identifiers)
+            self.assertIn("save-and-finish", identifiers)
+            self.assertEqual(
+                sum(identifier.startswith("exercise-") for identifier in identifiers),
+                int(exercise.isdigit()),
+            )
+            self.assertNotIn("What we reused", "\n".join(cell["source"] for cell in cells))
+            self.assertNotIn("route", "\n".join(cell["source"] for cell in cells).lower())
+
+    def test_notebook_bootstrap_finds_lab_from_project_or_notebook_folder(self) -> None:
+        """Opening the repository rather than labs must not break a nested notebook."""
+        lab = self.root / "labs"
+        notebook_dir = lab / "notebooks/deeper"
+        notebook_dir.mkdir(parents=True)
+        (lab / "workshop_runtime.py").touch()
+        bootstrap = lesson.setup_source("1", solved=False).split("from uuid import uuid4")[0]
+        for directory in (self.root, lab, notebook_dir):
+            with (
+                patch("os.getcwd", return_value=str(directory)),
+                patch.object(sys, "path", sys.path.copy()),
+            ):
+                namespace = {}
+                exec(bootstrap, namespace)
+                self.assertEqual(namespace["LAB_ROOT"], lab)
+
+    def test_optional_tasks_share_the_core_without_changing_saved_answers(self) -> None:
+        """A participant can skip or explore the zoom-in without switching workspaces."""
+        script = (ROOT / "labs/hands_on.py").read_text()
+        cells = lesson.exercise_cells(script, "3")
+        by_id = {cell["id"]: cell for cell in cells}
+        self.assertEqual(by_id["clean-sales"]["role"], "supplied")
+        self.assertEqual(by_id["parsing-preview"]["role"], "starter")
+        self.assertEqual(by_id["parsing-preview"]["depth"], "zoom")
+        self.assertIn("todo(", by_id["parsing-preview"]["source"])
+        self.assertNotIn("parsed_preview", by_id["save-and-finish"]["source"])
+        self.assertIn("Workspace(solutions=False)", by_id["notebook-setup"]["source"])
+        ids = [cell["id"] for cell in cells]
+        self.assertLess(ids.index("check-validation"), ids.index("core-complete"))
+        self.assertLess(ids.index("core-complete"), ids.index("parsing-preview"))
+        solved = lesson.exercise_cells(script, "3", solved=True)
+        self.assertIn(
+            "Workspace(solutions=True)",
+            next(cell["source"] for cell in solved if cell["id"] == "notebook-setup"),
+        )
+
+    def test_deeper_notebooks_need_only_their_topic_prerequisites(self) -> None:
+        """Early investigations must not secretly require completion of the whole pipeline."""
+        schemas = lesson.setup_source("schemas", solved=False)
+        tags = lesson.setup_source("tags", solved=False)
+        self.assertIn("clean_sales", schemas)
+        self.assertNotIn("category_totals", schemas)
+        self.assertNotIn("workspace.load", tags)
+        self.assertEqual(
+            lesson.relative_link("schemas", "README.md", solved=False), "../../README.md"
+        )
+        self.assertEqual(
+            lesson.relative_link("3", "solutions/03-validate.ipynb", solved=False),
+            "../solutions/03-validate.ipynb",
+        )
 
     def test_taught_transformations_match_pipeline_module(self) -> None:
         """Keep the reference module and the functions learners see behaviourally aligned."""
@@ -173,6 +259,7 @@ class PackagingTests(unittest.TestCase):
             ".venv/bin/python",
             ".ruff_cache/local-entry",
             "runs/checkpoint/state",
+            "learner_work/answers.py",
             ".git/config",
             "__pycache__/module.pyc",
             ".env",

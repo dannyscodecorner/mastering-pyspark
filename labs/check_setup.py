@@ -117,7 +117,10 @@ def main() -> int:
         spark = create_spark(run_root)
         print(f"Spark: {spark.version}", flush=True)
         run_checks(spark, run_root)
-        print("Setup check passed. Open hands_on.py or hands-on.ipynb to begin.", flush=True)
+        print(
+            "Setup check passed. Open notebooks/01-inspect.ipynb to begin.",
+            flush=True,
+        )
         return 0
     except Exception:
         traceback.print_exc()

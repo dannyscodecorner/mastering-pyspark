@@ -15,7 +15,7 @@
   slide changes. Review affected slides in the browser, including relevant
   animation steps and reference links.
 - `labs/hands_on.py` is the canonical lesson source. Regenerate the
-  optional notebook and HTML with its authoring helper. Keep exercise numbers
+  per-exercise learner and solution notebooks/HTML with `uv run --locked --group notebook --group author -m author.build_notebook` from labs. Participant work belongs in `learner_work/` and must never be published. Keep exercise numbers
   aligned with `slides/src/chapters/chapter_08/`.
 - The lab uses its own locked uv project. Do not change its Spark/Python/Java
   baseline as a side effect of presentation work. Validate runtime changes and

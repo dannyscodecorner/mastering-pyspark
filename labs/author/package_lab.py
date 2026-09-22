@@ -12,6 +12,7 @@ EXCLUDED_DIRECTORIES = {
     "__pycache__",
     ".ipynb_checkpoints",
     "runs",
+    "learner_work",
     "artifacts",
     "spark-warehouse",
     "metastore_db",

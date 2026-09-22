@@ -1,0 +1,31 @@
+:root { color-scheme: light; --ink: #282d30; --accent: #b94532; --line: #e0ddd7; }
+* { box-sizing: border-box; }
+body { margin: 0; background: #f4f3ef; color: var(--ink); font: 17px/1.65 system-ui, sans-serif; }
+main { max-width: 1040px; margin: 40px auto; padding: 42px 58px; background: #fff; border-top: 5px solid var(--accent); }
+h1, h2, h3 { line-height: 1.25; }
+h1 { font-size: 2.3rem; margin-bottom: 1.2rem; }
+h2 { font-size: 1.65rem; margin: 2.4rem 0 1rem; }
+h3 { font-size: 1.15rem; margin: 1.8rem 0 .7rem; }
+a { color: #a63624; text-underline-offset: 3px; }
+p, ul, ol { margin: 1rem 0; }
+li { margin: .5rem 0; }
+pre { padding: 20px 24px; border: 1px solid var(--line); border-radius: 5px; background: #292d30; color: #f3f2ee; overflow: auto; font: 15px/1.65 ui-monospace, monospace; }
+code { font: .92em ui-monospace, monospace; }
+pre code { font-size: inherit; }
+hr { border: 0; border-top: 2px solid var(--line); margin: 3rem 0; }
+table { border-collapse: collapse; margin: 1.5rem 0; }
+th, td { padding: 10px 20px; border-bottom: 1px solid var(--line); text-align: left; }
+details { margin: .8rem 0; padding: 12px 18px; border-left: 3px solid var(--line); background: #faf9f6; }
+summary { cursor: pointer; font-weight: 600; }
+.exercises { list-style: none; padding: 0; }
+.exercises li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; border-bottom: 1px solid var(--line); padding: 10px 0; }
+.output_area { margin-bottom: 1.2rem; }
+.output_area pre { background: #fff; color: var(--ink); border-left: 3px solid #629754; }
+.highlight .k, .highlight .kn { color: #c5a5e8; }
+.highlight .s, .highlight .s1, .highlight .s2 { color: #a8ce91; }
+.highlight .c1 { color: #adb8bf; }
+.highlight .nf { color: #83bde3; }
+@media (max-width: 760px) { main { margin: 0; padding: 24px; } pre { padding: 16px; font-size: 13px; } h1 { font-size: 1.8rem; } }
+
+.anchor-link { visibility: hidden; font-size: .75em; }
+h1:hover .anchor-link, h2:hover .anchor-link, h3:hover .anchor-link { visibility: visible; }

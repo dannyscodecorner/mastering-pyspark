@@ -41,7 +41,7 @@ The slides' **Download the lab** link downloads `pyspark-labs.zip` from the late
    python3 labs/author/package_lab.py
    ```
 
-   This creates `.build/releases/pyspark-labs.zip`. It excludes local environments, caches and run output. No Spark or Incan installation is needed to package the files.
+   This creates `.build/releases/pyspark-labs.zip`. It excludes local environments, caches, run output and learner_work (participant answers/checkpoint handoffs). No Spark or Incan installation is needed to package the files.
 
 3. Create a draft [GitHub Release](https://github.com/dannyscodecorner/mastering-pyspark/releases) for the tag and attach the ZIP with the exact name `pyspark-labs.zip`.
 4. Check the attachment extracts into a complete `labs` folder, then publish the release and mark it as the latest release. Use a regular release, not a prerelease.

@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import re
+import runpy
 import shutil
 import subprocess
 import tempfile
@@ -32,6 +33,7 @@ EXCLUDED = {
     "__pycache__",
     ".ipynb_checkpoints",
     "runs",
+    "learner_work",
     "artifacts",
     "spark-warehouse",
     "metastore_db",
@@ -193,41 +195,48 @@ def verify_links(site: Path) -> dict[Path, Markup]:
     return markup
 
 
-def cell_source(kind: str, lines: list[str]) -> str:
-    """Decode a VS Code cell using the notebook author's Markdown comment convention."""
-    body = "\n".join(lines).strip()
-    if kind == "code":
-        return body
-    return "\n".join(line[2:] if line.startswith("# ") else line[1:] for line in body.splitlines())
-
-
-def script_cells(script: str) -> Iterator[tuple[str, str]]:
-    """Yield canonical cell kinds and source text without requiring notebook dependencies."""
-    kind = None
-    lines = []
-    for line in script.splitlines() + ["# %%"]:
-        if line not in {"# %%", "# %% [markdown]"}:
-            if kind is not None:
-                lines.append(line)
-            continue
-        if kind is not None:
-            yield kind, cell_source(kind, lines)
-        kind = "markdown" if "[markdown]" in line else "code"
-        lines = []
-
-
 def verify_lab(lab: Path) -> None:
-    """Require the notebook to contain exactly the editable lesson's cells in order."""
-    script, notebook = lab / "hands_on.py", lab / "hands-on.ipynb"
-    if not script.is_file() or not notebook.is_file():
-        raise ValueError(f"Lab needs hands_on.py and hands-on.ipynb: {lab}")
-    expected = list(script_cells(script.read_text(encoding="utf-8")))
-    cells = json.loads(notebook.read_text(encoding="utf-8"))["cells"]
-    actual = [(cell["cell_type"], "".join(cell["source"])) for cell in cells]
-    if actual != expected:
+    """Verify every generated exercise and prevent answers/outputs leaking into learner copies."""
+    script = lab / "hands_on.py"
+    parser = lab / "author/lesson_source.py"
+    if not script.is_file() or not parser.is_file():
+        raise ValueError(f"Lab needs hands_on.py and author/lesson_source.py: {lab}")
+    model = runpy.run_path(str(parser))
+    source = script.read_text(encoding="utf-8")
+    expected_files = {
+        lab / folder / f"{spec.slug}.ipynb"
+        for folder in ("notebooks", "solutions")
+        for spec in model["EXERCISES"].values()
+    }
+    actual_files = {
+        path for folder in ("notebooks", "solutions") for path in (lab / folder).rglob("*.ipynb")
+    }
+    if actual_files != expected_files:
         raise ValueError(
-            f"Regenerate {lab.name}/hands-on.ipynb from hands_on.py; the cells differ."
+            "Lab needs exactly one learner and one solution notebook per exercise; remove stale route copies and regenerate missing exercises."
         )
+    for exercise in model["exercise_ids"]():
+        for solved in (False, True):
+            folder = "solutions" if solved else "notebooks"
+            slug = model["EXERCISES"][exercise].slug
+            path = lab / folder / f"{slug}.ipynb"
+            expected = model["exercise_cells"](source, exercise, solved=solved)
+            verify_exercise(path, expected, solved=solved)
+
+
+def verify_exercise(path: Path, expected: list[dict[str, str]], *, solved: bool) -> None:
+    """Check one notebook's source and guard against saved learner answers."""
+    if not path.is_file():
+        raise ValueError(f"Lab needs generated notebook: {path}")
+    cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+    actual = [(cell["cell_type"], "".join(cell["source"]), cell["id"]) for cell in cells]
+    wanted = [(cell["kind"], cell["source"], cell["id"]) for cell in expected]
+    if actual != wanted:
+        raise ValueError(f"Regenerate {path}; the cells differ from its exercise source.")
+    if not solved and any(
+        cell.get("outputs") or cell.get("execution_count") is not None for cell in cells
+    ):
+        raise ValueError(f"Learner notebook contains saved execution output: {path}")
 
 
 def binary_path() -> Path:

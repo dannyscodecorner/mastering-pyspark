@@ -1,0 +1,277 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Validate the sales</title><link rel="stylesheet" href="../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Exercise-3-%E2%80%94-Validate-the-sales">Exercise 3 — Validate the sales<a class="anchor-link" href="#Exercise-3-%E2%80%94-Validate-the-sales">¶</a></h1><p><strong>Learner exercise</strong> · <a href="../index.html">All exercises</a> · <a href="../README.md">Setup</a></p>
+<p><strong>Core: about 5 minutes.</strong> The same baseline for everyone. <a href="#zoom">Optional zoom-in</a>: about 6 extra minutes; choose it here if the topic interests you.</p>
+<p>Complete <strong>Your code</strong>, run the <strong>Check</strong> cells, and open hints when needed. Replace <code>todo(...)</code> with your answer. Do not use <strong>Run All</strong> while tasks remain unfinished.</p>
+<p>Run the supplied setup first. End with <strong>Save and finish</strong>; the next notebook loads your saved functions, so this kernel can be closed.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=setup-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setup-%E2%80%94-supplied">Setup — supplied<a class="anchor-link" href="#Setup-%E2%80%94-supplied">¶</a></h2><p>Select the lab's <code>.venv</code> kernel. Close the previous exercise after <strong>Save and finish</strong>. Missing earlier work? Use an explicit <a href="../RECOVERY.md">catch-up step</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=notebook-setup">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># Support opening the complete repository or its labs folder in VS Code.</span>
+<span class="n">LAB_ROOT</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">candidate</span> <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span> <span class="o">*</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span>
+     <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">parent</span> <span class="o">/</span> <span class="s1">'labs'</span><span class="p">)</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">candidate</span> <span class="o">/</span> <span class="s1">'workshop_runtime.py'</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()),</span>
+    <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">LAB_ROOT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">'Open the complete labs project in VS Code; a notebook alone is not enough.'</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">lab_checks</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">check</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arrival_files</span><span class="w"> </span><span class="kn">import</span> <span class="n">publish_arrival</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">todo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_workspace</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workspace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">workshop_runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_ROOT</span><span class="p">,</span> <span class="n">create_spark</span><span class="p">,</span> <span class="n">finish_query</span><span class="p">,</span> <span class="n">new_run</span><span class="p">,</span> <span class="n">spark_path</span>
+
+<span class="n">workspace</span> <span class="o">=</span> <span class="n">Workspace</span><span class="p">(</span><span class="n">solutions</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">product_key</span><span class="p">,</span> <span class="n">clean_products</span> <span class="o">=</span> <span class="n">workspace</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'product_key'</span><span class="p">,</span> <span class="s1">'clean_products'</span><span class="p">)</span>
+<span class="n">RUN_ROOT</span> <span class="o">=</span> <span class="n">new_run</span><span class="p">()</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">create_spark</span><span class="p">(</span><span class="n">RUN_ROOT</span><span class="p">)</span>
+<span class="n">raw</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"sales.parquet"</span><span class="p">))</span>
+<span class="n">raw_products</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"products.parquet"</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">; inputs: </span><span class="si">{</span><span class="n">DATA_ROOT</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">; notebook ready"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_prompt" id="cell-id=exercise-3"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr/>
+<p><a id="exercise-3"></a></p>
+<h2 id="Your-task">Your task<a class="anchor-link" href="#Your-task">¶</a></h2><p><strong>Which rows belong in the report, and how will we explain the rejects?</strong></p>
+<p>Core budget: about 5 minutes.</p>
+<p>Our contract rejects missing/empty product keys, invalid or missing amounts, and invalid or missing timestamps. Keep the raw values and a <code>reject_reason</code>. A valid key absent from the lookup is still an accepted sale.</p>
+<p>Parse amounts as <code>DECIMAL(12, 2)</code> and timestamps with <code>yyyy-MM-dd HH:mm:ss</code>. Parsing failures should become null, so we can explain them. Do not silently turn missing amounts into zero.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_response" id="cell-id=predict-rejects"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Predict-before-running">Predict before running<a class="anchor-link" href="#Predict-before-running">¶</a></h3><p>Which sale IDs will fail this contract? Does a missing product lookup make a sale invalid?</p>
+<p>Your prediction: …</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=parse-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Supplied-%E2%80%94-parse-and-mark-bad-rows">Supplied — parse and mark bad rows<a class="anchor-link" href="#Supplied-%E2%80%94-parse-and-mark-bad-rows">¶</a></h3><p>This parsing function is supplied for the core. Read its rules before using it; the optional section lets you build the parsing expressions yourself.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=clean-sales">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">clean_sales</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Parse the exercise's UTC timestamps and amounts; retain bad input."""</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">raw</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">"product_id"</span><span class="p">,</span> <span class="n">product_key</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"product_id"</span><span class="p">)))</span>
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">"amount"</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">expr</span><span class="p">(</span><span class="s2">"try_cast(amount_raw AS DECIMAL(12, 2))"</span><span class="p">))</span>
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+            <span class="s2">"sold_at"</span><span class="p">,</span>
+            <span class="n">F</span><span class="o">.</span><span class="n">try_to_timestamp</span><span class="p">(</span><span class="s2">"sold_at_raw"</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"yyyy-MM-dd HH:mm:ss"</span><span class="p">)),</span>
+        <span class="p">)</span>
+        <span class="o">.</span><span class="n">withColumn</span><span class="p">(</span>
+            <span class="s2">"reject_reason"</span><span class="p">,</span>
+            <span class="n">F</span><span class="o">.</span><span class="n">when</span><span class="p">(</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"product_id"</span><span class="p">)</span><span class="o">.</span><span class="n">isNull</span><span class="p">()</span> <span class="o">|</span> <span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"product_id"</span><span class="p">)</span> <span class="o">==</span> <span class="s2">""</span><span class="p">),</span>
+                <span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"missing product key"</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"amount"</span><span class="p">)</span><span class="o">.</span><span class="n">isNull</span><span class="p">(),</span> <span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"invalid or missing amount"</span><span class="p">))</span>
+            <span class="o">.</span><span class="n">when</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">col</span><span class="p">(</span><span class="s2">"sold_at"</span><span class="p">)</span><span class="o">.</span><span class="n">isNull</span><span class="p">(),</span> <span class="n">F</span><span class="o">.</span><span class="n">lit</span><span class="p">(</span><span class="s2">"invalid or missing timestamp"</span><span class="p">)),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=inspect-cleaned">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">cleaned</span> <span class="o">=</span> <span class="n">clean_sales</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+<span class="n">cleaned</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"sale_id"</span><span class="p">,</span> <span class="s2">"product_id"</span><span class="p">,</span> <span class="s2">"amount"</span><span class="p">,</span> <span class="s2">"sold_at"</span><span class="p">,</span> <span class="s2">"reject_reason"</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span>
+    <span class="s2">"sale_id"</span>
+<span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=filters-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-code-%E2%80%94-separate-accepted-and-rejected-rows">Your code — separate accepted and rejected rows<a class="anchor-link" href="#Your-code-%E2%80%94-separate-accepted-and-rejected-rows">¶</a></h3><p>Keep the filtering functions reusable: the stream will call them too.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_starter" id="cell-id=split-sales">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">accepted_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return sales without a rejection reason."""</span>
+    <span class="k">return</span> <span class="n">cleaned</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">todo</span><span class="p">(</span><span class="s2">"3: select rows with no reject_reason"</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">rejected_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return rejected sales, keeping their raw values and reason."""</span>
+    <span class="k">return</span> <span class="n">cleaned</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">todo</span><span class="p">(</span><span class="s2">"3: select rows with a reject_reason"</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=inspect-rejected">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">accepted</span> <span class="o">=</span> <span class="n">accepted_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">)</span>
+<span class="n">rejected</span> <span class="o">=</span> <span class="n">rejected_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">)</span>
+<span class="n">rejected</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"sale_id"</span><span class="p">,</span> <span class="s2">"amount_raw"</span><span class="p">,</span> <span class="s2">"sold_at_raw"</span><span class="p">,</span> <span class="s2">"reject_reason"</span><span class="p">)</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"sale_id"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+    <span class="n">truncate</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=validation-check-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Check">Check<a class="anchor-link" href="#Check">¶</a></h3><p>Reconcile all eight input rows. Check which rows survive, not just how many.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_check" id="cell-id=check-validation">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">check</span><span class="o">.</span><span class="n">validation</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">accepted</span><span class="p">,</span> <span class="n">rejected</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_hint" id="cell-id=hints-3"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<details>
+<summary>Need a nudge? Hint 1</summary>
+<p>Use the tolerant parsing functions named in the task. Test parsed values for null.</p>
+</details>
+<details>
+<summary>A little more help: Hint 2</summary>
+<p>A chained <code>when</code> without an <code>otherwise</code> produces null when none of its conditions matches. Filter that column with <code>isNull()</code> or <code>isNotNull()</code>.</p>
+</details>
+<p>If you need to catch up during class, use the explicit <a href="../RECOVERY.md#exercise-3">recovery step</a>. <a href="../solutions/03-validate.html">Worked solution</a> — open it separately when you are ready to compare.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=core-complete"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Core-complete">Core complete<a class="anchor-link" href="#Core-complete">¶</a></h2><p>For the 60-minute lab, <a href="#finish">skip to Save and finish</a>. To explore this topic further, continue with the optional section below. Later core exercises do not need any of its variables.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading celltag_optional" id="cell-id=zoom-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="zoom"></a></p>
+<h2 id="Optional-zoom-in-%C2%B7-about-6-minutes">Optional zoom-in · about 6 minutes<a class="anchor-link" href="#Optional-zoom-in-%C2%B7-about-6-minutes">¶</a></h2><p>These investigations make up the extra depth in a 90-minute session. Choose them independently; keep your working pipeline unchanged.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading celltag_optional" id="cell-id=validation-depth"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Parseable-does-not-always-mean-valid">Parseable does not always mean valid<a class="anchor-link" href="#Parseable-does-not-always-mean-valid">¶</a></h3><p>Our contract is intentionally small. It does not, for example, reject a negative amount: refunds might be legitimate. A real pipeline needs an explicit business decision about that.</p>
+<p>Keep <code>amount_raw</code> and <code>sold_at_raw</code> alongside parsed columns so a reject can be explained. Spark null checks use <code>isNull()</code>/<code>isNotNull()</code>, not Python's <code>is None</code>. The <a href="deeper/schemas-and-parsing.html">parsing experiment</a> adds malformed and missing keys/timestamps without changing the main fixture.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading celltag_optional" id="cell-id=parsing-zoom"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-code-%E2%80%94-build-the-parsing-expressions">Your code — build the parsing expressions<a class="anchor-link" href="#Your-code-%E2%80%94-build-the-parsing-expressions">¶</a></h3><p>Create a separate <code>parsed_preview</code> with <code>sale_id</code>, parsed <code>amount</code> as <code>DECIMAL(12, 2)</code>, and parsed <code>sold_at</code> using <code>yyyy-MM-dd HH:mm:ss</code>. Use tolerant parsing so invalid input becomes null. Compare it with the supplied cleaner without changing that function.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_starter celltag_optional" id="cell-id=parsing-preview">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">parsed_preview</span> <span class="o">=</span> <span class="n">raw</span><span class="o">.</span><span class="n">select</span><span class="p">(</span>
+    <span class="s2">"sale_id"</span><span class="p">,</span>
+    <span class="n">todo</span><span class="p">(</span><span class="s2">"Parse amount_raw as a decimal without failing on invalid values"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"amount"</span><span class="p">),</span>
+    <span class="n">todo</span><span class="p">(</span><span class="s2">"Parse sold_at_raw with the given timestamp pattern"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"sold_at"</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_check celltag_optional" id="cell-id=check-parsing-preview">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">check</span><span class="o">.</span><span class="n">same_rows</span><span class="p">(</span><span class="n">cleaned</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s2">"sale_id"</span><span class="p">,</span> <span class="s2">"amount"</span><span class="p">,</span> <span class="s2">"sold_at"</span><span class="p">),</span> <span class="n">parsed_preview</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_hint celltag_optional" id="cell-id=parsing-hint"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<details><summary>Hint for the parsing expressions</summary>
+<p>Use <code>F.expr</code> with SQL <code>try_cast</code> for the decimal and <code>F.try_to_timestamp</code> with <code>F.lit</code> for the timestamp pattern. Both expressions should preserve a row even when parsing fails.</p>
+</details>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=finish-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="finish"></a></p>
+<h2 id="Save-and-finish">Save and finish<a class="anchor-link" href="#Save-and-finish">¶</a></h2><p>Run once the core checks pass, whether or not you did the optional section. This saves your functions or stream handoff, then stops this notebook’s queries and Spark. Your work remains in <code>learner_work/</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=save-and-finish">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">workspace</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">clean_sales</span><span class="p">,</span> <span class="n">accepted_sales</span><span class="p">,</span> <span class="n">rejected_sales</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">active_query</span> <span class="ow">in</span> <span class="n">spark</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+    <span class="n">active_query</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Session stopped; exercise files are under"</span><span class="p">,</span> <span class="n">RUN_ROOT</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=next-exercise"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next: <a href="04-join-aggregate.html">Exercise 4 — Join and aggregate</a>.</p>
+<p>Want more on this topic? You can open these now, using the same saved work: <a href="deeper/schemas-and-parsing.html">Schemas and parsing</a>.</p>
+<p>After your attempt, compare the separate <a href="../solutions/03-validate.html">worked solution</a>.</p>
+</div>
+</div>
+</div>
+</main></body></html>

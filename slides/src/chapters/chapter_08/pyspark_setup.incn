@@ -17,13 +17,13 @@ pub def slide_pyspark_setup() -> Slide:
             group([
                 heading("In the VS Code terminal", level=2),
                 paragraph([
-                    text("Open the extracted "),
+                    text("Open the project’s "),
                     code("labs"),
                     text(" folder."),
                 ]),
                 node(NodeKind.Preformatted, children=[
                     node(NodeKind.Code, content="""java -version
-uv sync --locked
+uv sync --locked --group notebook
 uv run --locked check_setup.py""", style="language-text"),
                 ]),
                 prose("Java 21 · Python 3.12 · PySpark 4.2.0", style="ho-note"),
@@ -33,16 +33,16 @@ uv run --locked check_setup.py""", style="language-text"),
                 ], style="ho-setup-pass"),
             ]),
             group([
-                heading("Work through the exercise cells", level=2),
-                prose("Add the optional interactive dependencies:"),
+                heading("Open one exercise notebook", level=2),
+                prose("Everyone starts with the same notebook:"),
                 node(NodeKind.Preformatted, children=[
-                    node(NodeKind.Code, content="uv sync --locked --group notebook", style="language-text"),
+                    node(NodeKind.Code, content="notebooks/01-inspect.ipynb", style="language-text"),
                 ]),
                 node(NodeKind.OrderedList, children=[
                     node(NodeKind.ListItem, content="Enable VS Code’s Python and Jupyter extensions."),
                     node(NodeKind.ListItem, children=[
                         text("Open "),
-                        code("hands_on.py"),
+                        code("01-inspect.ipynb"),
                         text(" and select the project’s "),
                         code(".venv"),
                         text(" kernel."),
@@ -56,8 +56,8 @@ uv run --locked check_setup.py""", style="language-text"),
                     ]),
                 ], style="ho-steps"),
                 paragraph([
-                    code("hands-on.ipynb"),
-                    text(" contains the same exercises."),
+                    strong("Save and finish"),
+                    text(" before opening the next notebook."),
                 ], style="ho-note"),
             ]),
         ], style="ho-workgrid ho-setup-grid"),
@@ -70,5 +70,5 @@ uv run --locked check_setup.py""", style="language-text"),
             span("106"),
         ]),
         ],
-        notes="Walk through the existing uv project, rather than installing a separate Spark distribution or using Docker. Run the setup check before class wherever possible; show what success looks like here. Its check includes file writes and checkpoint restart, not just launching Spark. For cell-by-cell work, the optional notebook dependency group supplies ipykernel; the Python and Jupyter extensions supply Run Cell in VS Code. Select the project .venv as the Interactive window kernel; do not use another system Python. The script can also run end to end with uv run --locked hands_on.py, but that executes the complete worked reference. During class, run the Setup cell and then one numbered exercise at a time. The local helper starts Spark with two threads, UTC and two shuffle partitions for this tiny fixture. On native Windows, follow README requirements for the matching Hadoop components and validate on an attendee machine. Danny will bring a spare MacBook prepared with the same project as a classroom fallback. https://docs.astral.sh/uv/guides/projects/ https://code.visualstudio.com/docs/python/jupyter-support-py https://spark.apache.org/docs/4.2.0/index.html",
+        notes="Complete installation and the setup check before class. The Python and Jupyter VS Code extensions are required; select labs/.venv in the notebook kernel picker. Everyone starts at notebooks/01-inspect.ipynb. Core tasks form the 60-minute baseline; optional zoom-ins inside each notebook add depth for a 90-minute session. Larger investigations are linked by topic. One saved workspace supports all choices. Run Setup, complete task cells and checks, then Save and finish. The next notebook loads saved learner functions and starts its own session. Blank todo calls intentionally stop; do not Run All before answering. Native Windows needs a recorded full validation of the redesigned notebooks. The spare MacBook should have this exact project and its preflight completed.",
     )

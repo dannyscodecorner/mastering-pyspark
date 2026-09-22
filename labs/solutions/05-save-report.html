@@ -1,0 +1,351 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inspect and save the report</title><link rel="stylesheet" href="../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Exercise-5-%E2%80%94-Inspect-and-save-the-report">Exercise 5 — Inspect and save the report<a class="anchor-link" href="#Exercise-5-%E2%80%94-Inspect-and-save-the-report">¶</a></h1><p><strong>Worked solution</strong> · <a href="../index.html">All exercises</a> · <a href="../README.md">Setup</a></p>
+<p><strong>Core: about 5 minutes.</strong> The same baseline for everyone. <a href="#zoom">Optional zoom-in</a>: about 4 extra minutes; choose it here if the topic interests you.</p>
+<p>Completed answers use a separate solution workspace and do not replace participant work.</p>
+<p>Run the supplied setup first. End with <strong>Save and finish</strong>; the next notebook loads your saved functions, so this kernel can be closed.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=setup-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setup-%E2%80%94-supplied">Setup — supplied<a class="anchor-link" href="#Setup-%E2%80%94-supplied">¶</a></h2><p>Select the lab's <code>.venv</code> kernel. Close the previous exercise after <strong>Save and finish</strong>. Missing earlier work? Use an explicit <a href="../RECOVERY.md">catch-up step</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=notebook-setup">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># Support opening the complete repository or its labs folder in VS Code.</span>
+<span class="n">LAB_ROOT</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">candidate</span> <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span> <span class="o">*</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span>
+     <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">parent</span> <span class="o">/</span> <span class="s1">'labs'</span><span class="p">)</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">candidate</span> <span class="o">/</span> <span class="s1">'workshop_runtime.py'</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()),</span>
+    <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">LAB_ROOT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">'Open the complete labs project in VS Code; a notebook alone is not enough.'</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">lab_checks</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">check</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">arrival_files</span><span class="w"> </span><span class="kn">import</span> <span class="n">publish_arrival</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">todo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_workspace</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workspace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">workshop_runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_ROOT</span><span class="p">,</span> <span class="n">create_spark</span><span class="p">,</span> <span class="n">finish_query</span><span class="p">,</span> <span class="n">new_run</span><span class="p">,</span> <span class="n">spark_path</span>
+
+<span class="n">workspace</span> <span class="o">=</span> <span class="n">Workspace</span><span class="p">(</span><span class="n">solutions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">product_key</span><span class="p">,</span> <span class="n">clean_products</span><span class="p">,</span> <span class="n">clean_sales</span><span class="p">,</span> <span class="n">accepted_sales</span><span class="p">,</span> <span class="n">rejected_sales</span><span class="p">,</span> <span class="n">enrich_sales</span><span class="p">,</span> <span class="n">category_totals</span> <span class="o">=</span> <span class="n">workspace</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'product_key'</span><span class="p">,</span> <span class="s1">'clean_products'</span><span class="p">,</span> <span class="s1">'clean_sales'</span><span class="p">,</span> <span class="s1">'accepted_sales'</span><span class="p">,</span> <span class="s1">'rejected_sales'</span><span class="p">,</span> <span class="s1">'enrich_sales'</span><span class="p">,</span> <span class="s1">'category_totals'</span><span class="p">)</span>
+<span class="n">RUN_ROOT</span> <span class="o">=</span> <span class="n">new_run</span><span class="p">()</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">create_spark</span><span class="p">(</span><span class="n">RUN_ROOT</span><span class="p">)</span>
+<span class="n">raw</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"sales.parquet"</span><span class="p">))</span>
+<span class="n">raw_products</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"products.parquet"</span><span class="p">))</span>
+<span class="n">products</span> <span class="o">=</span> <span class="n">clean_products</span><span class="p">(</span><span class="n">raw_products</span><span class="p">)</span>
+<span class="n">cleaned</span> <span class="o">=</span> <span class="n">clean_sales</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+<span class="n">accepted</span> <span class="o">=</span> <span class="n">accepted_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">)</span>
+<span class="n">rejected</span> <span class="o">=</span> <span class="n">rejected_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">)</span>
+<span class="n">enriched</span> <span class="o">=</span> <span class="n">enrich_sales</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="n">products</span><span class="p">)</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">category_totals</span><span class="p">(</span><span class="n">enriched</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">; inputs: </span><span class="si">{</span><span class="n">DATA_ROOT</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">; notebook ready"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>WARNING: Using incubator modules: jdk.incubator.vector
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/09/22 17:34:50 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Spark 4.2.0; inputs: data; notebook ready
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_prompt" id="cell-id=exercise-5"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr/>
+<p><a id="exercise-5"></a></p>
+<h2 id="Your-task">Your task<a class="anchor-link" href="#Your-task">¶</a></h2><p><strong>What work have we described, and how can we check the saved result?</strong></p>
+<p>Core budget: about 5 minutes.</p>
+<p>Save the category report and rejected rows to the supplied fresh paths. Read the report back as <code>saved_report</code> and verify its values. The write/read steps are supplied for the core. Explain which operations actually execute work; the optional section investigates the physical plan.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=save-paths">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">REPORT_PATH</span> <span class="o">=</span> <span class="n">spark_path</span><span class="p">(</span><span class="n">RUN_ROOT</span> <span class="o">/</span> <span class="s2">"report"</span><span class="p">)</span>
+<span class="n">REJECTED_PATH</span> <span class="o">=</span> <span class="n">spark_path</span><span class="p">(</span><span class="n">RUN_ROOT</span> <span class="o">/</span> <span class="s2">"rejected"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=save-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Supplied-%E2%80%94-write,-then-read-back">Supplied — write, then read back<a class="anchor-link" href="#Supplied-%E2%80%94-write,-then-read-back">¶</a></h3><p>Use the default <code>errorifexists</code> mode to protect existing outputs. Run the write cell once; after a successful write, rerun just the read/check cells.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=write-report">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">report</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"errorifexists"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">REPORT_PATH</span><span class="p">)</span>
+<span class="n">rejected</span><span class="o">.</span><span class="n">write</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="s2">"errorifexists"</span><span class="p">)</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">REJECTED_PATH</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=read-report">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">saved_report</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">REPORT_PATH</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=save-check-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Check-%E2%80%94-supplied">Check — supplied<a class="anchor-link" href="#Check-%E2%80%94-supplied">¶</a></h3><p>The saved values must match your in-memory report, and all three rejected rows must be saved.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_check" id="cell-id=check-saved">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">check</span><span class="o">.</span><span class="n">saved</span><span class="p">(</span><span class="n">report</span><span class="p">,</span> <span class="n">saved_report</span><span class="p">,</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">REJECTED_PATH</span><span class="p">))</span>
+<span class="n">saved_report</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"category"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Reports agree: five sales, total 100.00.
+Saved report and rejected rows verified.
++--------+-----+-----+
+|category|sales|total|
++--------+-----+-----+
+|   books|    3|50.00|
+|   games|    1|40.00|
+|unmapped|    1|10.00|
++--------+-----+-----+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_hint" id="cell-id=hints-5"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<details>
+<summary>Need a nudge? Hint 1</summary>
+<p>The DataFrame writer belongs to <code>.write</code>; the batch reader belongs to <code>spark.read</code>.</p>
+</details>
+<details>
+<summary>A little more help: Hint 2</summary>
+<p>Writing is an action. The Python call returns None; the files are its side effect. Keep writes separate from read-back checks.</p>
+</details>
+<p>If you need to catch up during class, use the explicit <a href="../RECOVERY.md#exercise-5">recovery step</a>. <a href="05-save-report.html">Worked solution</a> — open it separately when you are ready to compare.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=core-complete"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Core-complete">Core complete<a class="anchor-link" href="#Core-complete">¶</a></h2><p>For the 60-minute lab, <a href="#finish">skip to Save and finish</a>. To explore this topic further, continue with the optional section below. Later core exercises do not need any of its variables.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading celltag_optional" id="cell-id=zoom-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="zoom"></a></p>
+<h2 id="Optional-zoom-in-%C2%B7-about-4-minutes">Optional zoom-in · about 4 minutes<a class="anchor-link" href="#Optional-zoom-in-%C2%B7-about-4-minutes">¶</a></h2><p>These investigations make up the extra depth in a 90-minute session. Choose them independently; keep your working pipeline unchanged.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_response celltag_optional" id="cell-id=plan-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Inspect-the-plan">Inspect the plan<a class="anchor-link" href="#Inspect-the-plan">¶</a></h3><p>Run the next cell. Find the join strategy and any <code>Exchange</code> operators shown. Explain which earlier operations they relate to. Exact operators can vary; eight rows on a laptop are not a performance benchmark.</p>
+<p>Your observations: …</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied celltag_optional" id="cell-id=plan">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">report</span><span class="o">.</span><span class="n">explain</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"formatted"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>== Physical Plan ==
+AdaptiveSparkPlan (13)
++- HashAggregate (12)
+   +- Exchange (11)
+      +- HashAggregate (10)
+         +- Project (9)
+            +- BroadcastHashJoin LeftOuter BuildRight (8)
+               :- Project (3)
+               :  +- Filter (2)
+               :     +- Scan parquet  (1)
+               +- BroadcastExchange (7)
+                  +- Project (6)
+                     +- Filter (5)
+                        +- Scan parquet  (4)
+
+
+(1) Scan parquet
+Output [3]: [product_id#1, amount_raw#2, sold_at_raw#3]
+Batched: true
+Location: InMemoryFileIndex [file:&lt;lab-root&gt;/data/sales.parquet]
+ReadSchema: struct&lt;product_id:string,amount_raw:string,sold_at_raw:string&gt;
+
+(2) Filter
+Input [3]: [product_id#1, amount_raw#2, sold_at_raw#3]
+Condition : CASE WHEN (isnull(upper(trim(product_id#1, None))) OR (upper(trim(product_id#1, None)) = )) THEN false WHEN isnull(try_cast(amount_raw#2 as decimal(12,2))) THEN false WHEN isnull(gettimestamp(sold_at_raw#3, yyyy-MM-dd HH:mm:ss, TimestampType, try_to_timestamp, Some(UTC), false)) THEN false ELSE true END
+
+(3) Project
+Output [2]: [upper(trim(product_id#1, None)) AS product_id#10, try_cast(amount_raw#2 as decimal(12,2)) AS amount#11]
+Input [3]: [product_id#1, amount_raw#2, sold_at_raw#3]
+
+(4) Scan parquet
+Output [2]: [product_id#4, category#5]
+Batched: true
+Location: InMemoryFileIndex [file:&lt;lab-root&gt;/data/products.parquet]
+ReadSchema: struct&lt;product_id:string,category:string&gt;
+
+(5) Filter
+Input [2]: [product_id#4, category#5]
+Condition : isnotnull(upper(trim(product_id#4, None)))
+
+(6) Project
+Output [2]: [upper(trim(product_id#4, None)) AS product_id#6, lower(trim(category#5, None)) AS category#7]
+Input [2]: [product_id#4, category#5]
+
+(7) BroadcastExchange
+Input [2]: [product_id#6, category#7]
+Arguments: HashedRelationBroadcastMode(List(input[0, string, true]),false), [plan_id=465]
+
+(8) BroadcastHashJoin
+Left keys [1]: [product_id#10]
+Right keys [1]: [product_id#6]
+Join type: LeftOuter
+Join condition: None
+
+(9) Project
+Output [2]: [amount#11, coalesce(category#7, unmapped) AS category#14]
+Input [4]: [product_id#10, amount#11, product_id#6, category#7]
+
+(10) HashAggregate
+Input [2]: [amount#11, category#14]
+Keys [1]: [category#14]
+Functions [2]: [partial_count(1), partial_sum(amount#11)]
+Aggregate Attributes [3]: [count#24L, sum#25, isEmpty#26]
+Results [4]: [category#14, count#27L, sum#28, isEmpty#29]
+
+(11) Exchange
+Input [4]: [category#14, count#27L, sum#28, isEmpty#29]
+Arguments: hashpartitioning(category#14, 2), ENSURE_REQUIREMENTS, [plan_id=470]
+
+(12) HashAggregate
+Input [4]: [category#14, count#27L, sum#28, isEmpty#29]
+Keys [1]: [category#14]
+Functions [2]: [count(1), sum(amount#11)]
+Aggregate Attributes [2]: [count(1)#22L, sum(amount#11)#23]
+Results [3]: [category#14, count(1)#22L AS sales#15L, sum(amount#11)#23 AS total#16]
+
+(13) AdaptiveSparkPlan
+Output [3]: [category#14, sales#15L, total#16]
+Arguments: isFinalPlan=false
+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading celltag_optional" id="cell-id=plan-depth"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Small-checks,-deliberate-actions">Small checks, deliberate actions<a class="anchor-link" href="#Small-checks,-deliberate-actions">¶</a></h3><p>Our helpers use <code>collect()</code> and counts on a tiny fixture to make mistakes visible. Do not copy repeated whole-dataset checks into a large production job without considering their cost. A formatted plan explains planned work; it does not prove runtime performance.</p>
+<p>The <a href="deeper/plans-and-cache.html">repeated-work experiment</a> compares plans and explores caching without making timing claims.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=finish-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="finish"></a></p>
+<h2 id="Save-and-finish">Save and finish<a class="anchor-link" href="#Save-and-finish">¶</a></h2><p>Run once the core checks pass, whether or not you did the optional section. This saves your functions or stream handoff, then stops this notebook’s queries and Spark. Your work remains in <code>learner_work/</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=save-and-finish">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">active_query</span> <span class="ow">in</span> <span class="n">spark</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+    <span class="n">active_query</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Session stopped; exercise files are under"</span><span class="p">,</span> <span class="n">RUN_ROOT</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Session stopped; exercise files are under runs/run-badcac2372
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=next-exercise"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next: <a href="06-streaming.html">Exercise 6 — Process arriving files</a>.</p>
+<p>Want more on this topic? You can open these now, using the same saved work: <a href="deeper/plans-and-cache.html">Plans and repeated work</a>.</p>
+</div>
+</div>
+</div>
+</main></body></html>

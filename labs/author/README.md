@@ -4,29 +4,35 @@
 
 Run the commands below from the **labs** folder.
 
-## Exercise route
+## Exercise sequence
 
 ### Instructor fallback laptop
 
-Danny will bring an additional MacBook for an attendee who encounters setup problems. Prepare that Mac with this same project and JDK 21 before the session: run `uv sync --locked`, `uv run --locked check_setup.py`, and the full `uv run --locked hands_on.py`. If using notebooks, also install the optional notebook group and select its kernel in VS Code beforehand. Leave the project ready at the first exercise; each run creates its own output directory.
+Danny will bring an additional MacBook for an attendee who encounters setup problems. Prepare that Mac with this same project and JDK 21 before the session: run `uv sync --locked --group notebook`, `uv run --locked check_setup.py`, and validate the seven workshop solution notebooks as described below. Select the project kernel in VS Code beforehand. Leave the project ready at the first exercise; each run creates its own output directory.
 
 Ask attendees to run the setup check before class. The spare Mac is the classroom contingency, not evidence that native Windows has been validated.
 
 ### Lesson sequence
 
-The chapter opens with an agenda and setup walkthrough. These numbered exercises then match the slides, `hands_on.py` headings and the optional notebook:
+The chapter opens with an agenda and setup walkthrough. Everyone starts at `notebooks/01-inspect.ipynb`. The core is the 60-minute baseline; optional sections add the 90-minute depth. Larger investigations are linked by topic under `notebooks/deeper/`. Every exercise is a separate notebook, with task cells, collapsed hints, checks and a final save/cleanup cell. Completed answers live under `solutions/`, never in the learner task cells.
 
-1. **Inspect the inputs:** read the prepared Parquet files and examine schemas and values.
-2. **Clean the keys:** use `functions as F` and a reusable Column-expression helper.
+1. **Inspect the inputs:** read Parquet and investigate schemas and values.
+2. **Clean the keys:** build a reusable Column-expression helper and normalise the lookup.
 3. **Validate the sales:** parse types, retain rejects and reconcile all eight inputs.
-4. **Join and aggregate:** check lookup keys and build the category report.
-5. **Save and check the report:** validate totals, write Parquet and read it back.
-6. **Process arriving files:** switch the reader, start the query and introduce files 01/02.
-7. **Resume from a checkpoint:** restart and introduce file 03 without double-counting.
-8. **Write the streaming output:** use a separate Append-mode Parquet query and checkpoint.
-9. **Build a daily report:** extend the batch result and preserve the total of 100.00.
+4. **Join and aggregate:** preserve the sale population and build the category report.
+5. **Inspect and save:** inspect the plan (optional zoom-in), write and verify the report and rejects.
+6. **Process arriving files:** reuse the participant's functions and introduce files 01/02.
+7. **Resume from a checkpoint:** open a new notebook/kernel, restore the same stream configuration, and introduce file 03.
 
-The lesson is a guided, executable reference with prediction prompts and a final exercise. It is not a blank assessment notebook. The tiny dataset teaches behaviour and reconciliation, not performance or scaling.
+Core exercises supply wrappers, parsing and some operational steps; participants write key expressions, filtering, joins/grouping and the streaming reader/start. Optional sections investigate expressions, parsing, join behaviour, plans, query progress and checkpoints. Participants may choose any zoom-in independently. Separate investigations have explicit prerequisites and never become dependencies of later core exercises. See the [design and timing budgets](../../docs/LAB-DESIGN.md); classroom rehearsal is still needed.
+
+### Cross-notebook handoffs
+
+Each notebook owns its SparkSession. Exercise 2 saves the participant's key/lookup functions, Exercise 3 saves validation/filter functions, and Exercise 4 saves reporting functions. `Workspace.save` captures their actual source into `learner_work/answers.py`; later notebooks reload that module and rebuild the small batch context. Functions use `F`, arguments and earlier saved helpers, not unrelated globals from a previous notebook. The normal learner flow never imports reference transformations.
+
+Exercise 6 stops its query and saves its input directory, checkpoint, table name and a hash of the saved functions. Exercise 7 starts in another kernel and resumes that state; changing saved transformations requires replaying Exercise 6 with fresh state. Solution runs use the separate `learner_work/solutions/` folder. Learner work, checkpoints and local runs are excluded from Git, Pages and ZIPs.
+
+[Recovery](../RECOVERY.md) offers explicit supplied-code boundaries with backups; it never silently replaces an unfinished answer. Participant agents should not choose a reference recovery on the learner's behalf.
 
 ## Local runtime
 
@@ -54,14 +60,14 @@ The lesson uses a fresh run directory and refuses to overwrite existing input or
 
 The category report uses a Complete-mode memory sink for classroom inspection. The checkpoint restart was verified, but the memory sink is not durable external output. The separate Append-mode Parquet query writes accepted sales rows before aggregation. Rejected rows are stored by the batch exercise; routing streaming rejects to a second audit destination is a possible extension.
 
-If an experimental edit raises an error while a query is running, stop it with `query.stop()` before restarting setup. The provided successful route stops both queries and the local SparkSession.
+If an experimental edit raises an error while a query is running, stop it with `query.stop()` before restarting setup. Every exercise ends with its own cleanup. Optional query notebooks clean up only queries they created; a skipped extension is never a core dependency.
 
 ## Original material reused
 
 Reviewed the original PowerPoints and the corresponding public notebooks at revision `8cbb218a87052cd1a37cbe4a7862e772c15e5e44`:
 
 - [3.2: fixing data](https://github.com/PacktPublishing/Mastering-Big-Data-Analytics-with-PySpark/blob/8cbb218a87052cd1a37cbe4a7862e772c15e5e44/Section%203%20-%20Preparing%20Data%20using%20SparkSQL/3.2/hands-on-3.2.ipynb): built-in functions, timestamp conversion and column transformations.
-- [3.3: further preparation](https://github.com/PacktPublishing/Mastering-Big-Data-Analytics-with-PySpark/blob/8cbb218a87052cd1a37cbe4a7862e772c15e5e44/Section%203%20-%20Preparing%20Data%20using%20SparkSQL/3.3/hands-on-3.3.ipynb): exploration and inspecting transformed data. Its split/explode example remains a possible follow-up.
+- [3.3: further preparation](https://github.com/PacktPublishing/Mastering-Big-Data-Analytics-with-PySpark/blob/8cbb218a87052cd1a37cbe4a7862e772c15e5e44/Section%203%20-%20Preparing%20Data%20using%20SparkSQL/3.3/hands-on-3.3.ipynb): exploration and inspecting transformed data. Its split/explode progression is used in the optional product-tags notebook.
 - [8.3: managing and converting streams](https://github.com/PacktPublishing/Mastering-Big-Data-Analytics-with-PySpark/blob/8cbb218a87052cd1a37cbe4a7862e772c15e5e44/Section%208%20-%20Machine%20Learning%20in%20Real-Time/8.3/structured_streaming.ipynb): static versus streaming readers, shared transformations, writer/query distinction, query activity, progress, memory-table inspection and stopping.
 
 The original files were preserved. Twitter acquisition, credentials and sentiment analysis are excluded. Prepared Parquet inputs replace the Twitter JSON. The exercise adds explicit rejected-record handling, repeatable arrivals, expected results and checkpoint/output checks. It removes the unconditional single-file coalesce, legacy one-time trigger and notebook display polling loop.
@@ -69,6 +75,10 @@ The original files were preserved. Twitter acquisition, credentials and sentimen
 `pipeline.py` contains only transformations and is the handoff to chapter 09. `prepare_inputs.py` is an author-only fixture generator; students do not need its DataFrame-construction syntax. `arrival_files.py` is exercise scaffolding.
 
 ## Validation performed
+
+On **22 September 2026**, the exercise-based layout passed on macOS with Python 3.12, PySpark 4.2.0 and Temurin 21.0.11. First, all **seven core notebooks** completed in fresh kernels with every optional section skipped. Then all **14 solution notebooks** completed, including every inline zoom-in and the seven deeper investigations visited at their associated exercise boundaries. The baseline and full-depth runs both preserved the saved-function and checkpoint handoffs and reached the expected 100.00 report. All 32 authoring/workspace tests and Python lint checks passed. Learner notebooks have unfinished tasks and no saved outputs.
+
+The instructor reports that the previous notebook worked on Windows; the redesigned sequence still needs end-to-end Windows validation and a timing rehearsal. The records below describe earlier versions.
 
 On 21 September 2026, the locked uv project was installed into a fresh environment and checked on macOS arm64 with Python **3.12.13**, PySpark **4.2.0** and Temurin **21.0.11**. Both the Python script and all notebook cells completed. The original notebook had also passed with Python 3.12.14 before this setup change.
 
@@ -101,10 +111,23 @@ Instruction-file conventions: [Codex AGENTS.md](https://learn.chatgpt.com/docs/a
 
 ## Maintaining the lab
 
-Edit `hands_on.py` as the teaching source; `pipeline.py` is the matching reusable transformation module for chapter 09. Regenerate and execute the notebook:
+Edit `hands_on.py` as the teaching source; `pipeline.py` is the matching reusable transformation module for chapter 09. The source remains a complete runnable reference. Annotated `# %%` cells have stable IDs and roles; comment-only `[starter]` cells replace a named task; `depth=zoom` marks optional cells. Missing/ambiguous starters fail generation. Operational setup, saved-code handoffs and notebook boundaries are defined in `author/lesson_source.py`.
+
+Generate learner and solution notebooks and lightweight HTML previews from the **labs** folder:
 
 ```text
-uv run --locked --group notebook --group author author/build_notebook.py --execute
+uv run --locked --group notebook --group author -m author.build_notebook
 ```
 
-Include `uv.lock` with the project; dependency updates should be deliberate and followed by both the setup check and the full lesson. The lab ZIP is generated only when preparing a release; follow [Publishing the lab](https://github.com/dannyscodecorner/mastering-pyspark/blob/main/docs/PUBLISHING.md#publishing-the-lab).
+To execute every reference-completed exercise, each in a separate kernel:
+
+```text
+uv run --locked check_setup.py
+uv run --locked --group notebook --group author -m author.build_notebook --execute
+```
+
+Use `--execute --core-only` first to skip every zoom-in and validate the complete baseline. Then use `--execute` to run all sections plus the deeper notebooks. These are validation modes over the same notebook files, not alternative learner routes. This intentionally executes solutions, not blank learner exercises. Learner notebooks always have empty outputs. Saved plan output replaces this machine’s lab directory with the labelled `<lab-root>` placeholder. Saved solution output is preserved only when the lesson and supporting Python sources are unchanged; generation alone is not execution evidence. Do not regenerate over a participant's edited notebooks.
+
+Keep the seven transformation definitions aligned with `pipeline.py`; the AST parity test checks this. Tests also cover missing starters, solution isolation and optional prerequisites, saving learner functions, recovery backups and checkpoint boundaries. Rebuild and verify the course after changing published lab assets.
+
+Include `uv.lock` with the project. Dependency changes require a new preflight and core and full-depth execution. The lab ZIP is generated only for a release; see [Publishing the lab](https://github.com/dannyscodecorner/mastering-pyspark/blob/main/docs/PUBLISHING.md#publishing-the-lab).

@@ -33,31 +33,26 @@ The supplied directory must contain the three original HTML documents. That comp
 
 ## Exercises and notebooks
 
-The agreed [lab design](LAB-DESIGN.md) defines the 60-minute, 90-minute and
-detailed self-paced routes, shared milestones and the implementation sequence.
-Those learner routes remain to be implemented; the files below currently contain
-the worked reference.
+The [lab design](LAB-DESIGN.md) defines seven shared exercises with optional depth. Each exercise has its own notebook. Participant setup and exercise links are in [labs/README.md](../labs/README.md); provenance and validation records remain in the [instructor notes](../labs/author/README.md).
 
-The chapter 08 lesson is a guided worked reference with prompts and checks. It uses the synthetic sales/products fixture and nine numbered exercises. The last exercise adds a daily report. Chapter 09 is intended to reuse the pipeline in AWS Glue and remains to be developed further.
+Edit `labs/hands_on.py`, the runnable worked source with annotated `# %%` teaching cells. Every task has one comment-only `[starter]`. Optional cells use `depth=zoom`; a larger investigation has its own exercise boundary. `labs/author/lesson_source.py` selects cells and supplies independent setup/finish steps. Learner functions are saved between notebooks, not assumed to survive in a shared kernel.
 
-Participant setup is in [labs/README.md](../labs/README.md). The [instructor notes](../labs/author/README.md) retain the lesson sequence, fixture details, original-material references and validation record.
-
-Edit `labs/hands_on.py`. Its `# %%` markers divide Markdown and code cells for VS Code and the optional notebook. From the `labs/` directory:
+From **labs**, generate notebooks and previews:
 
 ```text
-uv run --locked --group notebook --group author author/build_notebook.py
+uv run --locked --group notebook --group author -m author.build_notebook
 ```
 
-That refreshes `hands-on.ipynb` and `hands-on.html`. It preserves outputs only when the lesson’s code cells are unchanged. After changing code, execute the reference as well:
+This refreshes `notebooks/`, `solutions/`, their `deeper/` subfolders, and the exercise index. Learner outputs are always empty. Changes to lesson/supporting Python invalidate saved solution output. For executable changes:
 
 ```text
 uv run --locked check_setup.py
-uv run --locked --group notebook --group author author/build_notebook.py --execute
+uv run --locked --group notebook --group author -m author.build_notebook --execute
 ```
 
-Review the resulting notebook and HTML. Keep transformations in `pipeline.py` aligned with their teaching definitions. Do not claim runtime checks passed just because the notebook’s saved output was preserved.
+Each solution notebook executes in a new kernel. First run with `--execute --core-only` to prove that all seven exercises work while skipping every optional section; then run `--execute` to validate all zoom-ins and separate investigations. Inspect the resulting notebook/HTML, including setup, task/hint separation and the stream restart across notebooks. Blank learner tasks are intentionally not executable end-to-end. Keep the reference transformations in `pipeline.py` aligned with their taught definitions.
 
-The course build copies the lab’s source, prepared data and generated references into `dist/labs/`. Environments and run output are excluded. It does not create a ZIP. The slide’s **Download the lab** link points to a GitHub Release attachment; see [Publishing the lab](PUBLISHING.md#publishing-the-lab).
+The course copies portable lab files into `dist/labs/`. `learner_work/`, run directories, environments and caches are excluded from publication and release ZIPs. Never regenerate a participant's edited notebooks. The slide download points to a GitHub Release attachment; [release preparation](PUBLISHING.md#publishing-the-lab) is separate from building Pages.
 
 ## Python tooling
 
