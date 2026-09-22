@@ -1,5 +1,6 @@
 # Working on this course
 
+- For participant lab setup or exercise help, read [labs/AGENTS.md](labs/AGENTS.md) first. Help with installation; coach exercises with hints. Explicit course-authoring requests remain authoring work.
 - Author slide content in `slides/src/chapters/`. Each chapter's `mod.incn` lists
   its slide modules in teaching order. This is the chosen source of truth.
   `dist/` is generated. Do not import the old HTML back over authored Incan edits.
@@ -13,7 +14,7 @@
 - Use `python3 tools/course.py build` and `python3 tools/course.py verify` after
   slide changes. Review affected slides in the browser, including relevant
   animation steps and reference links.
-- `labs/chapter08/hands_on.py` is the canonical lesson source. Regenerate the
+- `labs/hands_on.py` is the canonical lesson source. Regenerate the
   optional notebook and HTML with its authoring helper. Keep exercise numbers
   aligned with `slides/src/chapters/chapter_08/`.
 - The lab uses its own locked uv project. Do not change its Spark/Python/Java

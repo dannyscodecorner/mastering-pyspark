@@ -12,7 +12,12 @@ import tempfile
 from pathlib import Path
 
 
-def publish_arrival(data_root, incoming, number):
+def publish_arrival(data_root: Path, incoming: Path, number: int) -> str:
+    """Publish one completed arrival atomically, refusing to overwrite an earlier delivery.
+
+    Return the published basename. The destination filesystem must support hard
+    links; temporary copies are removed on success and failure.
+    """
     source = Path(data_root) / "arrivals" / f"{number:02d}"
     files = sorted(source.glob("*.parquet"))
     if len(files) != 1:

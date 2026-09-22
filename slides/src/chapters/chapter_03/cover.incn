@@ -1,6 +1,6 @@
 """Cover slide."""
 
-from surface import Frame, Slide, group, heading, image, prose
+from surface import Frame, NodeKind, Slide, group, heading, image, node, prose, span
 
 pub def slide_section_3() -> Slide:
     return Slide(
@@ -9,14 +9,14 @@ pub def slide_section_3() -> Slide:
         frame=Frame.Composed,
         styles="slide core-intro-art",
         content=[
-            image("assets/core-abstractions-two-apis.png", "Illustrated numbered tiles and a table represent RDDs and DataFrames against a dark charcoal background.", style="core-intro-image"),
+            image("assets/core-abstractions-two-apis-unbranded.png", "Illustrated numbered tiles and a table represent RDDs and DataFrames against a dark charcoal background.", style="core-intro-image"),
             group([
             prose("03 / Spark’s Core Abstractions"),
             heading("Spark’s Core Abstractions", level=1),
             prose("Putting data into perspective"),
             prose("RDDs · DataFrames"),
-            prose("Danny’s Code Corner"),
         ], style="sr-only"),
+            node(NodeKind.Footer, children=[span("Danny’s Code Corner")]),
         ],
         notes="This section focuses on RDDs and DataFrames. The history chapter established where Hadoop and Spark came from. Now follow one MapReduce calculation to see why reuse matters, explain recovery with RDDs, then show what schema-aware DataFrame expressions let Spark optimise. Typed Dataset details are in the reference deck if questions arise.",
     )

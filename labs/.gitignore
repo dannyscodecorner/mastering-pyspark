@@ -1,4 +1,5 @@
 .venv/
+.ruff_cache/
 __pycache__/
 .ipynb_checkpoints/
 runs/
@@ -7,3 +8,4 @@ spark-warehouse/
 metastore_db/
 derby.log
 *.pyc
+/*.zip

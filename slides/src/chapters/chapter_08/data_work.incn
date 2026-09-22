@@ -80,9 +80,9 @@ pub def slide_data_work() -> Slide:
             ]),
         ], style="ho-workgrid"),
             paragraph([
-            node(NodeKind.Link, content="Open the guided lab", attributes=[attr("href", "labs/chapter08/hands-on.html"), attr("target", "_blank")]),
+            node(NodeKind.Link, content="Open the guided lab", attributes=[attr("href", "labs/hands-on.html"), attr("target", "_blank")]),
             text(" · "),
-            node(NodeKind.Link, content="Download the lab", attributes=[attr("href", "labs/chapter08-lab.zip"), attr("download", flag=true)]),
+            node(NodeKind.Link, content="Download the lab", attributes=[attr("href", "https://github.com/dannyscodecorner/mastering-pyspark/releases/latest/download/pyspark-labs.zip")]),
             text(" · "),
             node(NodeKind.Link, content="Course on GitHub", attributes=[attr("href", "https://github.com/dannyscodecorner/mastering-pyspark"), attr("target", "_blank"), attr("rel", "noopener")]),
         ], style="ho-resource"),

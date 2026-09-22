@@ -1,0 +1,20 @@
+target-version = "py310"
+line-length = 100
+extend-exclude = [".build", "dist", "slides", "labs/runs", "*.ipynb"]
+
+[lint]
+select = ["E4", "E7", "E9", "F", "I", "D", "C90", "PLR1702"]
+preview = true
+explicit-preview-rules = true
+
+[lint.isort]
+known-first-party = ["arrival_files", "course", "labs", "pipeline", "tools", "workshop_runtime"]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.mccabe]
+max-complexity = 10
+
+[lint.pylint]
+max-nested-blocks = 3

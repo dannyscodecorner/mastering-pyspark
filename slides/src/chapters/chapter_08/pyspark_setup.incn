@@ -18,7 +18,7 @@ pub def slide_pyspark_setup() -> Slide:
                 heading("In the VS Code terminal", level=2),
                 paragraph([
                     text("Open the extracted "),
-                    code("chapter08"),
+                    code("labs"),
                     text(" folder."),
                 ]),
                 node(NodeKind.Preformatted, children=[

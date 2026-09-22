@@ -1,61 +1,80 @@
 """Local workshop setup; keep environment choices out of pipeline.py."""
 
+from __future__ import annotations
+
 import atexit
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import sys
+from pathlib import Path
+from typing import TYPE_CHECKING
 from uuid import uuid4
+
+if TYPE_CHECKING:
+    from pyspark.sql import SparkSession
+    from pyspark.sql.streaming import StreamingQuery
 
 PROJECT_ROOT = Path(__file__).resolve().parent
 DATA_ROOT = PROJECT_ROOT / "data"
 
 
-def spark_path(path):
-    """Hadoop accepts absolute paths with forward slashes, including C:/ on Windows.
+def spark_path(path: str | Path) -> str:
+    """Return an absolute Hadoop path with forward slashes, including C:/ on Windows.
 
     Do not URL-encode these: Spark treats encoded spaces in Path strings literally.
     """
     return Path(path).resolve().as_posix()
 
 
-def new_run(prefix="run"):
+def new_run(prefix: str = "run") -> Path:
+    """Create a unique run directory without overwriting previous results or checkpoints."""
     root = PROJECT_ROOT / "runs" / f"{prefix}-{uuid4().hex[:10]}"
     root.mkdir(parents=True, exist_ok=False)
     return root
 
 
-def java_version():
+def java_version() -> int:
+    """Read Java's major version and report actionable errors for an unsupported runtime."""
     java_home = os.environ.get("JAVA_HOME")
     java = (
         str(Path(java_home) / "bin" / ("java.exe" if os.name == "nt" else "java"))
-        if java_home else shutil.which("java")
+        if java_home
+        else shutil.which("java")
     )
     if not java:
-        raise RuntimeError("Install JDK 21, then reopen VS Code. See README.md: Java.")
+        raise RuntimeError("Install JDK 21, then reopen VS Code. See TROUBLESHOOTING.md: Java.")
     try:
         result = subprocess.run(
             [java, "-version"], capture_output=True, text=True, timeout=15, check=True
         )
     except (OSError, subprocess.SubprocessError) as exc:
-        raise RuntimeError("Java could not start. Check JAVA_HOME and PATH; see README.md.") from exc
+        raise RuntimeError(
+            "Java could not start. Check JAVA_HOME and PATH; see TROUBLESHOOTING.md."
+        ) from exc
     version = re.search(r'version "(\d+)', result.stderr + result.stdout)
     if not version or int(version[1]) not in {17, 21, 25}:
-        raise RuntimeError("This Spark 4.2 project needs Java 17, 21 or 25. Use JDK 21 for the workshop.")
+        raise RuntimeError(
+            "This Spark 4.2 project needs Java 17, 21 or 25. Use JDK 21 for the workshop."
+        )
     return int(version[1])
 
 
-def create_spark(run_root):
+def create_spark(run_root: Path) -> SparkSession:
     """Start a local session owned by this exercise, using this Python on workers."""
     if sys.version_info[:2] != (3, 12):
-        raise RuntimeError("Use the project's Python 3.12: run with uv, or select .venv as the kernel.")
+        raise RuntimeError(
+            "Use the project's Python 3.12: run with uv, or select .venv as the kernel."
+        )
     java_version()
+    # Keep this import lazy so Python and Java preflight failures stay readable.
     from pyspark.sql import SparkSession
 
     if SparkSession.getActiveSession() is not None:
-        raise RuntimeError("A SparkSession is already active. Stop it before starting a fresh lab run.")
+        raise RuntimeError(
+            "A SparkSession is already active. Stop it before starting a fresh lab run."
+        )
     os.environ["PYSPARK_PYTHON"] = sys.executable
     os.environ["SPARK_LOCAL_IP"] = "127.0.0.1"
     spark = (
@@ -79,7 +98,7 @@ def create_spark(run_root):
     return spark
 
 
-def finish_query(query, timeout=120):
+def finish_query(query: StreamingQuery, timeout: int = 120) -> None:
     """Wait for a bounded AvailableNow run and stop it if it fails or times out."""
     try:
         if not query.awaitTermination(timeout):

@@ -1,4 +1,4 @@
-# Chapter 08: run with uv run --locked hands_on.py, or use the VS Code cells.
+"""Work through the sales pipeline using the VS Code cells or ``uv run --locked hands_on.py``."""
 
 # %% [markdown]
 # # Working with PySpark
@@ -21,18 +21,21 @@
 
 # %% [markdown]
 # ## Setup
-# Open the **chapter08 project folder** in VS Code. Follow `README.md` to install Java, run `uv sync --locked`, and pass `uv run --locked check_setup.py` before class.
+# Open the **labs project folder** in VS Code. Follow `README.md` to install Java, run `uv sync --locked`, and pass `uv run --locked check_setup.py` before class.
 #
 # For this notebook, run `uv sync --locked --group notebook` and select the project's **.venv** Python environment in the kernel picker. The same lesson is available as `hands_on.py`, with `# %%` cells for VS Code or as a regular Python script.
 #
 # The next cell creates a local SparkSession and a fresh run directory. Stop the session before running setup again. The prepared input files stay unchanged; every run gets separate output and checkpoints.
 
 # %%
-from uuid import uuid4
 from decimal import Decimal
+from uuid import uuid4
+
+from pyspark.sql import Column, DataFrame
 from pyspark.sql import functions as F
+
 from arrival_files import publish_arrival
-from workshop_runtime import DATA_ROOT, new_run, create_spark, spark_path
+from workshop_runtime import DATA_ROOT, create_spark, new_run, spark_path
 
 RUN_ROOT = new_run()
 INCOMING = RUN_ROOT / "incoming"
@@ -70,16 +73,20 @@ raw.select("sale_id", "product_id", key.alias("clean_key")).orderBy("sale_id").s
 # The call to `product_key` builds the expression in Python; Spark evaluates the built-in string operations on the data.
 # This differs from a Python UDF, whose custom Python code runs on values in Python workers. The provided pipeline needs no UDF.
 
+
 # %%
-def product_key(column):
+def product_key(column: Column) -> Column:
     """Build a Spark Column expression; this is not a Python UDF."""
     return F.upper(F.trim(column))
 
-def clean_products(raw):
+
+def clean_products(raw: DataFrame) -> DataFrame:
+    """Normalise product keys and category names while retaining the lookup row grain."""
     return raw.select(
         product_key(F.col("product_id")).alias("product_id"),
         F.lower(F.trim("category")).alias("category"),
     )
+
 
 products = clean_products(raw_products)
 products.orderBy("product_id").show()
@@ -91,8 +98,9 @@ products.orderBy("product_id").show()
 #
 # This exercise rejects missing keys, invalid/missing amounts and invalid/missing timestamps. It accepts a well-formed product key absent from the lookup; the left join will preserve that sale. A production contract could impose additional rules.
 
+
 # %%
-def clean_sales(raw):
+def clean_sales(raw: DataFrame) -> DataFrame:
     """Parse the exercise's UTC timestamps and amounts; retain bad input."""
     return (
         raw.withColumn("product_id", product_key(F.col("product_id")))
@@ -112,24 +120,34 @@ def clean_sales(raw):
         )
     )
 
+
 # %%
 cleaned = clean_sales(raw)
-cleaned.select("sale_id", "product_id", "amount", "sold_at", "reject_reason").orderBy("sale_id").show(truncate=False)
+cleaned.select("sale_id", "product_id", "amount", "sold_at", "reject_reason").orderBy(
+    "sale_id"
+).show(truncate=False)
 
 # %% [markdown]
 # ### Separate accepted and rejected records
 # **Predict first:** which sale IDs are rejected? The invalid input remains available for diagnosis.
 
+
 # %%
-def accepted_sales(cleaned):
+def accepted_sales(cleaned: DataFrame) -> DataFrame:
+    """Keep parsed sales with no rejection reason, including keys absent from the lookup."""
     return cleaned.filter(F.col("reject_reason").isNull())
 
-def rejected_sales(cleaned):
+
+def rejected_sales(cleaned: DataFrame) -> DataFrame:
+    """Keep invalid sales and their original values for diagnosis."""
     return cleaned.filter(F.col("reject_reason").isNotNull())
+
 
 accepted = accepted_sales(cleaned)
 rejected = rejected_sales(cleaned)
-rejected.select("sale_id", "amount_raw", "sold_at_raw", "reject_reason").orderBy("sale_id").show(truncate=False)
+rejected.select("sale_id", "amount_raw", "sold_at_raw", "reject_reason").orderBy("sale_id").show(
+    truncate=False
+)
 assert raw.count() == accepted.count() + rejected.count() == 8
 assert accepted.count() == 5
 assert {row.sale_id for row in rejected.select("sale_id").collect()} == {"s6", "s7", "s8"}
@@ -144,19 +162,26 @@ assert {row.sale_id for row in rejected.select("sale_id").collect()} == {"s6", "
 assert products.filter(F.col("product_id").isNull() | (F.col("product_id") == "")).count() == 0
 assert products.groupBy("product_id").count().filter(F.col("count") > 1).count() == 0
 
+
 # %%
-def enrich_sales(accepted, products):
-    """Products must have one row per key; the notebook checks that contract."""
+def enrich_sales(accepted: DataFrame, products: DataFrame) -> DataFrame:
+    """Join each accepted sale to its category, retaining unmatched sales as unmapped.
+
+    Products must have one row per key; the notebook checks that contract.
+    """
     return (
         accepted.join(products, on="product_id", how="left")
         .withColumn("category", F.coalesce("category", F.lit("unmapped")))
         .select("sale_id", "product_id", "amount", "sold_at", "category")
     )
 
-def category_totals(enriched):
+
+def category_totals(enriched: DataFrame) -> DataFrame:
+    """Count sales and sum decimal amounts into one row per report category."""
     return enriched.groupBy("category").agg(
         F.count("*").alias("sales"), F.sum("amount").alias("total")
     )
+
 
 enriched = enrich_sales(accepted, products)
 report = category_totals(enriched)
@@ -169,10 +194,17 @@ report.orderBy("category").show()
 # The report should retain five accepted sales totalling 100.00. Write the rejected rows too. New output paths protect previous runs.
 
 # %%
-expected = {"books": (3, Decimal("50.00")), "games": (1, Decimal("40.00")), "unmapped": (1, Decimal("10.00"))}
+expected = {
+    "books": (3, Decimal("50.00")),
+    "games": (1, Decimal("40.00")),
+    "unmapped": (1, Decimal("10.00")),
+}
 
-def snapshot(frame):
+
+def snapshot(frame: DataFrame) -> dict[str, tuple[int, Decimal]]:
+    """Collect the tiny classroom report into category-keyed counts and totals."""
     return {row.category: (row.sales, row.total) for row in frame.collect()}
+
 
 assert enriched.count() == accepted.count() == 5
 assert snapshot(report) == expected
@@ -192,11 +224,7 @@ saved_report.orderBy("category").show()
 # This supported combination is a streaming left input with a static right lookup, followed by a category aggregate. It does not imply every batch operation is supported in streaming. Keep the lookup unchanged during this exercise.
 
 # %%
-stream_raw = (
-    spark.readStream
-    .schema(raw.schema)
-    .parquet(spark_path(INCOMING))
-)
+stream_raw = spark.readStream.schema(raw.schema).parquet(spark_path(INCOMING))
 stream_cleaned = clean_sales(stream_raw)
 stream_accepted = accepted_sales(stream_cleaned)
 stream_enriched = enrich_sales(stream_accepted, products)
@@ -212,8 +240,7 @@ print("batch:", report.isStreaming, "stream:", stream_report.isStreaming)
 # %%
 TABLE_NAME = "sales_" + uuid4().hex[:10]
 writer = (
-    stream_report.writeStream
-    .format("memory")
+    stream_report.writeStream.format("memory")
     .queryName(TABLE_NAME)
     .outputMode("complete")
     .option("checkpointLocation", spark_path(RUN_ROOT / "report-checkpoint"))
@@ -249,7 +276,11 @@ print("last completed batch:", progress["batchId"], "input rows:", progress["num
 publish_arrival(DATA_ROOT, INCOMING, 2)
 query.processAllAvailable()
 spark.table(TABLE_NAME).orderBy("category").show()
-assert snapshot(spark.table(TABLE_NAME)) == {"books": (2, Decimal("40.00")), "games": (1, Decimal("40.00")), "unmapped": (1, Decimal("10.00"))}
+assert snapshot(spark.table(TABLE_NAME)) == {
+    "books": (2, Decimal("40.00")),
+    "games": (1, Decimal("40.00")),
+    "unmapped": (1, Decimal("10.00")),
+}
 
 # %% [markdown]
 # ## Exercise 7 — Resume from a checkpoint
@@ -281,8 +312,7 @@ print("Restarted query reached the same report; query stopped.")
 
 # %%
 file_query = (
-    stream_enriched.writeStream
-    .format("parquet")
+    stream_enriched.writeStream.format("parquet")
     .outputMode("append")
     .option("checkpointLocation", spark_path(RUN_ROOT / "rows-checkpoint"))
     .trigger(availableNow=True)
