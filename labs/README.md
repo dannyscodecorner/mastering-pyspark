@@ -2,6 +2,15 @@
 
 Read and clean Parquet data, build a sales report, then run the same pipeline as files arrive.
 
+## Dependencies
+
+1. **Java 21 (JDK)** — follow the [Java installation steps](TROUBLESHOOTING.md#java) for your operating system.
+2. **[VS Code](https://code.visualstudio.com/download)** — enable the **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** and **[Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)** extensions.
+3. **[Git](https://git-scm.com/install/)** — needed to clone the repository; optional if you download the ZIP instead.
+4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)** — install uv; it downloads Python 3.12 during setup if needed.
+
+The setup below installs PySpark 4.2.0 and the notebook kernel into the lab's environment.
+
 ## 1. Open the lab
 
 Clone the repository and open **mastering-pyspark/labs** in VS Code. Skip cloning if you already have it.
@@ -14,37 +23,7 @@ Alternatively, [download the lab from the latest GitHub Release](https://github.
 
 ## 2. Run setup
 
-**Windows:** open PowerShell with **Run as administrator** and install JDK 21:
-
-```powershell
-winget install --id EclipseAdoptium.Temurin.21.JDK --exact
-```
-
-**macOS:** install [SDKMAN! through Homebrew](https://github.com/sdkman/homebrew-tap):
-
-```sh
-brew tap sdkman/tap
-brew install sdkman-cli
-```
-
-Add these two lines once at the end of `~/.zshrc`:
-
-```sh
-export SDKMAN_DIR="$(brew --prefix sdkman-cli)/libexec"
-[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
-```
-
-Then load SDKMAN, install Temurin 21 and make it your default Java:
-
-```sh
-source ~/.zshrc
-sdk install java 21.0.12-tem
-sdk default java 21.0.12-tem
-```
-
-**Linux:** install [JDK 21](https://adoptium.net/temurin/releases/?version=21).
-
-Reopen VS Code normally and enable its **Python** and **Jupyter** extensions. In the VS Code terminal:
+After installing the dependencies, reopen VS Code normally. In its terminal, make sure you are in the **labs** folder and run:
 
 ```text
 uv sync --locked --group notebook

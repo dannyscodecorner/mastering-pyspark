@@ -24,7 +24,29 @@ It should report version 21 for this workshop. Spark 4.2 also supports Java 17 a
 
 ### macOS
 
-Follow the [Homebrew and SDKMAN setup](README.md#2-run-setup). Install [Homebrew](https://brew.sh/) first if `brew` is unavailable. The initialization lines use Homebrew's SDKMAN directory; the usual `~/.sdkman` path is for a different installation method.
+Install [Homebrew](https://brew.sh/) first if `brew` is unavailable. Then install [SDKMAN! through its Homebrew tap](https://github.com/sdkman/homebrew-tap):
+
+```sh
+brew tap sdkman/tap
+brew install sdkman-cli
+```
+
+Add these two lines once at the end of `~/.zshrc`:
+
+```sh
+export SDKMAN_DIR="$(brew --prefix sdkman-cli)/libexec"
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+```
+
+Then load SDKMAN, install Temurin 21 and make it your default Java:
+
+```sh
+source ~/.zshrc
+sdk install java 21.0.12-tem
+sdk default java 21.0.12-tem
+```
+
+The initialization lines use Homebrew's SDKMAN directory; the usual `~/.sdkman` path is for a different installation method.
 
 The instructions assume Zsh, the default macOS shell. If you use Bash, put the initialization lines in `~/.bash_profile` and source that file instead. If `sdk` is missing in a new terminal, check that the initialization lines are in your shell's startup file.
 
@@ -38,6 +60,10 @@ java -version
 If another version is selected, run `sdk use java 21.0.12-tem` for the current terminal or `sdk default java 21.0.12-tem` for future terminals too. SDKMAN sets `JAVA_HOME`; an older hard-coded setting later in your shell startup file can override it.
 
 The command pins Temurin 21. If that patch becomes unavailable, use `sdk list java` and choose an available Temurin **21** identifier. A bare `sdk install java` selects SDKMAN's current default major version, which may differ from the workshop's. See [SDKMAN usage](https://sdkman.io/usage/).
+
+### Linux
+
+Install a 64-bit [JDK 21](https://adoptium.net/temurin/releases/?version=21) matching your computer. Reopen VS Code and check `java -version` in its terminal; it should report version 21.
 
 ## Windows status
 
