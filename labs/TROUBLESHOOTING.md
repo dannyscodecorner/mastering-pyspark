@@ -4,7 +4,15 @@
 
 ## Java
 
-Use a 64-bit JDK matching your computer, such as [Eclipse Temurin 21](https://adoptium.net/temurin/releases/?version=21). The [Windows installer](https://adoptium.net/installation/windows/) offers PATH and `JAVA_HOME` settings; enable them. `JAVA_HOME` should name the JDK directory, not its `bin` directory. Reopen VS Code after installation and run:
+Use a 64-bit JDK matching your computer, such as [Eclipse Temurin 21](https://adoptium.net/temurin/releases/?version=21).
+
+On Windows, open PowerShell with **Run as administrator**:
+
+```powershell
+winget install --id EclipseAdoptium.Temurin.21.JDK --exact
+```
+
+If WinGet is unavailable, use the [Windows installer](https://adoptium.net/installation/windows/) and enable its PATH and `JAVA_HOME` options. If `JAVA_HOME` is set, it should name the JDK directory, not its `bin` directory. After installation, close the Administrator terminal and fully reopen VS Code normally. Run:
 
 ```text
 java -version
@@ -14,7 +22,7 @@ It should report version 21 for this workshop. Spark 4.2 also supports Java 17 a
 
 ## Windows status
 
-**Native Windows is not yet validated for this lab.** Jupyter in VS Code supports Windows; the remaining risk is Spark's Hadoop filesystem support. The bundled Spark 4.2 distribution uses Hadoop 3.5.0. Hadoop's [Windows build documentation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/BUILDING.txt#L615-L618) states that its native Windows components are required. Python, uv and Java alone may therefore be insufficient for Parquet/checkpoint writes on a clean machine.
+**The full lab has not yet been validated on native Windows.** The instructor has confirmed the Java installation command above; the setup check is still pending. Jupyter in VS Code supports Windows; the remaining risk is Spark's Hadoop filesystem support. The bundled Spark 4.2 distribution uses Hadoop 3.5.0. Hadoop's [Windows build documentation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/BUILDING.txt#L615-L618) states that its native Windows components are required. Python, uv and Java alone may therefore be insufficient for Parquet/checkpoint writes on a clean machine.
 
 Before distributing a native Windows setup as class-ready, the instructor must supply or approve a matching Hadoop 3.5.0 Windows build (`winutils.exe` and `hadoop.dll`, with its required runtime libraries), configure `HADOOP_HOME` and its `bin` directory on PATH, and run the setup check on a representative attendee machine. This project does not download unverified native binaries. Do not mix binaries from older Hadoop releases.
 

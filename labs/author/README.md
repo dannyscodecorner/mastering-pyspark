@@ -83,7 +83,9 @@ On 21 September 2026, the locked uv project was installed into a fresh environme
 - Daily-report exercise yielded four rows and preserved the total of 100.00.
 - Executed notebook and HTML preview include the observed outputs.
 
-Native Windows, Linux, WSL, crash-injection, distributed-cluster, Spark Connect and AWS Glue validation have not been performed. Local checks cannot establish support for those environments.
+On **22 September 2026**, the instructor reported that `winget install --id EclipseAdoptium.Temurin.21.JDK --exact` successfully installed Java on Windows when run in PowerShell as Administrator. This records the installation step; the Windows setup check and lesson run are still pending.
+
+Full lab validation on native Windows, Linux, WSL, distributed clusters, Spark Connect and AWS Glue remains pending, as does crash-injection testing. Local checks cannot establish support for those environments.
 
 ## Agent support
 

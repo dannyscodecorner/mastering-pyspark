@@ -14,7 +14,15 @@ Alternatively, [download the lab from the latest GitHub Release](https://github.
 
 ## 2. Run setup
 
-Install [JDK 21](https://adoptium.net/temurin/releases/?version=21), reopen VS Code and enable its **Python** and **Jupyter** extensions. In the VS Code terminal:
+**Windows:** open PowerShell with **Run as administrator** and install JDK 21:
+
+```powershell
+winget install --id EclipseAdoptium.Temurin.21.JDK --exact
+```
+
+**macOS/Linux:** install [JDK 21](https://adoptium.net/temurin/releases/?version=21).
+
+Reopen VS Code normally and enable its **Python** and **Jupyter** extensions. In the VS Code terminal:
 
 ```text
 uv sync --locked --group notebook
