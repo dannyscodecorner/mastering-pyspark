@@ -6,7 +6,9 @@
 
 Use a 64-bit JDK matching your computer, such as [Eclipse Temurin 21](https://adoptium.net/temurin/releases/?version=21).
 
-On Windows, open PowerShell with **Run as administrator**:
+### Windows
+
+Open PowerShell with **Run as administrator**:
 
 ```powershell
 winget install --id EclipseAdoptium.Temurin.21.JDK --exact
@@ -19,6 +21,23 @@ java -version
 ```
 
 It should report version 21 for this workshop. Spark 4.2 also supports Java 17 and 25, but this lab's observed validation uses 21. uv manages Python, not Java.
+
+### macOS
+
+Follow the [Homebrew and SDKMAN setup](README.md#2-run-setup). Install [Homebrew](https://brew.sh/) first if `brew` is unavailable. The initialization lines use Homebrew's SDKMAN directory; the usual `~/.sdkman` path is for a different installation method.
+
+The instructions assume Zsh, the default macOS shell. If you use Bash, put the initialization lines in `~/.bash_profile` and source that file instead. If `sdk` is missing in a new terminal, check that the initialization lines are in your shell's startup file.
+
+In the VS Code terminal, check the selected JDK:
+
+```sh
+sdk current java
+java -version
+```
+
+If another version is selected, run `sdk use java 21.0.12-tem` for the current terminal or `sdk default java 21.0.12-tem` for future terminals too. SDKMAN sets `JAVA_HOME`; an older hard-coded setting later in your shell startup file can override it.
+
+The command pins Temurin 21. If that patch becomes unavailable, use `sdk list java` and choose an available Temurin **21** identifier. A bare `sdk install java` selects SDKMAN's current default major version, which may differ from the workshop's. See [SDKMAN usage](https://sdkman.io/usage/).
 
 ## Windows status
 

@@ -20,7 +20,29 @@ Alternatively, [download the lab from the latest GitHub Release](https://github.
 winget install --id EclipseAdoptium.Temurin.21.JDK --exact
 ```
 
-**macOS/Linux:** install [JDK 21](https://adoptium.net/temurin/releases/?version=21).
+**macOS:** install [SDKMAN! through Homebrew](https://github.com/sdkman/homebrew-tap):
+
+```sh
+brew tap sdkman/tap
+brew install sdkman-cli
+```
+
+Add these two lines once at the end of `~/.zshrc`:
+
+```sh
+export SDKMAN_DIR="$(brew --prefix sdkman-cli)/libexec"
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"
+```
+
+Then load SDKMAN, install Temurin 21 and make it your default Java:
+
+```sh
+source ~/.zshrc
+sdk install java 21.0.12-tem
+sdk default java 21.0.12-tem
+```
+
+**Linux:** install [JDK 21](https://adoptium.net/temurin/releases/?version=21).
 
 Reopen VS Code normally and enable its **Python** and **Jupyter** extensions. In the VS Code terminal:
 

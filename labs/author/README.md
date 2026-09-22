@@ -85,6 +85,8 @@ On 21 September 2026, the locked uv project was installed into a fresh environme
 
 On **22 September 2026**, the instructor reported that `winget install --id EclipseAdoptium.Temurin.21.JDK --exact` successfully installed Java on Windows when run in PowerShell as Administrator. This records the installation step; the Windows setup check and lesson run are still pending.
 
+On **22 September 2026**, the macOS setup instructions were checked against [SDKMAN's Homebrew tap](https://github.com/sdkman/homebrew-tap). SDKMAN's validation API accepted `21.0.12-tem`, and its download URLs resolved successfully for both Apple Silicon and Intel Macs. A fresh Homebrew/SDKMAN installation and a lab run with this patch have not been performed; the executed macOS validation above used 21.0.11.
+
 Full lab validation on native Windows, Linux, WSL, distributed clusters, Spark Connect and AWS Glue remains pending, as does crash-injection testing. Local checks cannot establish support for those environments.
 
 ## Agent support
