@@ -115,7 +115,8 @@ def main() -> int:
         print(f"Platform: {platform.system()} {platform.machine()}", flush=True)
         print(f"Python: {platform.python_version()}; Java: {java_version()}", flush=True)
         spark = create_spark(run_root)
-        print(f"Spark: {spark.version}", flush=True)
+        hadoop_version = spark.sparkContext._jvm.org.apache.hadoop.util.VersionInfo.getVersion()
+        print(f"Spark: {spark.version}; Hadoop: {hadoop_version}", flush=True)
         run_checks(spark, run_root)
         print(
             "Setup check passed. Open notebooks/00-spark-session.ipynb to begin.",

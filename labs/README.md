@@ -19,6 +19,8 @@ You can mix these choices. There is no route to switch and no work to copy. Time
 3. **[Git](https://git-scm.com/install/)** — to clone the repository; optional for the ZIP download.
 4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)** — [Windows uv instructions](TROUBLESHOOTING.md#uv-on-windows). uv downloads Python 3.12 if needed.
 
+**Native Windows also needs Hadoop 3.5.0 native components.** These are not installed by uv or the JDK installer. A validated course bundle is not supplied yet; read [Windows native Hadoop](TROUBLESHOOTING.md#windows-native-hadoop) before starting the exercises.
+
 ## 1. Open the lab
 
 Clone the repository if you do not already have it:

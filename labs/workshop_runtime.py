@@ -61,6 +61,36 @@ def java_version() -> int:
     return int(version[1])
 
 
+def check_windows_hadoop(spark: SparkSession) -> None:
+    """Check Windows native loading and the same file-access API used by Parquet reads."""
+    if sys.platform != "win32":
+        return
+    from py4j.protocol import Py4JJavaError
+
+    jvm = spark.sparkContext._jvm
+    hadoop = jvm.org.apache.hadoop
+    version = hadoop.util.VersionInfo.getVersion()
+    guidance = (
+        f"This Spark session uses Hadoop {version}. It needs a matching Windows build "
+        "containing hadoop.dll, winutils.exe and their runtime dependencies. "
+        "Set HADOOP_HOME to that build and include its bin directory on PATH before "
+        "starting VS Code. Restart the notebook kernel after correcting the environment. "
+        "See TROUBLESHOOTING.md#windows-native-hadoop."
+    )
+    if not hadoop.util.NativeCodeLoader.isNativeCodeLoaded():
+        raise RuntimeError("Hadoop's Windows native library could not be loaded. " + guidance)
+    try:
+        hadoop.util.Shell.getWinUtilsPath()
+        readable = hadoop.fs.FileUtil.canRead(jvm.java.io.File(spark_path(DATA_ROOT)))
+    except Py4JJavaError as exc:
+        raise RuntimeError("Hadoop's Windows file-access check failed. " + guidance) from exc
+    if not readable:
+        raise RuntimeError(
+            f"Hadoop cannot read the lab data directory: {DATA_ROOT}. "
+            "Check that the full lab was extracted and that this user can read it."
+        )
+
+
 def create_spark(run_root: Path) -> SparkSession:
     """Start a local session owned by this exercise, using this Python on workers."""
     if sys.version_info[:2] != (3, 12):
@@ -94,6 +124,11 @@ def create_spark(run_root: Path) -> SparkSession:
         spark.stop()
         raise RuntimeError("Expected Spark 4.2.0. Check for an old SPARK_HOME override.")
     spark.sparkContext.setLogLevel("ERROR")
+    try:
+        check_windows_hadoop(spark)
+    except Exception:
+        spark.stop()
+        raise
     atexit.register(spark.stop)
     return spark
 

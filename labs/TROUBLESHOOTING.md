@@ -85,18 +85,49 @@ Then continue with [creating the lab's virtual environment](README.md#2-create-t
 
 ## Windows status
 
-**The full lab has not yet been validated on native Windows.** The instructor has confirmed the Java installation command and reports that the notebook runs on Windows. A recorded full setup check and execution of the redesigned exercise notebooks on native Windows are still pending. Jupyter in VS Code supports Windows; the remaining risk is Spark's Hadoop filesystem support. The bundled Spark 4.2 distribution uses Hadoop 3.5.0. Hadoop's [Windows build documentation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/BUILDING.txt#L615-L618) states that its native Windows components are required. Python, uv and Java alone may therefore be insufficient for Parquet/checkpoint writes on a clean machine.
+**Native Windows currently has a confirmed filesystem blocker on the instructor’s test machine.** The notebook kernel and Spark start, but Exercise 1 fails at its first Parquet read with `NativeIO$Windows.access0`. The full lab is not yet validated on native Windows. Starting Spark or running `spark.range(...).show()` does not establish that file access works.
 
-Before distributing a native Windows setup as class-ready, the instructor must supply or approve a matching Hadoop 3.5.0 Windows build (`winutils.exe` and `hadoop.dll`, with its required runtime libraries), configure `HADOOP_HOME` and its `bin` directory on PATH, and run the setup check on a representative attendee machine. This project does not download unverified native binaries. Do not mix binaries from older Hadoop releases.
+## Windows native Hadoop
 
-If native setup proves impractical, the same uv project can be evaluated in WSL without Docker. WSL has not been tested here and is not a prerequisite currently assumed for attendees. Keep this deployment choice out of the teaching slides.
+The locked Spark 4.2.0 distribution includes Hadoop 3.5.0 Java libraries. Native Windows also needs a matching `hadoop.dll`, `winutils.exe` and the runtime libraries required by that build. uv and the JDK installer do not install these. Hadoop’s [Windows build instructions](https://github.com/apache/hadoop/blob/rel/release-3.5.0/BUILDING.txt#L615-L618) describe the native components as required.
+
+### `UnsatisfiedLinkError: NativeIO$Windows.access0`
+
+The Java runtime cannot resolve a native Windows file-access function. The Hadoop DLL may be absent, incompatible with the loaded Hadoop/Java architecture, or unable to load because a dependency is missing. `winutils.exe` alone cannot supply this DLL function. Hadoop’s [file-access implementation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/fs/FileUtil.java) calls it while checking local paths, before Parquet rows are read.
+
+1. In the VS Code PowerShell terminal, inspect the current environment:
+
+   ```powershell
+   $env:HADOOP_HOME
+   where.exe winutils
+   where.exe hadoop.dll
+   ```
+
+   Blank `HADOOP_HOME` or a “could not find files” result is a useful clue. Finding the files does not prove that Java can load them or that their versions match.
+
+2. Use an instructor-approved Hadoop **3.5.0** Windows build matching the Java architecture, including both native files and its runtime dependencies. **This repository does not yet supply a validated build or download link.** The instructor must provide and test one before native Windows can be the workshop default. Do not mix files from unrelated Hadoop releases.
+
+3. With that build installed, set `HADOOP_HOME` to its root directory and add its `bin` directory to your user PATH. For example, a build at `C:\tools\hadoop-3.5.0` would have these files:
+
+   ```text
+   C:\tools\hadoop-3.5.0\bin\hadoop.dll
+   C:\tools\hadoop-3.5.0\bin\winutils.exe
+   ```
+
+   Use your actual installation location. Do not copy the DLL into the JDK directory. Fully exit VS Code and reopen it after changing user environment variables; the running Java process will not pick up a new PATH. Restarting only the failed cell is insufficient.
+
+4. From **labs**, run `uv run --locked check_setup.py`. Require **Setup check passed**, which includes Parquet reads/writes and streaming checkpoint recovery, before resuming the notebook. The shared session helper now detects missing native support during Setup and keeps the underlying Java error when a file-access call fails.
+
+If the files are present but loading still fails, keep the full setup-check output and check the build’s architecture and dependent DLLs. Running VS Code as administrator does not supply a missing native function. Keep your exercise answers and existing checkpoints; changing the read expression or deleting data will not repair this dependency.
+
+The same uv project could be evaluated in WSL without Docker if native setup proves impractical. WSL has not been tested here and remains a separate environment choice, not a required or automatic fallback.
 
 ## Common problems
 
 - **Java missing or wrong version:** install JDK 21, correct `JAVA_HOME`/PATH and reopen VS Code. Run `java -version` again.
 - **Wrong Python or kernel:** use `uv run`, or select the project's `.venv` in VS Code. System Python and a previously selected notebook kernel may differ.
 - **Unexpected Spark version:** check for an old `SPARK_HOME` override. This project uses the Spark bundled with its locked PySpark dependency.
-- **`winutils`, `NativeIO$Windows` or `hadoop.dll` errors:** this is the native Windows dependency issue above. Keep the complete setup-check output for the instructor; a passing `spark.range(...).show()` is not sufficient.
+- **`winutils`, `NativeIO$Windows` or `hadoop.dll` errors:** follow [Windows native Hadoop](#windows-native-hadoop). Keep the complete setup-check output for the instructor; a passing `spark.range(...).show()` is not sufficient.
 - **Hard-link or file permission error:** keep the project in a writable local NTFS/APFS/ext4 folder. The arrival publisher requires hard-link support.
 - **Interrupted interactive run:** stop the query or call `spark.stop()` before running setup again. The setup cell creates a new run rather than deleting old checkpoint files.
 
