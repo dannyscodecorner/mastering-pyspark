@@ -50,9 +50,9 @@ Open [hands_on.py](hands_on.py) from the Explorer sidebar. Open the **Command Pa
 Check the interpreter's path belongs to this lab:
 
 | Operating system | Python executable inside `labs` |
-| --- | --- |
-| Windows | `.venv\Scripts\python.exe` |
-| macOS / Linux | `.venv/bin/python` |
+| ---------------- | ------------------------------- |
+| Windows          | `.venv\Scripts\python.exe`      |
+| macOS / Linux    | `.venv/bin/python`              |
 
 If `.venv` is missing from the list, see [VS Code setup help](TROUBLESHOOTING.md#vs-code-cells-and-kernels).
 
