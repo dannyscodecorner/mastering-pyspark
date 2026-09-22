@@ -5,7 +5,7 @@ Read and clean Parquet data, build a sales report, then run the same pipeline as
 ## Dependencies
 
 1. **Java 21 (JDK)** — follow the [Java installation steps](TROUBLESHOOTING.md#java) for your operating system.
-2. **[VS Code](https://code.visualstudio.com/download)** — enable the **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** and **[Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)** extensions.
+2. **[VS Code](https://code.visualstudio.com/download)** — install and enable the **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** and **[Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)** extensions.
 3. **[Git](https://git-scm.com/install/)** — needed to clone the repository; optional if you download the ZIP instead.
 4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)** — install uv ([Windows steps](TROUBLESHOOTING.md#uv-on-windows)); it downloads Python 3.12 during setup if needed.
 
@@ -43,7 +43,20 @@ uv run --locked check_setup.py
 
 **Windows:** native Windows setup is not yet validated. Read the [Windows notes](TROUBLESHOOTING.md#windows-status) before class.
 
-## 3. Select the lab's Python in VS Code
+## 3. Install the VS Code extensions
+
+`uv sync` installs the Python packages in `.venv`. The editor also needs its own **Python** and **Jupyter** extensions installed.
+
+1. Open the **Extensions** view: **Ctrl+Shift+X** on Windows/Linux or **Cmd+Shift+X** on macOS.
+2. Search for `@id:ms-python.python`. Open **Python** by **Microsoft** and click **Install** if it is missing.
+3. Search for `@id:ms-toolsai.jupyter`. Open **Jupyter** by **Microsoft** and click **Install**. If either extension is already installed but disabled, choose **Enable**.
+4. Wait for installation to finish and follow any **Restart Extensions** or reload prompt.
+
+If VS Code shows a notification recommending **Jupyter**, its **Install** button does the same thing. A menu entry saying **Install the Jupyter extension** means this editor setup is still missing.
+
+Reopen [hands_on.py](hands_on.py). You should now see **Run Cell** links above the `# %%` code-cell markers. If they are still missing, see [VS Code setup help](TROUBLESHOOTING.md#vs-code-cells-and-kernels).
+
+## 4. Select the lab's Python in VS Code
 
 Open [hands_on.py](hands_on.py) from the Explorer sidebar. Open the **Command Palette** with **Ctrl+Shift+P** on Windows/Linux or **Cmd+Shift+P** on macOS. Run **Python: Select Interpreter** and choose the **Python 3.12** environment in the lab's **.venv** folder.
 
@@ -56,7 +69,7 @@ Check the interpreter's path belongs to this lab:
 
 If `.venv` is missing from the list, see [VS Code setup help](TROUBLESHOOTING.md#vs-code-cells-and-kernels).
 
-## 4. Run the first cell, then the exercises
+## 5. Run the first cell, then the exercises
 
 The `# %%` lines in `hands_on.py` divide the file into cells. Each code cell has a **Run Cell** link above it. Cells share a Python session, so later cells can use variables created earlier.
 
