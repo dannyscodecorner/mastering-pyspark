@@ -31,6 +31,7 @@ class Exercise(NamedTuple):
 
 
 EXERCISES = {
+    "0": Exercise("00-spark-session", "Create a SparkSession", 0, "", (5, 0)),
     "1": Exercise("01-inspect", "Inspect the inputs", 0, "", (5, 3)),
     "2": Exercise("02-clean-keys", "Clean the keys", 0, "1", (5, 5)),
     "3": Exercise("03-validate", "Validate the sales", 2, "2", (5, 6)),
@@ -132,7 +133,7 @@ def lesson_cells(script: str, *, solved: bool = False) -> list[dict[str, str]]:
 
 
 def exercise_ids(*, core_only: bool = False) -> list[str]:
-    """List the seven shared exercises, followed by separate optional investigations."""
+    """List the shared exercises, interleaving their optional investigations."""
     core = [key for key in EXERCISES if key.isdigit()]
     if core_only:
         return core
@@ -160,7 +161,7 @@ def teaching_groups(cells: list[dict[str, str]]) -> dict[str, list[dict[str, str
             current = identifier.removeprefix("exercise-")
         elif identifier.startswith("extension-"):
             current = identifier.removeprefix("extension-")
-        elif identifier in {"extensions", "cleanup"}:
+        elif identifier in {"setup", "extensions", "cleanup"}:
             current = None
         if current is not None:
             result.setdefault(current, []).append(cell)
@@ -176,6 +177,17 @@ def notebook_cell(
 
 def setup_source(exercise: str, *, solved: bool) -> str:
     """Start a session and load only the learner functions this exercise needs."""
+    if exercise == "0":
+        return "\n".join(
+            [
+                "import os",
+                "import sys",
+                "",
+                "from pyspark.sql import SparkSession",
+                "",
+                'print("Notebook Python:", sys.executable)',
+            ]
+        )
     lines = [
         "from pathlib import Path",
         "import sys",
@@ -272,6 +284,8 @@ def setup_source(exercise: str, *, solved: bool) -> str:
 
 def finish_source(exercise: str) -> str:
     """Save core outputs and stop this session without depending on optional work."""
+    if exercise == "0":
+        return 'spark.stop()\nprint("Spark stopped; the notebook Python kernel is still running.")'
     save = {
         "2": "workspace.save(product_key, clean_products)\n",
         "3": "workspace.save(clean_sales, accepted_sales, rejected_sales)\n",
@@ -299,7 +313,7 @@ def relative_link(exercise: str, destination: str, *, solved: bool) -> str:
 def rewrite_links(source: str, exercise: str, *, solved: bool) -> str:
     """Point local help, solutions and topic links at one exercise-based tree."""
     folder = "solutions" if solved else "notebooks"
-    for filename in ("README.md", "RECOVERY.md", "API-REFERENCE.md"):
+    for filename in ("README.md", "RECOVERY.md", "API-REFERENCE.md", "workshop_runtime.py"):
         source = source.replace(
             f"({filename}", f"({relative_link(exercise, filename, solved=solved)}"
         )
@@ -325,7 +339,10 @@ def introduction(exercise: str, *, solved: bool) -> dict[str, str]:
     )
     source = f"# {title}\n\n**{edition}** · [All exercises]({relative_link(exercise, 'index.html', solved=solved)}) · [Setup](README.md)\n\n"
     if exercise.isdigit():
-        source += f"**Core: about {spec.minutes[0]} minutes.** The same baseline for everyone. [Optional zoom-in](#zoom): about {spec.minutes[1]} extra minutes; choose it here if the topic interests you.\n\n"
+        source += f"**Core: about {spec.minutes[0]} minutes.** The same baseline for everyone."
+        if spec.minutes[1]:
+            source += f" [Optional zoom-in](#zoom): about {spec.minutes[1]} extra minutes; choose it here if the topic interests you."
+        source += "\n\n"
     else:
         prerequisite = EXERCISES[spec.after]
         link = relative_link(
@@ -334,11 +351,19 @@ def introduction(exercise: str, *, solved: bool) -> dict[str, str]:
             solved=solved,
         )
         source += f"Optional. Complete [Exercise {spec.after}]({link}) and its **Save and finish** cell first. This investigation uses the same saved work; it does not replace your core pipeline.\n\n"
-    if solved:
-        source += "Completed answers use a separate solution workspace and do not replace participant work.\n\n"
+    if exercise == "0":
+        source += "Create a local SparkSession, run a small job, then stop Spark. "
+        if solved:
+            source += "Saved output labels the author's interpreter path as `<validation-python>`; running the cell yourself prints your actual path. "
+        else:
+            source += "Replace `None` in **Your code** with your builder expression. "
+        source += "Run cells in order and end with **Finish — stop Spark**. This exercise does not save pipeline functions."
     else:
-        source += "Complete **Your code**, run the **Check** cells, and open hints when needed. Replace `todo(...)` with your answer. Do not use **Run All** while tasks remain unfinished.\n\n"
-    source += "Run the supplied setup first. End with **Save and finish**; the next notebook loads your saved functions, so this kernel can be closed."
+        if solved:
+            source += "Completed answers use a separate solution workspace and do not replace participant work.\n\n"
+        else:
+            source += "Complete **Your code**, run the **Check** cells, and open hints when needed. Replace `todo(...)` with your answer. Do not use **Run All** while tasks remain unfinished.\n\n"
+        source += "Run the supplied setup first. End with **Save and finish**; the next notebook loads your saved functions, so this kernel can be closed."
     return notebook_cell("notebook-intro", "markdown", source, "reading")
 
 
@@ -408,23 +433,28 @@ def exercise_cells(script: str, exercise: str, *, solved: bool = False) -> list[
         ]
     core = [cell for cell in body if cell["depth"] == "core"]
     optional = [cell for cell in body if cell["depth"] == "zoom"]
-    if exercise.isdigit():
+    if exercise.isdigit() and optional:
         core.extend(zoom_cells(exercise, optional))
     elif optional:
         raise ValueError("A separate investigation should not contain a second depth selector")
+    setup_heading = "## Setup — supplied\n\nSelect the lab's `.venv` kernel. Stop Spark in the previous notebook before closing it. This uses the `create_spark` helper explained in [Exercise 0](#exercise-0). Missing earlier work? Use an explicit [catch-up step](RECOVERY.md)."
+    finish_heading = '<a id="finish"></a>\n## Save and finish\n\nRun once the core checks pass, whether or not you did the optional section. This saves your functions or stream handoff, then stops this notebook’s queries and Spark. Your work remains in `learner_work/`.'
+    if exercise == "0":
+        setup_heading = "## Setup — check the Python kernel\n\nComplete the [installation and setup check](README.md#2-create-the-virtual-environment) first. Select the lab's `.venv` kernel, then run this cell. On Windows the printed path should end in `labs\\.venv\\Scripts\\python.exe`; on macOS/Linux, `labs/.venv/bin/python`. If it points at uv's base Python instead, use [kernel selection help](README.md#4-open-exercise-0-and-select-the-kernel). Importing `SparkSession` makes the class available; this cell does not start Spark."
+        finish_heading = '<a id="finish"></a>\n## Finish — stop Spark\n\nRun the cell below after the checks. In this local lab, `spark.stop()` stops the underlying SparkContext and releases its resources. The Python kernel keeps running, but the stopped session and its DataFrames cannot run more work. To repeat this exercise, run the builder and following cells again. [SparkSession.stop documentation](https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.SparkSession.stop.html).'
     cells = [
         introduction(exercise, solved=solved),
         notebook_cell(
             "setup-heading",
             "markdown",
-            "## Setup — supplied\n\nSelect the lab's `.venv` kernel. Close the previous exercise after **Save and finish**. Missing earlier work? Use an explicit [catch-up step](RECOVERY.md).",
+            setup_heading,
         ),
         notebook_cell("notebook-setup", "code", setup_source(exercise, solved=solved)),
         *core,
         notebook_cell(
             "finish-heading",
             "markdown",
-            '<a id="finish"></a>\n## Save and finish\n\nRun once the core checks pass, whether or not you did the optional section. This saves your functions or stream handoff, then stops this notebook’s queries and Spark. Your work remains in `learner_work/`.',
+            finish_heading,
         ),
         notebook_cell("save-and-finish", "code", finish_source(exercise)),
         next_steps(exercise, solved=solved),

@@ -73,7 +73,7 @@ key = F.upper(F.trim(F.col("product_id")))"""),
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("108"),
+            span("109"),
         ]),
         ],
         notes="Callback: you have seen functions as F earlier; now use it. F.col refers to a column; F.lit creates a literal expression, which we use later for unmapped. Use select and withColumn to apply the expressions. A Python helper returning Column constructs an expression on the driver; Spark evaluates its built-in operations. This differs from a Python UDF, whose custom code executes on values in Python workers. The lesson includes that explanation; the pipeline needs no UDF. Apply this normalization policy to the provided ASCII keys, without claiming it suits every business identifier. https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/functions.html",

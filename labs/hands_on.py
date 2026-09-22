@@ -1,16 +1,121 @@
-"""Authoring source and complete reference; learners open notebooks/01-inspect.ipynb.
+"""Authoring source and complete reference; learners open notebooks/00-spark-session.ipynb.
 
 Each task has one learner starter. Optional zoom-ins enrich the same exercise;
 separate deeper investigations reuse the same saved learner functions.
 """
 
+import os
+import sys
+from pathlib import Path
+from uuid import uuid4
+
+from pyspark.sql import Column, DataFrame, SparkSession
+from pyspark.sql import functions as F
+
+import lab_checks as check
+from arrival_files import publish_arrival
+from workshop_runtime import DATA_ROOT, create_spark, finish_query, new_run, spark_path
 
 # %% [markdown] id=welcome
 # # Working with PySpark
 #
-# Seven shared exercises. Complete the core for an approximately 60-minute lab; choose optional zoom-ins within each exercise for more depth. Larger investigations have their own notebooks. [Start here](README.md).
+# Start with a SparkSession in Exercise 0, then build the pipeline in Exercises 1–7. Complete the core for an approximately 60-minute lab; choose optional zoom-ins within each exercise for more depth. Larger investigations have their own notebooks. [Start here](README.md).
 #
 # The data is synthetic. Amounts use one unspecified currency; timestamps are UTC.
+
+
+# %% [markdown] id=exercise-0 role=prompt
+# <a id="exercise-0"></a>
+# ## Exercise 0 — Create a SparkSession
+#
+# **Where does the `spark` in `spark.read.parquet(...)` come from?**
+#
+# Your notebook kernel is a running Python process. Selecting that kernel makes the installed PySpark package available; it does not create a SparkSession. `SparkSession` is the entry point for creating DataFrames, reading data and running SQL. We conventionally name the session `spark`.
+#
+# In this lab, Spark runs locally on your laptop. PySpark starts the Java-based Spark runtime when we create the session. This is why both Python and Java were needed during installation.
+
+
+# %% [markdown] id=session-settings-label
+# ### Supplied local settings
+#
+# Run this cell before starting Spark. `PYSPARK_PYTHON` tells Spark which Python to use for Python workers. `SPARK_LOCAL_IP` sets Spark’s local IP to the loopback address for this laptop exercise. Neither line starts Spark.
+
+
+# %% id=session-settings
+os.environ["PYSPARK_PYTHON"] = sys.executable
+os.environ["SPARK_LOCAL_IP"] = "127.0.0.1"
+
+
+# %% [markdown] id=session-builder-prompt role=prompt
+# ### Your code — create the session
+#
+# Build a session using the pieces below. Use two local worker threads, give the application a name of your choice, and assign the resulting session to `spark`.
+#
+# | Piece | What it does |
+# |---|---|
+# | `SparkSession.builder` | Begins configuring a session. |
+# | `.master("local[2]")` | Runs Spark on this machine with two worker threads. This does not create two machines or two executors. |
+# | `.appName("...")` | Gives the Spark application a recognisable name. |
+# | `.getOrCreate()` | Returns an existing session, or starts one when none exists. |
+#
+# Chain these calls together. The builder configures; `getOrCreate()` gives you the session. See the [builder documentation](https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.SparkSession.builder.getOrCreate.html) and [local execution settings](https://spark.apache.org/docs/4.2.0/submitting-applications.html#master-urls).
+
+
+# %% [starter] id=session-builder-starter replaces=session-builder
+# # Replace None with your SparkSession builder expression.
+# spark = None
+
+
+# %% id=session-builder role=task
+spark = SparkSession.builder.master("local[2]").appName("My first SparkSession").getOrCreate()
+
+
+# %% [markdown] id=session-hint role=hint
+# <details>
+# <summary>Need a nudge?</summary>
+#
+# Start from `SparkSession.builder`. Each configuration method returns the builder, so you can continue the chain with the next method. Finish with the method that returns the session. Parentheses let you put the chain on several lines.
+#
+# </details>
+
+
+# %% [markdown] id=session-check-label
+# ### Check — ask Spark to do some work
+#
+# The next cell checks your session and runs a tiny DataFrame. `range(3)` describes rows with IDs 0, 1 and 2; `show()` asks Spark to compute and display them. `count()` returns the number of rows to Python. Creating a session alone does not run our sales pipeline.
+#
+# The first startup can take a little time. Wait for the cell to finish. Java or connection error? Use [setup troubleshooting](README.md#2-create-the-virtual-environment); a running notebook kernel alone does not prove Spark is ready.
+
+
+# %% id=check-session role=check
+assert isinstance(spark, SparkSession), "Create spark with your builder expression first."
+assert spark.sparkContext.master == "local[2]", 'Use .master("local[2]") for this exercise.'
+print(f"Spark {spark.version}; application: {spark.sparkContext.appName}")
+spark.sparkContext.setLogLevel("ERROR")
+example = spark.range(3)
+example.show()
+assert example.count() == 3
+print("Session check passed")
+
+
+# %% [markdown] id=session-reuse-label
+# ### Predict, then run
+#
+# If we call `getOrCreate()` again, do we get a second running Spark application? Predict the result of `same_session is spark` before running this supplied cell.
+
+
+# %% id=session-reuse
+same_session = SparkSession.builder.getOrCreate()
+print("Same session:", same_session is spark)
+assert same_session is spark
+
+
+# %% [markdown] id=session-bridge
+# ### Why the next notebooks use `create_spark`
+#
+# From Exercise 1 onward, the supplied Setup cell calls `spark = create_spark(RUN_ROOT)`. This is a helper written for this lab, not a PySpark API. It uses the same builder pattern you just used, then applies the lab defaults: local threads, Python and networking settings, UTC timestamps, two shuffle partitions and a per-run warehouse directory. It also checks the installed versions and reduces log noise.
+#
+# You can read the helper in [workshop_runtime.py](workshop_runtime.py). It returns a normal `SparkSession`. Later exercises use it so you can concentrate on the data; they start their own sessions and load your saved transformation functions. No live session is passed between notebooks.
 
 
 # %% [markdown] id=setup
@@ -21,16 +126,8 @@ separate deeper investigations reuse the same saved learner functions.
 # If you already have a session running, run the [cleanup cell](#cleanup) before repeating setup. To replay streaming, use the [stream recovery instructions](RECOVERY.md#exercise-6); do not delete a checkpoint or publish the same arrival twice.
 
 # %% id=setup-code
-from pathlib import Path
-from uuid import uuid4
-
-from pyspark.sql import Column, DataFrame
-from pyspark.sql import functions as F
-
-import lab_checks as check
-from arrival_files import publish_arrival
-from workshop_runtime import DATA_ROOT, create_spark, finish_query, new_run, spark_path
-
+# The runnable authoring reference also closes the introductory session.
+spark.stop()
 RUN_ROOT = new_run()
 INCOMING = RUN_ROOT / "incoming"
 INCOMING.mkdir()

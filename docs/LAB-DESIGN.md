@@ -8,7 +8,7 @@ The exercise is the stable unit. Every core exercise has one learner notebook an
 
 ## Depth within an exercise
 
-- **Core:** a complete baseline across seven exercises, aiming for about 60 minutes including discussion and catch-up. Supplied wrappers and operational code leave participants to make the central decisions and write selected expressions.
+- **Core:** a complete baseline across Exercises 0–7, aiming for about 60 minutes including discussion and catch-up. Supplied wrappers and operational code leave participants to make the central decisions and write selected expressions.
 - **Optional zoom-in:** a clearly separated section after that exercise's core checks, adding approximately 30 minutes across the chapter. A participant can choose it for one topic and skip it for another.
 - **Deeper investigation:** a separate notebook only where a topic warrants its own context and task. Links live beside the relevant exercise, with explicit prerequisites. There is no detailed route to switch into.
 
@@ -16,6 +16,7 @@ Installation is pre-work. The timing figures below are facilitation budgets, not
 
 | Exercise | Core | Optional zoom-in | Extra time |
 |---|---:|---|---:|
+| 0. Create a SparkSession | 5 min | — | — |
 | 1. Inspect the inputs | 5 min | Row grain, stored schemas and meaningful values | 3 min |
 | 2. Clean the keys | 5 min | Column expressions, renaming/dropping and immutability | 5 min |
 | 3. Validate the sales | 5 min | Build tolerant decimal/timestamp parsing expressions | 6 min |
@@ -23,7 +24,7 @@ Installation is pre-work. The timing figures below are facilitation budgets, not
 | 5. Inspect and save | 5 min | Read the formatted physical plan | 4 min |
 | 6. Process arriving files | 10 min | Inspect the DataFrame, writer, query and last progress | 4 min |
 | 7. Resume from a checkpoint | 5 min | Inspect checkpoint contents and explain recovery | 3 min |
-| Discussion, catch-up and finish | 15 min | | |
+| Discussion, catch-up and finish | 10 min | | |
 | **Total** | **60 min** | **With all zoom-ins** | **90 min overall** |
 
 ## Notebook shape
@@ -36,12 +37,15 @@ Installation is pre-work. The timing figures below are facilitation budgets, not
 6. Save the participant's functions and stop this notebook's SparkSession.
 7. Link to the next exercise and related deeper investigations using the same saved work.
 
+Exercise 0 introduces the lifecycle before this shared pattern: its setup imports `SparkSession` and reports the kernel, but the learner creates the session explicitly. It has no optional zoom-in or saved-function dependency; its Finish cell only stops Spark. Later notebooks link back to its explanation of the `create_spark` helper.
+
 Do not put completed answers in learner task cells or save execution outputs in distributed learner notebooks. Expected results and operational scaffolding are supplied deliberately. Worked answers are separately accessible for comparison after an attempt. Participants' agents help with setup and nudges, not completed answers.
 
 ## Core contracts and handoffs
 
 Use the prepared eight-row sales fixture and three-row product lookup. Preserve the original data. One raw sales row represents an attempted sale; one lookup row represents a product category.
 
+- Exercise 0 creates a local SparkSession, runs a small DataFrame, observes `getOrCreate()` reuse and stops Spark. No live session or function definitions are passed to Exercise 1.
 - Exercise 1 discovers malformed values, string-typed amount/time fields and inconsistent keys.
 - Exercise 2 saves `product_key` and `clean_products`. The supplied lookup wrapper uses the participant's key expression.
 - Exercise 3 saves `clean_sales`, `accepted_sales` and `rejected_sales`. Missing keys, invalid/missing amounts and invalid/missing timestamps are rejected. A valid key absent from the lookup is accepted. Retain raw values and a rejection reason.
@@ -83,6 +87,7 @@ The generated layout is:
 ```text
 labs/
   notebooks/
+    00-spark-session.ipynb
     01-inspect.ipynb
     ...
     07-checkpoint.ipynb
@@ -95,7 +100,7 @@ labs/
 
 The generator creates one learner and one solution notebook per exercise, with lightweight HTML previews. There are no time-based directories. The README and browser index lead with exercise names and offer deeper links in context.
 
-Validate the baseline with `--execute --core-only`: seven fresh kernels, skipping every optional section. Then run `--execute`: all zoom-ins and deeper notebooks, visiting investigations at their associated exercise boundaries. This proves that optional work can be skipped and that exploring it does not disrupt the remaining core. Blank learner worksheets deliberately cannot pass Run All.
+Validate the baseline with `--execute --core-only`: eight fresh kernels, skipping every optional section. Then run `--execute`: all zoom-ins and deeper notebooks, visiting investigations at their associated exercise boundaries. This proves that optional work can be skipped and that exploring it does not disrupt the remaining core. Blank learner worksheets deliberately cannot pass Run All.
 
 Tests cover one starter per task, learner-output exclusion, one notebook per exercise, shared learner functions, solution isolation, recovery backups, minimal topic prerequisites and checkpoint boundaries. `pipeline.py` remains the reference module and chapter 09 handoff; AST checks keep its seven transformation functions aligned with the lesson.
 
@@ -103,7 +108,7 @@ Build and verify the native Incan course after publishing-source changes. Check 
 
 ## Slides
 
-Keep the established slide IDs. Chapter 08 opens with the shared outcome and seven exercises, then setup, then the core task briefs. Presenter notes identify optional depth. The checkpoint slide links directly to the recap; the daily report and persisted output remain clearly optional. Use one deck and one notebook sequence.
+Keep the established slide IDs. Chapter 08 opens with the shared outcome and Exercises 0–7, then installation setup, then the SparkSession introduction and pipeline task briefs. Presenter notes identify optional depth. The checkpoint slide links directly to the recap; the daily report and persisted output remain clearly optional. Use one deck and one notebook sequence.
 
 ## Reuse of the original course
 

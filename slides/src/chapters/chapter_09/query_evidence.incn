@@ -39,7 +39,7 @@ pub def slide_query_evidence() -> Slide:
             span("CONTENT SKELETON", style="draft-label"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("121"),
+            span("122"),
         ]),
         ],
         notes="Deferred from former slide39. Dedicated monitoring subsection after Spark in AWS Glue. Use the same query when we build this: inspect runtime version and logging setup, find the run, read execution evidence, compare AQE plans and investigate skew/retries. Not part of section05. Glue3+ standard event logs support console UI; permissions and runtime-specific limits must be checked when implementing. Source: https://docs.aws.amazon.com/glue/latest/dg/monitor-spark-ui.html",

@@ -32,6 +32,6 @@ The relocated lab’s locked setup check passed on macOS: a Python worker, prepa
 
 ## Next course work
 
-Continue editing the notebook exercises and chapter 08 in this repository. The lab now has one learner notebook and one solution per exercise, with optional zoom-ins and linked deeper investigations; keep its seven core exercise numbers and expected results aligned with the slides. Chapter 09 remains the place to develop the AWS Glue deployment story.
+Continue editing the notebook exercises and chapter 08 in this repository. The lab now has one learner notebook and one solution per exercise, with optional zoom-ins and linked deeper investigations; keep its core exercise numbers (0–7) and expected results aligned with the slides. Chapter 09 remains the place to develop the AWS Glue deployment story.
 
 The repository was prepared locally. GitHub publication and hosting configuration are separate from this baseline.

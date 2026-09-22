@@ -1,0 +1,254 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Create a SparkSession</title><link rel="stylesheet" href="../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Exercise-0-%E2%80%94-Create-a-SparkSession">Exercise 0 — Create a SparkSession<a class="anchor-link" href="#Exercise-0-%E2%80%94-Create-a-SparkSession">¶</a></h1><p><strong>Worked solution</strong> · <a href="../index.html">All exercises</a> · <a href="../README.md">Setup</a></p>
+<p><strong>Core: about 5 minutes.</strong> The same baseline for everyone.</p>
+<p>Create a local SparkSession, run a small job, then stop Spark. Saved output labels the author's interpreter path as <code>&lt;validation-python&gt;</code>; running the cell yourself prints your actual path. Run cells in order and end with <strong>Finish — stop Spark</strong>. This exercise does not save pipeline functions.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=setup-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setup-%E2%80%94-check-the-Python-kernel">Setup — check the Python kernel<a class="anchor-link" href="#Setup-%E2%80%94-check-the-Python-kernel">¶</a></h2><p>Complete the <a href="../README.md#2-create-the-virtual-environment">installation and setup check</a> first. Select the lab's <code>.venv</code> kernel, then run this cell. On Windows the printed path should end in <code>labs\.venv\Scripts\python.exe</code>; on macOS/Linux, <code>labs/.venv/bin/python</code>. If it points at uv's base Python instead, use <a href="../README.md#4-open-exercise-0-and-select-the-kernel">kernel selection help</a>. Importing <code>SparkSession</code> makes the class available; this cell does not start Spark.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=notebook-setup">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">SparkSession</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Notebook Python:"</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Notebook Python: &lt;validation-python&gt;
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_prompt" id="cell-id=exercise-0"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="exercise-0"></a></p>
+<h2 id="Your-task">Your task<a class="anchor-link" href="#Your-task">¶</a></h2><p><strong>Where does the <code>spark</code> in <code>spark.read.parquet(...)</code> come from?</strong></p>
+<p>Your notebook kernel is a running Python process. Selecting that kernel makes the installed PySpark package available; it does not create a SparkSession. <code>SparkSession</code> is the entry point for creating DataFrames, reading data and running SQL. We conventionally name the session <code>spark</code>.</p>
+<p>In this lab, Spark runs locally on your laptop. PySpark starts the Java-based Spark runtime when we create the session. This is why both Python and Java were needed during installation.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=session-settings-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Supplied-local-settings">Supplied local settings<a class="anchor-link" href="#Supplied-local-settings">¶</a></h3><p>Run this cell before starting Spark. <code>PYSPARK_PYTHON</code> tells Spark which Python to use for Python workers. <code>SPARK_LOCAL_IP</code> sets Spark’s local IP to the loopback address for this laptop exercise. Neither line starts Spark.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=session-settings">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"PYSPARK_PYTHON"</span><span class="p">]</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">executable</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"SPARK_LOCAL_IP"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"127.0.0.1"</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_prompt" id="cell-id=session-builder-prompt"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-code-%E2%80%94-create-the-session">Your code — create the session<a class="anchor-link" href="#Your-code-%E2%80%94-create-the-session">¶</a></h3><p>Build a session using the pieces below. Use two local worker threads, give the application a name of your choice, and assign the resulting session to <code>spark</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SparkSession.builder</code></td>
+<td>Begins configuring a session.</td>
+</tr>
+<tr>
+<td><code>.master("local[2]")</code></td>
+<td>Runs Spark on this machine with two worker threads. This does not create two machines or two executors.</td>
+</tr>
+<tr>
+<td><code>.appName("...")</code></td>
+<td>Gives the Spark application a recognisable name.</td>
+</tr>
+<tr>
+<td><code>.getOrCreate()</code></td>
+<td>Returns an existing session, or starts one when none exists.</td>
+</tr>
+</tbody>
+</table>
+<p>Chain these calls together. The builder configures; <code>getOrCreate()</code> gives you the session. See the <a href="https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.SparkSession.builder.getOrCreate.html">builder documentation</a> and <a href="https://spark.apache.org/docs/4.2.0/submitting-applications.html#master-urls">local execution settings</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_task" id="cell-id=session-builder">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">spark</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">master</span><span class="p">(</span><span class="s2">"local[2]"</span><span class="p">)</span><span class="o">.</span><span class="n">appName</span><span class="p">(</span><span class="s2">"My first SparkSession"</span><span class="p">)</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>WARNING: Using incubator modules: jdk.incubator.vector
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/09/22 19:22:58 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_hint" id="cell-id=session-hint"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<details>
+<summary>Need a nudge?</summary>
+<p>Start from <code>SparkSession.builder</code>. Each configuration method returns the builder, so you can continue the chain with the next method. Finish with the method that returns the session. Parentheses let you put the chain on several lines.</p>
+</details>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=session-check-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Check-%E2%80%94-ask-Spark-to-do-some-work">Check — ask Spark to do some work<a class="anchor-link" href="#Check-%E2%80%94-ask-Spark-to-do-some-work">¶</a></h3><p>The next cell checks your session and runs a tiny DataFrame. <code>range(3)</code> describes rows with IDs 0, 1 and 2; <code>show()</code> asks Spark to compute and display them. <code>count()</code> returns the number of rows to Python. Creating a session alone does not run our sales pipeline.</p>
+<p>The first startup can take a little time. Wait for the cell to finish. Java or connection error? Use <a href="../README.md#2-create-the-virtual-environment">setup troubleshooting</a>; a running notebook kernel alone does not prove Spark is ready.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_check" id="cell-id=check-session">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spark</span><span class="p">,</span> <span class="n">SparkSession</span><span class="p">),</span> <span class="s2">"Create spark with your builder expression first."</span>
+<span class="k">assert</span> <span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">master</span> <span class="o">==</span> <span class="s2">"local[2]"</span><span class="p">,</span> <span class="s1">'Use .master("local[2]") for this exercise.'</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">; application: </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">appName</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">.</span><span class="n">setLogLevel</span><span class="p">(</span><span class="s2">"ERROR"</span><span class="p">)</span>
+<span class="n">example</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">example</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">example</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Session check passed"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Spark 4.2.0; application: My first SparkSession
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+---+
+| id|
++---+
+|  0|
+|  1|
+|  2|
++---+
+
+Session check passed
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=session-reuse-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Predict,-then-run">Predict, then run<a class="anchor-link" href="#Predict,-then-run">¶</a></h3><p>If we call <code>getOrCreate()</code> again, do we get a second running Spark application? Predict the result of <code>same_session is spark</code> before running this supplied cell.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=session-reuse">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">same_session</span> <span class="o">=</span> <span class="n">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">.</span><span class="n">getOrCreate</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Same session:"</span><span class="p">,</span> <span class="n">same_session</span> <span class="ow">is</span> <span class="n">spark</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">same_session</span> <span class="ow">is</span> <span class="n">spark</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Same session: True
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=session-bridge"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Why-the-next-notebooks-use-create_spark">Why the next notebooks use <code>create_spark</code><a class="anchor-link" href="#Why-the-next-notebooks-use-create_spark">¶</a></h3><p>From Exercise 1 onward, the supplied Setup cell calls <code>spark = create_spark(RUN_ROOT)</code>. This is a helper written for this lab, not a PySpark API. It uses the same builder pattern you just used, then applies the lab defaults: local threads, Python and networking settings, UTC timestamps, two shuffle partitions and a per-run warehouse directory. It also checks the installed versions and reduces log noise.</p>
+<p>You can read the helper in <a href="../workshop_runtime.py">workshop_runtime.py</a>. It returns a normal <code>SparkSession</code>. Later exercises use it so you can concentrate on the data; they start their own sessions and load your saved transformation functions. No live session is passed between notebooks.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=finish-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="finish"></a></p>
+<h2 id="Finish-%E2%80%94-stop-Spark">Finish — stop Spark<a class="anchor-link" href="#Finish-%E2%80%94-stop-Spark">¶</a></h2><p>Run the cell below after the checks. In this local lab, <code>spark.stop()</code> stops the underlying SparkContext and releases its resources. The Python kernel keeps running, but the stopped session and its DataFrames cannot run more work. To repeat this exercise, run the builder and following cells again. <a href="https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.SparkSession.stop.html">SparkSession.stop documentation</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=save-and-finish">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Spark stopped; the notebook Python kernel is still running."</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Spark stopped; the notebook Python kernel is still running.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=next-exercise"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next: <a href="01-inspect.html">Exercise 1 — Inspect the inputs</a>.</p>
+</div>
+</div>
+</div>
+</main></body></html>

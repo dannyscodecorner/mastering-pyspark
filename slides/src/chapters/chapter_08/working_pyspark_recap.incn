@@ -41,7 +41,7 @@ pub def slide_working_pyspark_recap() -> Slide:
             prose("Next: take this pipeline to AWS Glue and configure how it runs.", style="chapter-recap-takeaway"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("116"),
+            span("117"),
         ]),
         ],
         notes="Close the concrete exercise. Eight raw records became five accepted plus three rejected. The left join retained the unmatched M1 sale. Batch and incremental category reports agree. We inspected and stopped the running query, resumed with its checkpoint, and matched the batch result. The separate Parquet stream sink is an optional extension, not a requirement of the core exercises. The tiny fixture proves behaviour and arithmetic, not performance at scale. The local project supplies the chapter08 environment; validate native Windows separately. Chapter09 owns platform configuration, dependencies, access and runtime monitoring. All helper functions are in the portable pipeline.py module.",

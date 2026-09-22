@@ -53,7 +53,7 @@ pub def slide_pyspark_streaming_files() -> Slide:
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("114"),
+            span("115"),
         ]),
         ],
         notes="Use stream_enriched before aggregation, not the changing category report. The fresh checkpoint lets this independent query consume all three prepared arrivals. AvailableNow processes the input available when it starts and then terminates. Use the supplied timeout and stop-on-timeout cleanup. Check five distinct IDs and exact category totals on readback. Batch rejection output was already written; a second streaming audit sink is an optional extension. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",

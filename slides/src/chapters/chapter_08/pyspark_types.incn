@@ -64,7 +64,7 @@ sold_at = F.try_to_timestamp("sold_at_raw", F.lit("yyyy-MM-dd HH:mm:ss"))"""),
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("109"),
+            span("110"),
         ]),
         ],
         notes="The exercise clean_sales function normalizes keys, parses the two fields and records the first rejection reason. It also checks missing/empty product keys. Invalid amount conversion should produce null, not zero. Preserve raw fields for inspection. M1 is a well-formed key with no lookup match and remains accepted; it is not one of the rejected records. Use the lab functions and checks to review the result. https://spark.apache.org/docs/4.2.0/api/python/reference/pyspark.sql/api/pyspark.sql.functions.try_to_timestamp.html",

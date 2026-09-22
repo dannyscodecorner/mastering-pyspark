@@ -47,7 +47,7 @@ saved = spark.read.parquet(spark_path(RUN_ROOT / "report"))"""),
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("111"),
+            span("112"),
         ]),
         ],
         notes="Use the existing fresh RUN_ROOT. Write the rejected DataFrame separately as well. The worked reference checks exact Decimal totals and full category rows, not just row counts. Repeated actions are intentionally simple on a tiny fixture; recall that they can request repeated work. The write returns None to Python; its side effect is the Parquet output. Keep previously created outputs intact.",

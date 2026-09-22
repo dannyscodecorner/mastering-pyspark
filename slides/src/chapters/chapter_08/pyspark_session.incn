@@ -1,0 +1,47 @@
+"""Introduce SparkSession before the pipeline exercises use the lab helper."""
+
+from surface import Frame, NodeKind, Slide, code, code_block, group, heading, node, paragraph, prose, span, text
+
+pub def slide_pyspark_session() -> Slide:
+    return Slide(
+        slug="pyspark-session",
+        title="Exercise 0 · Create a SparkSession",
+        frame=Frame.Composed,
+        styles="slide ho-lesson ho-exercise",
+        content=[
+            group([text("08 / WORKING WITH PYSPARK")], style="eyebrow"),
+            heading("Exercise 0 · Create a SparkSession", level=1),
+            group([
+                group([
+                    heading("Where does spark come from?", level=2),
+                    prose("The notebook kernel runs Python. A SparkSession gives that Python code access to Spark."),
+                    node(NodeKind.OrderedList, children=[
+                        node(NodeKind.ListItem, content="Build a session with two local worker threads and an application name."),
+                        node(NodeKind.ListItem, content="Run a small DataFrame to check it works."),
+                        node(NodeKind.ListItem, content="Try getOrCreate() again, then stop Spark."),
+                    ], style="ho-steps"),
+                ]),
+                group([
+                    heading("Build, use and stop", level=2),
+                    code_block("""from pyspark.sql import SparkSession
+
+spark = (
+    SparkSession.builder
+    .master("local[2]")
+    .appName("My first SparkSession")
+    .getOrCreate()
+)
+
+spark.range(3).show()
+spark.stop()"""),
+                ]),
+            ], style="ho-workgrid"),
+            paragraph([
+                text("Later notebooks use "),
+                code("create_spark"),
+                text(" — the same builder pattern with the lab’s defaults."),
+            ], style="ho-takeaway"),
+            node(NodeKind.Footer, children=[span("Danny’s Code Corner"), span("107")]),
+        ],
+        notes="Allow about five minutes. The kernel is Python; importing SparkSession does not start Spark. This slide is the teaching reference; learners build the expression in their own blank notebook task. local[2] means two local worker threads, not two executors. getOrCreate reuses an existing session when one is available. The supplied range/show/count check runs a small job, then learners predict the identity comparison. Finish stops the local SparkContext while the Python kernel remains alive. Explain that create_spark is our course helper, not a PySpark function: it wraps this same builder with known local defaults, version checks and cleanup. Exercise 1 starts its own session; do not suggest that the SparkSession is transferred between kernels.",
+    )

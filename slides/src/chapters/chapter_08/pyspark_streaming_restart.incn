@@ -65,7 +65,7 @@ publish_arrival(DATA_ROOT, INCOMING, 3)"""),
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("113"),
+            span("114"),
         ]),
         ],
         notes="Exercise 7 has a new notebook and kernel. Its setup loads the participant’s saved transformations and the existing stream input/checkpoint recorded at the end of Exercise 6. Start that writer, publish arrival 03, wait for input processing, and compare with the batch report. Finish saves the completed boundary for optional experiments and stops Spark. This is an orderly stop/restart, not crash injection. To finish the core, use the recap link to skip optional extensions.",

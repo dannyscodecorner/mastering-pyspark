@@ -38,7 +38,7 @@ pub def slide_production() -> Slide:
             span("CONTENT SKELETON", style="draft-label"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("119"),
+            span("120"),
         ]),
         ],
         notes="Apply the chapter08 pipeline to the selected deployment environment. This preserved outline now belongs to chapter09; develop it with the Glue runtime, permissions, dependencies and monitoring walkthrough.",

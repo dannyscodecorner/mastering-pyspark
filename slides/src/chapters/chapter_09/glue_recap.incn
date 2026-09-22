@@ -41,7 +41,7 @@ pub def slide_glue_recap() -> Slide:
             prose("Apply the same questions about execution, correctness and performance to the Glue job.", style="chapter-recap-takeaway"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("122"),
+            span("123"),
         ]),
         ],
         notes="""Draft closing points for chapter 09. Revisit after the Glue job and Spark UI walkthroughs are built. These points apply the earlier Spark material to the selected Glue environment. Verify exact runtime versions, worker behaviour, access policies and console steps when developing the demonstrations. Recovery coverage remains in the Glue overview and needs a workload-specific example.

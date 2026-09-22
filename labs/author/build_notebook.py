@@ -156,18 +156,22 @@ def execute_notebook(notebook: NotebookNode, directory: Path, *, core_only: bool
     notebook.metadata.workshop.executed_depth = "core" if core_only else "all"
 
 
+def portable_output_text(text: str, root: Path) -> str:
+    """Label author-specific paths without changing the recorded computation results."""
+    return text.replace(sys.executable, "<validation-python>").replace(str(root), "<lab-root>")
+
+
 def normalise_output_paths(notebook: NotebookNode, root: Path) -> None:
-    """Replace this machine's lab path in recorded plan output with a labelled placeholder."""
+    """Replace this machine's paths in saved output with explicit portable placeholders."""
     for cell in notebook.cells:
         for output in cell.get("outputs", []):
             if "text" in output:
-                output.text = output.text.replace(str(root), "<lab-root>")
+                output.text = portable_output_text(output.text, root)
             if "text/plain" in output.get("data", {}):
-                output.data["text/plain"] = output.data["text/plain"].replace(
-                    str(root), "<lab-root>"
-                )
+                output.data["text/plain"] = portable_output_text(output.data["text/plain"], root)
     notebook.metadata.workshop.output_path_placeholder = (
-        "<lab-root> replaces the local lab directory in saved outputs"
+        "<lab-root> replaces the local lab directory; "
+        "<validation-python> replaces the interpreter path in saved outputs"
     )
 
 
@@ -212,10 +216,13 @@ def save_index(root: Path) -> None:
             if deeper
             else ""
         )
+        timing = f"Core: about {core} minutes."
+        if zoom:
+            timing += f" Optional zoom-in: about {zoom} more minutes, in the same notebook."
         sections.append(
-            f'<section id="exercise-{key}"><h2>{key}. {html.escape(exercise.title)}</h2><p>{links}</p><p>Core: about {core} minutes · Optional zoom-in: about {zoom} more minutes, in the same notebook.</p>{extra}</section>'
+            f'<section id="exercise-{key}"><h2>{key}. {html.escape(exercise.title)}</h2><p>{links}</p><p>{timing}</p>{extra}</section>'
         )
-    body = '<h1>Working with PySpark</h1><p>Seven exercises. One sales pipeline, from Parquet inputs to a restarted stream.</p><p><strong>Start with Exercise 1.</strong> Each notebook has a complete core and an optional zoom-in. Choose more depth topic by topic; your saved work stays in one workspace.</p><p><strong>About 60 minutes:</strong> the seven core exercises, with time for discussion and catch-up. <strong>About 90 minutes:</strong> add the optional zoom-ins. <strong>At your own pace:</strong> follow the deeper investigation links beside each exercise. These budgets still need a classroom rehearsal; installation is pre-work.</p><p><a href="README.md">Setup</a> · <a href="RECOVERY.md">Catch-up help</a> · <a href="API-REFERENCE.md">Small API reference</a></p>'
+    body = '<h1>Working with PySpark</h1><p>Create a SparkSession, then build one sales pipeline from Parquet inputs to a restarted stream.</p><p><strong>Start with Exercise 0.</strong> Then work through Exercises 1–7, with optional zoom-ins inside each notebook. Choose more depth topic by topic; your saved work stays in one workspace.</p><p><strong>About 60 minutes:</strong> Exercises 0–7, with time for discussion and catch-up. <strong>About 90 minutes:</strong> add the optional zoom-ins. <strong>At your own pace:</strong> follow the deeper investigation links beside each exercise. These budgets still need a classroom rehearsal; installation is pre-work.</p><p><a href="README.md">Setup</a> · <a href="RECOVERY.md">Catch-up help</a> · <a href="API-REFERENCE.md">Small API reference</a></p>'
     body += "".join(sections)
     body += "<p>Completed answers are separate under <code>solutions/</code>. Each notebook links to its matching solution for comparison after your attempt.</p>"
     page = f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PySpark exercises</title><link rel="stylesheet" href="notebook.css"></head><body><main>{body}</main></body></html>'
@@ -245,7 +252,7 @@ def main() -> None:
     parser.add_argument(
         "--core-only",
         action="store_true",
-        help="Validate exercises 1–7 while skipping optional zoom-ins",
+        help="Validate exercises 0–7 while skipping optional zoom-ins",
     )
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]

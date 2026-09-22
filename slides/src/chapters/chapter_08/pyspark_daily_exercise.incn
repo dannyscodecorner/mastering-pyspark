@@ -73,7 +73,7 @@ pub def slide_pyspark_daily_exercise() -> Slide:
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("115"),
+            span("116"),
         ]),
         ],
         notes="Give participants time to write this variation before opening the separate daily-report solution notebook. Work on the bounded enriched DataFrame. Timestamps are UTC and all records are from September2026. The full reference checks four rows and total100. Discuss why grouping changes the grain but should not change the total. Finally run the cleanup cell to stop the local SparkSession. Keep the input, output and checkpoint folders available for inspection.",

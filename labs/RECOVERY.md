@@ -4,7 +4,7 @@ Try the collapsed hints in your exercise first. You can move on during class and
 
 ## How the notebooks connect
 
-Each notebook starts its own SparkSession and stops it at the end. **Save and finish** writes your function definitions into `learner_work/answers.py`. Later notebooks load them and reconstruct the small batch inputs. Keep helper functions self-contained: use `F`, function arguments and the previously saved helpers, rather than unrelated notebook globals.
+Exercise 0 teaches you to create and stop a SparkSession. It saves no pipeline functions. Later notebooks start their own sessions through the helper explained there and stop them at the end. **Save and finish** writes your function definitions into `learner_work/answers.py`. Later notebooks load them and reconstruct the small batch inputs. Keep helper functions self-contained: use `F`, function arguments and the previously saved helpers, rather than unrelated notebook globals.
 
 Core tasks, optional zoom-ins and deeper investigations share this one answer folder. You can choose extra depth without copying or restarting your work. Solution notebooks use `learner_work/solutions/` and do not replace your answers. Your notebook edits remain your primary working copy.
 
@@ -25,6 +25,11 @@ This leaves files and checkpoints intact. After a kernel restart, run the notebo
 For Exercises 3–6, missing saved functions can make Setup stop before Spark starts. The `workspace` object has already been created. Run the appropriate catch-up call below in a new cell, then rerun Setup. If Spark was already started, stop it first with the cleanup cell above.
 
 The helper backs up existing saved functions before replacing them with reference implementations. It never changes your exercise notebook. It replaces the whole boundary through the chosen stage so the functions remain consistent. You can later redo the earlier exercise and save your own code again.
+
+<a id="exercise-0"></a>
+### Exercise 0 — the session
+
+A missing `ipykernel` or `pyspark` package points to setup or kernel selection; follow [VS Code troubleshooting](TROUBLESHOOTING.md#vs-code-cells-and-kernels). If `spark` is still `None`, complete the builder task. If you already ran **Finish — stop Spark**, rerun the builder and subsequent cells to start again. After a kernel restart, run the notebook from its Setup cell. Exercise 1 creates its own session; it does not depend on this notebook remaining open.
 
 <a id="exercise-1"></a>
 ### Exercise 1

@@ -67,7 +67,7 @@ query.processAllAvailable()"""),
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("112"),
+            span("113"),
         ]),
         ],
         notes="Run the Exercise6 cells in order: streaming reader, shared cleaning/enrichment/aggregate, writer, start, arrival01, then arrival02. stream_report describes the result; writer configures the output; query is the running handle. The provided writer uses a unique memory-table name, Complete mode, a checkpoint and a two-second processing trigger. Query progress may be absent before the first completed batch. Use show on the bounded memory table, never directly on the streaming DataFrame. The arrival helper exposes completed files atomically. processAllAvailable makes this finite demonstration deterministic; each file is not a guaranteed physical micro-batch boundary. The report has four accepted sales/90 after02. https://spark.apache.org/docs/4.2.0/streaming/apis-on-dataframes-and-datasets.html",

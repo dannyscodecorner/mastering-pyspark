@@ -118,7 +118,7 @@ def main() -> int:
         print(f"Spark: {spark.version}", flush=True)
         run_checks(spark, run_root)
         print(
-            "Setup check passed. Open notebooks/01-inspect.ipynb to begin.",
+            "Setup check passed. Open notebooks/00-spark-session.ipynb to begin.",
             flush=True,
         )
         return 0

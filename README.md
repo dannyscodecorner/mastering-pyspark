@@ -13,7 +13,7 @@ uv sync --locked --group notebook
 uv run --locked check_setup.py
 ```
 
-Open [Exercise 1](labs/notebooks/01-inspect.ipynb) and select the lab’s `.venv` kernel. Each exercise has one notebook: complete the core for an approximately 60-minute lab, add optional zoom-ins for about 90 minutes, or explore the linked deeper investigations at your own pace. [The lab guide](labs/README.md) explains the flow. Completed solutions are separate; participants do not need Incan or Docker.
+Open [Exercise 0](labs/notebooks/00-spark-session.ipynb) and select the lab’s `.venv` kernel. Each exercise has one notebook: complete the core for an approximately 60-minute lab, add optional zoom-ins for about 90 minutes, or explore the linked deeper investigations at your own pace. [The lab guide](labs/README.md) explains the flow. Completed solutions are separate; participants do not need Incan or Docker.
 
 For optional Parquet inspection in VS Code, install [Parquet Explorer](https://marketplace.visualstudio.com/items?itemName=AdamViola.parquet-explorer). The [lab setup guide](labs/README.md#explore-parquet-files--optional) explains which files to open.
 

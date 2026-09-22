@@ -15,8 +15,15 @@ pub def slide_data_work() -> Slide:
             heading("What we’ll cover", level=1),
             group([
             group([
-                heading("Seven core exercises", level=2),
+                heading("Exercises 0–7", level=2),
                 node(NodeKind.OrderedList, children=[
+                    node(NodeKind.ListItem, children=[
+                        span("0"),
+                        group([
+                            strong("Create a SparkSession"),
+                            prose("Start Spark locally, run a small job and stop it."),
+                        ]),
+                    ]),
                     node(NodeKind.ListItem, children=[
                         span("1–3"),
                         group([
@@ -36,13 +43,6 @@ pub def slide_data_work() -> Slide:
                         group([
                             strong("Run the pipeline as a stream"),
                             prose("Add files and resume with the same checkpoint."),
-                        ]),
-                    ]),
-                    node(NodeKind.ListItem, children=[
-                        span("Extra"),
-                        group([
-                            strong("Extend it yourself"),
-                            prose("Optional: daily reports, tags and stored stream output."),
                         ]),
                     ]),
                 ], style="ho-agenda"),
@@ -91,5 +91,5 @@ pub def slide_data_work() -> Slide:
             span("105"),
         ]),
         ],
-        notes="Use the shared core for about 60 minutes; optional zoom-ins inside each exercise add depth for about 90 minutes. Learners can choose topics independently and follow deeper notebook links at their own pace. These are facilitation budgets awaiting rehearsal. Each exercise is its own notebook. The first seven tasks form a complete pipeline; the daily report and persisted stream output are extensions. At each boundary run Save and finish so the next notebook can load the participant’s own functions. Keep ten minutes for catch-up and the recap.",
+        notes="Use the shared core for about 60 minutes; optional zoom-ins inside each exercise add depth for about 90 minutes. Learners can choose topics independently and follow deeper notebook links at their own pace. These are facilitation budgets awaiting rehearsal. Each exercise is its own notebook. Exercise 0 explains session creation, then Exercises 1–7 form a complete pipeline; the daily report and persisted stream output are extensions. At each boundary run Save and finish so the next notebook can load the participant’s own functions. Keep ten minutes for catch-up and the recap.",
     )

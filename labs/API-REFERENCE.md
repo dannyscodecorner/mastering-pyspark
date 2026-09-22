@@ -4,6 +4,8 @@ These are API reminders, not completed exercise answers. `F` is the alias from `
 
 | Operation | Shape |
 |---|---|
+| Configure / obtain a session | `SparkSession.builder.master(...).appName(...).getOrCreate()` |
+| Inspect / stop a session | `spark.version` / `spark.stop()` |
 | Read prepared Parquet | `spark.read.parquet(path)` |
 | Inspect schema / rows | `df.printSchema()` / `df.show(truncate=False)` |
 | Reference a column / literal | `F.col("amount")` / `F.lit("unknown")` |

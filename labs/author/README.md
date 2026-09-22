@@ -8,14 +8,15 @@ Run the commands below from the **labs** folder.
 
 ### Instructor fallback laptop
 
-Danny will bring an additional MacBook for an attendee who encounters setup problems. Prepare that Mac with this same project and JDK 21 before the session: run `uv sync --locked --group notebook`, `uv run --locked check_setup.py`, and validate the seven workshop solution notebooks as described below. Select the project kernel in VS Code beforehand. Leave the project ready at the first exercise; each run creates its own output directory.
+Danny will bring an additional MacBook for an attendee who encounters setup problems. Prepare that Mac with this same project and JDK 21 before the session: run `uv sync --locked --group notebook`, `uv run --locked check_setup.py`, and validate the eight core solution notebooks as described below. Select the project kernel in VS Code beforehand. Leave the project ready at the first exercise; each run creates its own output directory.
 
 Ask attendees to run the setup check before class. The spare Mac is the classroom contingency, not evidence that native Windows has been validated.
 
 ### Lesson sequence
 
-The chapter opens with an agenda and setup walkthrough. Everyone starts at `notebooks/01-inspect.ipynb`. The core is the 60-minute baseline; optional sections add the 90-minute depth. Larger investigations are linked by topic under `notebooks/deeper/`. Every exercise is a separate notebook, with task cells, collapsed hints, checks and a final save/cleanup cell. Completed answers live under `solutions/`, never in the learner task cells.
+The chapter opens with an agenda and setup walkthrough. Everyone starts at `notebooks/00-spark-session.ipynb`. The core is the 60-minute baseline; optional sections add the 90-minute depth. Larger investigations are linked by topic under `notebooks/deeper/`. Every exercise is a separate notebook, with task cells, collapsed hints, checks and a final save/cleanup cell. Completed answers live under `solutions/`, never in the learner task cells.
 
+0. **Create a SparkSession:** distinguish the kernel from the session, configure local execution, run a tiny DataFrame, observe session reuse and stop Spark. Explain the later setup helper.
 1. **Inspect the inputs:** read Parquet and investigate schemas and values.
 2. **Clean the keys:** build a reusable Column-expression helper and normalise the lookup.
 3. **Validate the sales:** parse types, retain rejects and reconcile all eight inputs.
@@ -36,9 +37,9 @@ Exercise 6 stops its query and saves its input directory, checkpoint, table name
 
 ## Local runtime
 
-The setup helper creates `spark` in local mode with two worker threads, UTC timestamps and two shuffle partitions for this tiny fixture. It selects the same Python executable for Spark workers as for the driver. It does not connect to a cluster. The final lesson cell stops the session; script exit also cleans up.
+Exercise 0 uses `SparkSession.builder` directly. From Exercise 1 onward, the setup helper creates `spark` in local mode with two worker threads, UTC timestamps and two shuffle partitions for this tiny fixture. It selects the same Python executable for Spark workers as for the driver. It does not connect to a cluster. The final lesson cell stops the session; script exit also cleans up.
 
-Every run creates a fresh directory under `runs/`; prepared inputs and earlier runs are never overwritten. The arrival helper stages completed files, then publishes each through a hard link. Use a local filesystem supporting hard links. Spark paths use absolute paths with forward slashes, preserving spaces and Windows drive letters without URL-encoding them.
+Every pipeline run creates a fresh directory under `runs/`; prepared inputs and earlier runs are never overwritten. The arrival helper stages completed files, then publishes each through a hard link. Use a local filesystem supporting hard links. Spark paths use absolute paths with forward slashes, preserving spaces and Windows drive letters without URL-encoding them.
 
 `pipeline.py` contains only transformations. Chapter 09 will reuse it in AWS Glue with separately configured storage, identity, runtime and monitoring. The local file publisher and session helper are workshop scaffolding, not deployment code.
 
@@ -76,7 +77,9 @@ The original files were preserved. Twitter acquisition, credentials and sentimen
 
 ## Validation performed
 
-On **22 September 2026**, the exercise-based layout passed on macOS with Python 3.12, PySpark 4.2.0 and Temurin 21.0.11. First, all **seven core notebooks** completed in fresh kernels with every optional section skipped. Then all **14 solution notebooks** completed, including every inline zoom-in and the seven deeper investigations visited at their associated exercise boundaries. The baseline and full-depth runs both preserved the saved-function and checkpoint handoffs and reached the expected 100.00 report. All 32 authoring/workspace tests and Python lint checks passed. Learner notebooks have unfinished tasks and no saved outputs.
+After adding **Exercise 0** on **22 September 2026**, all eight core notebooks completed in separate kernels with optional sections skipped, followed by all 15 solution notebooks with full depth. The new session exercise created Spark 4.2.0 directly through the builder, displayed IDs 0/1/2, observed session reuse and stopped successfully. All 34 authoring/workspace tests and Python lint/format checks passed. The learner preview and chapter 08 introduction were visually reviewed. This is local macOS validation, not evidence of a successful Windows run or a measured five-minute classroom duration.
+
+Before adding Exercise 0 on **22 September 2026**, the exercise-based layout passed on macOS with Python 3.12, PySpark 4.2.0 and Temurin 21.0.11. First, all **seven core notebooks** completed in fresh kernels with every optional section skipped. Then all **14 solution notebooks** completed, including every inline zoom-in and the seven deeper investigations visited at their associated exercise boundaries. The baseline and full-depth runs both preserved the saved-function and checkpoint handoffs and reached the expected 100.00 report. All 32 authoring/workspace tests and Python lint checks passed. Learner notebooks have unfinished tasks and no saved outputs.
 
 The instructor reports that the previous notebook worked on Windows; the redesigned sequence still needs end-to-end Windows validation and a timing rehearsal. The records below describe earlier versions.
 
@@ -126,7 +129,7 @@ uv run --locked check_setup.py
 uv run --locked --group notebook --group author -m author.build_notebook --execute
 ```
 
-Use `--execute --core-only` first to skip every zoom-in and validate the complete baseline. Then use `--execute` to run all sections plus the deeper notebooks. These are validation modes over the same notebook files, not alternative learner routes. This intentionally executes solutions, not blank learner exercises. Learner notebooks always have empty outputs. Saved plan output replaces this machine’s lab directory with the labelled `<lab-root>` placeholder. Saved solution output is preserved only when the lesson and supporting Python sources are unchanged; generation alone is not execution evidence. Do not regenerate over a participant's edited notebooks.
+Use `--execute --core-only` first to skip every zoom-in and validate the complete baseline. Then use `--execute` to run all sections plus the deeper notebooks. These are validation modes over the same notebook files, not alternative learner routes. This intentionally executes solutions, not blank learner exercises. Learner notebooks always have empty outputs. Saved output uses the labelled placeholders `<lab-root>` for this machine’s lab directory and `<validation-python>` for the interpreter path. Results are otherwise retained as executed. Saved solution output is preserved only when the lesson and supporting Python sources are unchanged; generation alone is not execution evidence. Do not regenerate over a participant's edited notebooks.
 
 Keep the seven transformation definitions aligned with `pipeline.py`; the AST parity test checks this. Tests also cover missing starters, solution isolation and optional prerequisites, saving learner functions, recovery backups and checkpoint boundaries. Rebuild and verify the course after changing published lab assets.
 

@@ -54,7 +54,7 @@ raw.printSchema(); raw.orderBy("sale_id").show(truncate=False)"""),
         ], style="ho-hint"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("107"),
+            span("108"),
         ]),
         ],
         notes="Ask participants to inspect the raw input before explaining the problems. The prepared sales file has eight rows: five valid sales and three deliberately invalid records. The product lookup has three rows, including X1 with no sale. Parquet provides a schema, but that does not establish valid business values. Reuse the prepared files; do not introduce createDataFrame syntax. Both amounts and timestamps are strings here by design.",

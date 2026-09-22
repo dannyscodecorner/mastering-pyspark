@@ -2,11 +2,11 @@
 
 Build a sales report from Parquet data, then run the same pipeline as files arrive. **Each exercise is a separate notebook.**
 
-## Start with Exercise 1
+## Start with Exercise 0
 
 Everyone uses the same notebooks and the same saved work. Choose how deeply to explore each topic as you go:
 
-- **About 60 minutes:** complete the **Core** in Exercises 1–7, with time for discussion and catch-up.
+- **About 60 minutes:** complete the **Core** in Exercises 0–7, with time for discussion and catch-up.
 - **About 90 minutes:** also do the **Optional zoom-in** sections inside those notebooks.
 - **At your own pace:** follow the linked **Deeper investigations** on topics that interest you. Larger investigations have their own notebooks.
 
@@ -48,9 +48,9 @@ Wait for **Setup check passed**. If it fails, use [troubleshooting](TROUBLESHOOT
 
 Open **Extensions** with **Ctrl+Shift+X** (Windows/Linux) or **Cmd+Shift+X** (macOS). Install or enable **Python** (`ms-python.python`) and **Jupyter** (`ms-toolsai.jupyter`), both by Microsoft. Follow any reload prompt. These editor extensions are separate from the packages installed by uv.
 
-## 4. Open Exercise 1 and select the kernel
+## 4. Open Exercise 0 and select the kernel
 
-In the Explorer, open **notebooks → 01-inspect.ipynb**. Start here regardless of how much time you have.
+In the Explorer, open **notebooks → 00-spark-session.ipynb**. Start here regardless of how much time you have.
 
 Click **Select Kernel** at the notebook's top right, then **Python Environments → .venv**. If a kernel is already selected, click its name and choose **Select Another Kernel** first. Select this lab's Python 3.12:
 
@@ -62,6 +62,8 @@ Click **Select Kernel** at the notebook's top right, then **Python Environments 
 Missing notebook controls or kernel? See [VS Code help](TROUBLESHOOTING.md#vs-code-cells-and-kernels).
 
 ## 5. Work through one notebook at a time
+
+**Exercise 0** explains the Python kernel, lets you build a `SparkSession`, and ends by stopping it. Complete that introduction first. From **Exercise 1** onward:
 
 1. Run its supplied **Setup** code cell with the play button beside the cell. Wait for **notebook ready**.
 2. Read the task and replace `todo(...)` in the **Your code** cells. Run a cell with its play button or **Shift+Enter**. Use the separate **Check** cells and collapsed hints as you go.
@@ -76,6 +78,7 @@ Stuck during class? Use a hint first, then an explicit [catch-up step](RECOVERY.
 
 | Exercise | Optional zoom-in in the same notebook |
 |---|---|
+| [0. Create a SparkSession](notebooks/00-spark-session.ipynb) | Core introduction: create, use and stop the session |
 | [1. Inspect the inputs](notebooks/01-inspect.ipynb) | Row grain, schemas and data quality |
 | [2. Clean the keys](notebooks/02-clean-keys.ipynb) | Expressions, renaming, dropping and immutability |
 | [3. Validate the sales](notebooks/03-validate.ipynb) | Write tolerant parsing expressions |

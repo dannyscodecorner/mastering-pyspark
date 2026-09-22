@@ -42,7 +42,7 @@ pub def slide_glue() -> Slide:
             span("CONTENT SKELETON", style="draft-label"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("120"),
+            span("121"),
         ]),
         ],
         notes="The final chapter applies the Spark concepts already taught to AWS Glue. Reuse the earlier query and execution vocabulary while introducing the service-specific runtime, workers and APIs. Runtime-specific claims remain to be verified against the client environment.",

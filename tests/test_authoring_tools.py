@@ -168,7 +168,7 @@ class NotebookTests(unittest.TestCase):
     def test_every_exercise_has_one_standalone_notebook(self) -> None:
         """Exercises lead the structure; optional depth does not duplicate a notebook."""
         script = (ROOT / "labs/hands_on.py").read_text()
-        self.assertEqual(lesson.exercise_ids(core_only=True), [str(i) for i in range(1, 8)])
+        self.assertEqual(lesson.exercise_ids(core_only=True), [str(i) for i in range(8)])
         slugs = [spec.slug for spec in lesson.EXERCISES.values()]
         self.assertEqual(len(slugs), len(set(slugs)))
         for exercise in lesson.exercise_ids():
@@ -182,6 +182,34 @@ class NotebookTests(unittest.TestCase):
             )
             self.assertNotIn("What we reused", "\n".join(cell["source"] for cell in cells))
             self.assertNotIn("route", "\n".join(cell["source"] for cell in cells).lower())
+
+    def test_session_exercise_leaves_startup_to_the_learner(self) -> None:
+        """Exercise zero must teach startup before later notebooks use the helper."""
+        script = (ROOT / "labs/hands_on.py").read_text()
+        cells = lesson.exercise_cells(script, "0")
+        by_id = {cell["id"]: cell for cell in cells}
+        setup = by_id["notebook-setup"]["source"]
+        self.assertNotIn("create_spark", setup)
+        self.assertNotIn("getOrCreate", setup)
+        self.assertEqual(by_id["session-builder"]["role"], "starter")
+        self.assertIn("spark = None", by_id["session-builder"]["source"])
+        self.assertNotIn("setup-code", by_id)
+        self.assertNotIn("zoom-heading", by_id)
+        self.assertNotIn("#zoom", by_id["notebook-intro"]["source"])
+        self.assertIn("spark.stop()", by_id["save-and-finish"]["source"])
+        self.assertIn("01-inspect.ipynb", by_id["next-exercise"]["source"])
+        solved = lesson.exercise_cells(script, "0", solved=True)
+        builder = next(cell["source"] for cell in solved if cell["id"] == "session-builder")
+        self.assertIn("SparkSession.builder", builder)
+        self.assertIn("getOrCreate()", builder)
+
+    def test_saved_session_output_labels_the_validation_interpreter(self) -> None:
+        """Published diagnostics must not include the author's private interpreter path."""
+        raw = f"Python: {sys.executable}\nInput: {self.root}/data"
+        self.assertEqual(
+            notebooks.portable_output_text(raw, self.root),
+            "Python: <validation-python>\nInput: <lab-root>/data",
+        )
 
     def test_notebook_bootstrap_finds_lab_from_project_or_notebook_folder(self) -> None:
         """Opening the repository rather than labs must not break a nested notebook."""

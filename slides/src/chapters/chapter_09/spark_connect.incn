@@ -35,7 +35,7 @@ pub def slide_spark_connect() -> Slide:
             span("CONTENT SKELETON", style="draft-label"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("118"),
+            span("119"),
         ]),
         ],
         notes="Preserved runtime-context outline for development in chapter09. Classic versus Connect explains the interface used by the chosen environment; this is not a claim that every AWS Glue session supports Spark Connect. Confirm the chosen interface and runtime before developing the lesson.",

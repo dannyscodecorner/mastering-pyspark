@@ -4,6 +4,7 @@ from surface import Chapter
 from chapters.chapter_08.cover import slide_section_8
 from chapters.chapter_08.data_work import slide_data_work
 from chapters.chapter_08.pyspark_setup import slide_pyspark_setup
+from chapters.chapter_08.pyspark_session import slide_pyspark_session
 from chapters.chapter_08.pyspark_inputs import slide_pyspark_inputs
 from chapters.chapter_08.pyspark_cleaning import slide_pyspark_cleaning
 from chapters.chapter_08.pyspark_types import slide_pyspark_types
@@ -20,6 +21,7 @@ pub def chapter_08_chapter() -> Chapter:
         slide_section_8(),
         slide_data_work(),
         slide_pyspark_setup(),
+        slide_pyspark_session(),
         slide_pyspark_inputs(),
         slide_pyspark_cleaning(),
         slide_pyspark_types(),

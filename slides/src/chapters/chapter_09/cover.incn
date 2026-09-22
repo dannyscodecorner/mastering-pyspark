@@ -25,7 +25,7 @@ pub def slide_section_9() -> Slide:
         ], style="divider"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("117"),
+            span("118"),
         ]),
         ],
         notes="Bring the course together by applying the Spark execution model, query reasoning and streaming concepts to AWS Glue. This is a separate final chapter, following the general Working with PySpark material. The next two slides are retained content outlines for development, not completed demonstrations.",

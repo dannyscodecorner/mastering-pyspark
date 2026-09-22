@@ -116,7 +116,7 @@ The setup check must finish with **Setup check passed**. It tests a Python worke
 
 ## VS Code cells and kernels
 
-- **The notebook opens as text or has no play buttons:** install or enable Microsoft's Python and Jupyter extensions. Follow [Install the VS Code extensions](README.md#3-install-the-vs-code-extensions), reload VS Code if prompted, and open `notebooks/01-inspect.ipynb`. The `.py` authoring file is not the participant entry point.
+- **The notebook opens as text or has no play buttons:** install or enable Microsoft's Python and Jupyter extensions. Follow [Install the VS Code extensions](README.md#3-install-the-vs-code-extensions), reload VS Code if prompted, and open `notebooks/00-spark-session.ipynb`. The `.py` authoring file is not the participant entry point.
 - **No .venv to select:** finish `uv sync --locked --group notebook` in **labs**, then run **Developer: Reload Window**. In the notebook's kernel picker, use **Select Another Kernel → Python Environments**. Choose `labs/.venv/Scripts/python.exe` on Windows or `labs/.venv/bin/python` on macOS/Linux.
 - **Imports fail after setup passed in the terminal:** check the notebook's kernel, not just the editor's Python interpreter. Select this lab's `.venv`, restart the kernel and run the notebook's Setup cell.
 - **`todo(...)` raises NotImplementedError:** this is an unfinished exercise, not an installation error. Replace the marked call with your own code; use the task's hint if needed.
@@ -124,5 +124,18 @@ The setup check must finish with **Setup check passed**. It tests a Python worke
 - **NameError after restarting a kernel:** cells in that notebook share state. Run its Setup and earlier completed cells before continuing. Each exercise notebook loads its prerequisites from saved files; another notebook's variables are not shared automatically.
 - **Spark is already active:** stop this notebook's queries and session using [safe cleanup](RECOVERY.md#stop-safely), then rerun Setup.
 - **An arrival was already published, or the checkpoint boundary is wrong:** follow [stream recovery](RECOVERY.md#exercise-6). Do not delete the checkpoint or overwrite already-consumed files.
+
+### Windows: the notebook selected uv's base Python
+
+A path under `AppData/Roaming/uv/python/` in an `ipykernel` error means the notebook selected the base interpreter. The lab kernel should use `labs/.venv/Scripts/python.exe`.
+
+If `.venv` is still missing from **Python Environments**, register it with a recognisable name. In PowerShell, from **labs**, run:
+
+```powershell
+uv sync --locked --group notebook
+.\.venv\Scripts\python.exe -m ipykernel install --user --name mastering-pyspark-lab --display-name "Mastering PySpark (labs .venv)"
+```
+
+Run **Developer: Reload Window**, then **Select Kernel → Select Another Kernel → Jupyter Kernels → Mastering PySpark (labs .venv)**. Exercise 0 prints `sys.executable`; check that it points into this lab's `.venv`. This registers a kernel for the current lab location; rerun the command if you move the folder. See [IPython's kernel installation instructions](https://ipython.readthedocs.io/en/stable/install/kernel_install.html).
 
 If VS Code is in Restricted Mode, review [Workspace Trust](https://code.visualstudio.com/docs/editing/workspaces/workspace-trust) and enable execution only for a course copy you trust.
