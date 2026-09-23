@@ -93,6 +93,17 @@ If another version is selected, run `sdk use java 21.0.12-tem` for the current t
 
 The command pins Temurin 21. If that patch becomes unavailable, use `sdk list java` and choose an available Temurin **21** identifier. A bare `sdk install java` selects SDKMAN's current default major version, which may differ from the workshop's. See [SDKMAN usage](https://sdkman.io/usage/).
 
+### uv on macOS
+
+Install [uv with Homebrew](https://docs.astral.sh/uv/getting-started/installation/#homebrew):
+
+```sh
+brew install uv
+uv --version
+```
+
+Reopen VS Code, then continue with [creating the lab's virtual environment](README.md#2-create-the-virtual-environment).
+
 ## Linux
 
 Install a 64-bit [JDK 21](https://adoptium.net/temurin/releases/?version=21) matching your computer. Reopen VS Code and check `java -version` in its terminal; it should report version 21.
