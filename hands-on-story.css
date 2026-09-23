@@ -84,6 +84,7 @@
 .ho-lesson .ho-resource { position: absolute; bottom: 144px; left: 66px; margin: 0; font-size: 24px; }
 .ho-resource a { color: var(--accent); text-underline-offset: 4px; }
 .ho-takeaway a { color: var(--accent); text-underline-offset: 4px; }
+.ho-recap { color: var(--accent); text-underline-offset: 4px; }
 .ho-definitions { display: block; margin: 20px 0 0; }
 .ho-definitions > div { display: grid; grid-template-columns: 340px 1fr; gap: 35px; padding: 15px 0; border-bottom: 1px solid #d8dcdb; }
 .ho-definitions dt { font-size: 26px; font-weight: 700; }

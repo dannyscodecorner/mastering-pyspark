@@ -1,9 +1,0 @@
-.venv/
-__pycache__/
-.ipynb_checkpoints/
-runs/
-artifacts/
-spark-warehouse/
-metastore_db/
-derby.log
-*.pyc

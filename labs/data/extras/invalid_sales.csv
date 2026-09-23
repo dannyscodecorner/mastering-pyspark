@@ -1,0 +1,4 @@
+sale_id,product_id,amount_raw,sold_at_raw
+x1, ,5.00,2026-09-01 09:00:00
+x2,B1,5.00,
+x3,B1,-2.00,2026-09-01 09:00:00

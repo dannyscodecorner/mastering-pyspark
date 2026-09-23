@@ -1,0 +1,199 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>A daily report</title><link rel="stylesheet" href="../../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Deeper-investigation-%E2%80%94-A-daily-report">Deeper investigation — A daily report<a class="anchor-link" href="#Deeper-investigation-%E2%80%94-A-daily-report">¶</a></h1><p><strong>Worked solution</strong> · <a href="../../../index.html">All exercises</a> · <a href="../../../README.md">Setup</a></p>
+<h2 id="What-you%E2%80%99ll-learn">What you’ll learn<a class="anchor-link" href="#What-you%E2%80%99ll-learn">¶</a></h2><ul>
+<li>Group sales by both date and category.</li>
+<li>Calculate multiple aggregates for each group and explain the different questions they answer.</li>
+</ul>
+<p>Optional. Complete <a href="../04-join-aggregate.html">Exercise 4</a> and its <strong>Save and finish</strong> cell first. This investigation uses the same saved work; it does not replace your core pipeline.</p>
+<p>Completed answers use a separate solution workspace and do not replace participant work.</p>
+<p>Run the supplied setup first. End with <strong>Save and finish</strong>; the next notebook loads your saved functions, so this kernel can be closed.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=setup-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setup-%E2%80%94-supplied">Setup — supplied<a class="anchor-link" href="#Setup-%E2%80%94-supplied">¶</a></h2><p>Select the lab's <code>.venv</code> kernel. Stop Spark in the previous notebook before closing it. This uses the <code>create_spark</code> helper explained in <a href="../00-spark-session.html">Exercise 0</a>. Missing earlier work? Use an explicit <a href="../../../docs/RECOVERY.md">catch-up step</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=notebook-setup">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Support opening the complete repository or its labs folder in VS Code.</span>
+<span class="n">LAB_ROOT</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">candidate</span> <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span> <span class="o">*</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span>
+     <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">parent</span> <span class="o">/</span> <span class="s1">'labs'</span><span class="p">)</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">candidate</span> <span class="o">/</span> <span class="s1">'lab_support/runtime.py'</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()),</span>
+    <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">LAB_ROOT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">'Open the complete labs project in VS Code; a notebook alone is not enough.'</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support</span><span class="w"> </span><span class="kn">import</span> <span class="n">checks</span> <span class="k">as</span> <span class="n">check</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.arrival_files</span><span class="w"> </span><span class="kn">import</span> <span class="n">publish_arrival</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">todo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_ROOT</span><span class="p">,</span> <span class="n">create_spark</span><span class="p">,</span> <span class="n">finish_query</span><span class="p">,</span> <span class="n">new_run</span><span class="p">,</span> <span class="n">spark_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.workspace</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workspace</span>
+
+<span class="n">workspace</span> <span class="o">=</span> <span class="n">Workspace</span><span class="p">(</span><span class="n">solutions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">product_key</span><span class="p">,</span> <span class="n">clean_products</span><span class="p">,</span> <span class="n">clean_sales</span><span class="p">,</span> <span class="n">accepted_sales</span><span class="p">,</span> <span class="n">rejected_sales</span><span class="p">,</span> <span class="n">enrich_sales</span><span class="p">,</span> <span class="n">category_totals</span> <span class="o">=</span> <span class="n">workspace</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'product_key'</span><span class="p">,</span> <span class="s1">'clean_products'</span><span class="p">,</span> <span class="s1">'clean_sales'</span><span class="p">,</span> <span class="s1">'accepted_sales'</span><span class="p">,</span> <span class="s1">'rejected_sales'</span><span class="p">,</span> <span class="s1">'enrich_sales'</span><span class="p">,</span> <span class="s1">'category_totals'</span><span class="p">)</span>
+<span class="n">RUN_ROOT</span> <span class="o">=</span> <span class="n">new_run</span><span class="p">()</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">create_spark</span><span class="p">(</span><span class="n">RUN_ROOT</span><span class="p">)</span>
+<span class="n">raw</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"sales.parquet"</span><span class="p">))</span>
+<span class="n">raw_products</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"products.parquet"</span><span class="p">))</span>
+<span class="n">products</span> <span class="o">=</span> <span class="n">clean_products</span><span class="p">(</span><span class="n">raw_products</span><span class="p">)</span>
+<span class="n">cleaned</span> <span class="o">=</span> <span class="n">clean_sales</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span>
+<span class="n">accepted</span> <span class="o">=</span> <span class="n">accepted_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">)</span>
+<span class="n">rejected</span> <span class="o">=</span> <span class="n">rejected_sales</span><span class="p">(</span><span class="n">cleaned</span><span class="p">)</span>
+<span class="n">enriched</span> <span class="o">=</span> <span class="n">enrich_sales</span><span class="p">(</span><span class="n">accepted</span><span class="p">,</span> <span class="n">products</span><span class="p">)</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">category_totals</span><span class="p">(</span><span class="n">enriched</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">; inputs: </span><span class="si">{</span><span class="n">DATA_ROOT</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">; notebook ready"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>WARNING: Using incubator modules: jdk.incubator.vector
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/09/23 10:50:45 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Spark 4.2.0; inputs: data; notebook ready
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_prompt" id="cell-id=extension-daily"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr/>
+<p><a id="extension-daily"></a></p>
+<h2 id="Your-task">Your task<a class="anchor-link" href="#Your-task">¶</a></h2><p>Use <code>enriched</code> to produce <code>daily</code>: add <code>sale_date</code> from <code>sold_at</code>, group by date and category, and sum amounts as <code>total</code>. Also calculate <code>largest_sale</code> with a suitable aggregate.</p>
+<p>You should have four date/category rows whose totals still sum to 100.00. Explain how <code>largest_sale</code> differs from <code>total</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_task" id="cell-id=daily-experiment">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">daily</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">enriched</span><span class="o">.</span><span class="n">withColumn</span><span class="p">(</span><span class="s2">"sale_date"</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">to_date</span><span class="p">(</span><span class="s2">"sold_at"</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">groupBy</span><span class="p">(</span><span class="s2">"sale_date"</span><span class="p">,</span> <span class="s2">"category"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">agg</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="s2">"amount"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"total"</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="s2">"amount"</span><span class="p">)</span><span class="o">.</span><span class="n">alias</span><span class="p">(</span><span class="s2">"largest_sale"</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">daily</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"sale_date"</span><span class="p">,</span> <span class="s2">"category"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+----------+--------+-----+------------+
+| sale_date|category|total|largest_sale|
++----------+--------+-----+------------+
+|2026-09-01|   books|25.00|       25.00|
+|2026-09-01|   games|40.00|       40.00|
+|2026-09-02|   books|25.00|       15.00|
+|2026-09-02|unmapped|10.00|       10.00|
++----------+--------+-----+------------+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_check" id="cell-id=check-daily">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">check</span><span class="o">.</span><span class="n">daily</span><span class="p">(</span><span class="n">daily</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Daily report verified: four groups, total 100.00.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_hint" id="cell-id=daily-hint"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<details><summary>Hint</summary>
+<p>Convert the timestamp with <code>to_date</code> before grouping. Each aggregate answers a different question about the sales in that group.</p>
+</details>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=finish-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="finish"></a></p>
+<h2 id="Save-and-finish">Save and finish<a class="anchor-link" href="#Save-and-finish">¶</a></h2><p>Run once the core checks pass, whether or not you did the optional section. This saves your functions or stream handoff, then stops this notebook’s queries and Spark. Your work remains in <code>learner_work/</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=save-and-finish">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">active_query</span> <span class="ow">in</span> <span class="n">spark</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+    <span class="n">active_query</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Session stopped; exercise files are under"</span><span class="p">,</span> <span class="n">RUN_ROOT</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Session stopped; exercise files are under runs/run-7ccc3126d2
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=next-exercise"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Return to <a href="../../../index.html">all exercises</a>.</p>
+</div>
+</div>
+</div>
+</main></body></html>

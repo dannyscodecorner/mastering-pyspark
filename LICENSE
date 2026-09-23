@@ -1,0 +1,81 @@
+Danny's Code Corner Course Licence 1.0
+
+Copyright (c) 2026 Danny Meijer, trading as Danny's Code Corner.
+
+1. Scope
+
+This licence covers the original Mastering PySpark course material in this
+repository and its distributions, including slides, notebooks, exercises,
+solutions, sample data, documentation and supporting code (the "Material").
+Third-party material is excluded as described in section 5.
+
+2. Free personal use
+
+Subject to these terms, Danny Meijer grants you a non-exclusive, worldwide,
+royalty-free permission to download, copy, run and modify the Material for your
+own personal study, experimentation and practice.
+
+Personal study includes developing skills for your profession or employment.
+You may keep your own copies, notes and exercise answers. You may use the
+knowledge and techniques you learn in your work; this licence does not claim
+rights over general ideas, Spark APIs or independently created work.
+
+3. Commercial training
+
+A trainer or training provider must obtain a separate written commercial licence
+from Danny Meijer and pay the agreed licence fee before using the Material, or
+adaptations of it, to prepare, deliver, record or distribute commercial training.
+
+Commercial training includes paid courses, workshops, coaching and tutorials;
+training delivered for remuneration to a client or employer; and training
+included in a paid subscription or other paid service. Calling a session free
+does not exempt it when it is part of, or promotes, a commercial training offer.
+
+The personal-use permission in section 2 does not grant permission to teach
+others using the Material. Other teaching uses require prior written permission;
+commercial training requires the paid licence above.
+
+For commercial licensing or other permissions, contact Danny Meijer through the
+Mastering PySpark course repository:
+https://github.com/dannyscodecorner/mastering-pyspark
+
+4. Forking, redistribution and notices
+
+Viewing and forking this repository on GitHub are permitted. You may keep and
+modify a fork for personal study and use it to propose contributions.
+
+Apart from those GitHub forks and the personal copies allowed by section 2,
+you may not republish, redistribute, sublicense or sell the Material or
+adaptations of it without Danny Meijer's prior written permission. This
+includes rehosting course files, sharing downloadable course bundles and
+republishing slides or notebooks as another course. A fork does not grant
+permission to use the Material in commercial training.
+
+Retain copyright, attribution and licence notices in any copies you make.
+Identify your modifications and do not imply endorsement by Danny Meijer or
+Danny's Code Corner. No trademark rights are granted.
+
+Nothing in this licence limits rights independently granted by GitHub's
+applicable Terms of Service, including viewing and forking public repositories
+within GitHub. It also does not restrict exceptions or rights that cannot be
+limited under applicable law.
+
+GitHub's terms: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service#d-user-generated-content
+
+5. Third-party material
+
+Third-party software, fonts, artwork and other assets remain subject to their
+own licences and notices. This licence does not replace or restrict those terms.
+See THIRD_PARTY_NOTICES.md in the course repository and the notices supplied
+with the relevant components. A paid course licence does not grant additional
+rights to third-party material.
+
+6. Availability and reserved rights
+
+The Material is provided as-is, without promises of accuracy, fitness for a
+particular purpose, support or continued availability, to the extent permitted
+by applicable law. Nothing here excludes rights or liabilities that cannot
+lawfully be excluded.
+
+Rights not expressly granted by this licence are reserved. This is a custom
+source-available course licence, not an OSI-approved open-source licence.
