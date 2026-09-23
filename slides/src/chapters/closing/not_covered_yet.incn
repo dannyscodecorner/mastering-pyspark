@@ -1,0 +1,48 @@
+"""Topics outside the current course scope."""
+
+from surface import Frame, NodeKind, Slide, attr, group, heading, node, prose, span, text
+
+pub def slide_not_covered_yet() -> Slide:
+    return Slide(
+        slug="not-covered-yet",
+        title="What these materials don’t cover",
+        frame=Frame.Composed,
+        styles="slide chapter-recap",
+        content=[
+            group([
+                text("DCC / SPARK TRAINING"),
+            ], style="eyebrow"),
+            heading("What these materials don’t cover", level=1),
+            node(NodeKind.Table, children=[
+                node(NodeKind.Caption, content="Topics outside the current course scope", style="sr-only"),
+                node(NodeKind.Columns, children=[
+                    node(NodeKind.Column),
+                    node(NodeKind.Column),
+                ]),
+                node(NodeKind.TableBody, children=[
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.HeaderCell, content="Spark UI", attributes=[attr("scope", "row")]),
+                        node(NodeKind.Cell, content="Using execution plans and task metrics to investigate a running application."),
+                    ]),
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.HeaderCell, content="Spark Connect", attributes=[attr("scope", "row")]),
+                        node(NodeKind.Cell, content="Connecting a Python client to Spark running in another process."),
+                    ]),
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.HeaderCell, content="MLlib", attributes=[attr("scope", "row")]),
+                        node(NodeKind.Cell, content="Preparing features, training models and evaluating predictions."),
+                    ]),
+                    node(NodeKind.Row, children=[
+                        node(NodeKind.HeaderCell, content="Spark in AWS Glue", attributes=[attr("scope", "row")]),
+                        node(NodeKind.Cell, content="Deploying jobs, choosing workers, managing dependencies and data access."),
+                    ]),
+                ]),
+            ], style="chapter-recap-table"),
+            prose("The core material covers DataFrames, distributed execution and a batch-to-streaming pipeline.", style="chapter-recap-takeaway"),
+            node(NodeKind.Footer, children=[
+                span("Danny’s Code Corner"),
+                span("124"),
+            ]),
+        ],
+        notes="This slide describes the scope of the public materials. They mention these capabilities but do not yet contain full guided lessons on them. Additional live demonstrations may cover some topics, including a separate AWS Glue walkthrough. Reading explain output and streaming progress in the lab is not a Spark UI lesson. Spark Connect is a separate client interface; do not imply that the chosen Glue environment supports it without checking. MLlib coverage would use the DataFrame-based API. Chapter 09 remains an outline. Invite questions and interests for future coverage without promising a delivery date.",
+    )

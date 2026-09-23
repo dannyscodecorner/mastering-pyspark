@@ -30,8 +30,8 @@ pub def slide_closing() -> Slide:
             prose("Discussion · recap · next steps", style="takeaway"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
-            span("124"),
+            span("125"),
         ]),
         ],
-        notes="Whole-course discussion after the final AWS Glue chapter. Revisit execution location, data movement and runtime evidence across the course. Resources and client-specific follow-up links to be added.",
+        notes="Whole-course discussion after clarifying what this edition has not covered. Revisit execution location, data movement and the evidence used in the taught material. Resources and client-specific follow-up links to be added.",
     )
