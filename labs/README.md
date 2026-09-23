@@ -116,6 +116,8 @@ Stuck during class? Use a hint first, then an explicit [catch-up step][recovery]
 
 Each notebook links to related investigations under **notebooks/deeper/**, with prerequisites stated. These cover CSV schemas and parsing, product tags, duplicate lookup keys, daily aggregates, caching, persisted streaming output and fresh checkpoints. The [browser index][browser-index] groups them by exercise and offers read-only previews.
 
+Free for personal study. GitHub forks are allowed; other redistribution requires permission. Commercial training requires a paid licence. See the [course licence][course-licence].
+
 <!-- Link destinations: define each once and reuse its label above. -->
 
 [java-macos]: docs/TROUBLESHOOTING.md#java-21-macos
@@ -147,3 +149,4 @@ Each notebook links to related investigations under **notebooks/deeper/**, with 
 [exercise-7]: notebooks/07-checkpoint.ipynb
 [browser-index]: index.html
 [parquet-demo]: https://github.com/adamviola/parquet-explorer/raw/HEAD/iris.gif
+[course-licence]: ../LICENSE

@@ -44,10 +44,16 @@ def lab_files(root: Path) -> Iterator[Path]:
 
 
 def package_lab(root: Path, output: Path) -> None:
-    """Write a reproducible ZIP with one project directory and no existing downloads."""
+    """Package the lab and canonical course licence without local files or old downloads."""
+    licence = root.parent / "LICENSE"
+    if licence.is_symlink():
+        raise ValueError("Use a regular course LICENSE file, not a symlink.")
+    if not licence.is_file():
+        raise ValueError(f"Missing course licence: {licence}")
+    sources = [licence, *lab_files(root)]
     with ZipFile(output, "w", compression=ZIP_DEFLATED) as bundle:
-        for path in lab_files(root):
-            archive_path = Path(root.name) / path.relative_to(root)
+        for path in sources:
+            archive_path = path.relative_to(root.parent)
             entry = ZipInfo(archive_path.as_posix(), date_time=(1980, 1, 1, 0, 0, 0))
             entry.compress_type = ZIP_DEFLATED
             entry.external_attr = 0o644 << 16

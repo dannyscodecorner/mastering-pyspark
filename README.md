@@ -4,6 +4,10 @@ Danny’s Code Corner course on Spark and PySpark, with an interactive presentat
 
 Course repository: [dannyscodecorner/mastering-pyspark](https://github.com/dannyscodecorner/mastering-pyspark).
 
+## Licence
+
+Free for personal study and practice, including professional development. GitHub forks are allowed; other redistribution requires Danny Meijer’s written permission. Commercial training requires a separate paid licence. See [LICENSE](LICENSE) for the full terms. Third-party components retain their own licences.
+
 ## Start the hands-on lab
 
 Open [labs](labs) in VS Code and follow its [setup guide](labs/README.md). The project uses Python 3.12, PySpark 4.2.0, Java 21 and uv. Run these commands from that folder:

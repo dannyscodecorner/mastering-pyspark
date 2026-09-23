@@ -346,6 +346,8 @@ class PackagingTests(unittest.TestCase):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name) / "labs"
+        self.licence = self.root.parent / "LICENSE"
+        self.licence.write_text("course licence fixture\n")
         for name in (
             "author/hands_on.py",
             "lab_support/runtime.py",
@@ -379,6 +381,7 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(
                 set(archive.namelist()),
                 {
+                    "LICENSE",
                     "labs/author/hands_on.py",
                     "labs/lab_support/runtime.py",
                     "labs/docs/TROUBLESHOOTING.md",
@@ -390,16 +393,47 @@ class PackagingTests(unittest.TestCase):
                 },
             )
             self.assertEqual(archive.read("labs/data/part.parquet"), b"data/part.parquet")
+            self.assertEqual(archive.read("LICENSE"), self.licence.read_bytes())
             site_sources = {
                 path.relative_to(self.root.parent).as_posix(): path.read_bytes()
                 for path in course.lab_files(self.root)
             }
+            site_sources["LICENSE"] = self.licence.read_bytes()
             self.assertEqual(
                 {name: archive.read(name) for name in archive.namelist()}, site_sources
             )
         first = standalone.read_bytes()
         packaging.package_lab(self.root, standalone)
         self.assertEqual(standalone.read_bytes(), first)
+
+    def test_missing_licence_prevents_release_creation(self) -> None:
+        """A standalone lab must not be published without its course terms."""
+        self.licence.unlink()
+        output = self.root.parent / "test.zip"
+        with self.assertRaisesRegex(ValueError, "Missing course licence"):
+            packaging.package_lab(self.root, output)
+        self.assertFalse(output.exists())
+
+    def test_licence_symlink_is_rejected(self) -> None:
+        """Only the canonical regular licence file may be included in the release."""
+        outside = self.root.parent / "outside.txt"
+        outside.write_text("private")
+        self.licence.unlink()
+        self.licence.symlink_to(outside)
+        output = self.root.parent / "test.zip"
+        with self.assertRaisesRegex(ValueError, "symlink"):
+            packaging.package_lab(self.root, output)
+        self.assertFalse(output.exists())
+
+    def test_licence_changes_invalidate_site_receipt(self) -> None:
+        """Changing distributed terms must require rebuilding the site."""
+        with patch.object(course, "ROOT", self.root.parent):
+            before = course.input_hashes()
+            self.assertEqual(before["LICENSE"], course.digest(self.licence))
+            self.licence.write_text("updated licence fixture\n")
+            after = course.input_hashes()
+        self.assertNotEqual(before["LICENSE"], after["LICENSE"])
+        self.assertEqual({path for path in before if before[path] != after[path]}, {"LICENSE"})
 
     def test_symlinks_cannot_pull_in_external_files(self) -> None:
         """Release packaging and site copying must reject included symlinks."""
@@ -435,6 +469,7 @@ class PackagingTests(unittest.TestCase):
         ):
             course.populate_site(site)
         self.assertEqual((site / "labs/data/part.parquet").read_bytes(), b"data/part.parquet")
+        self.assertEqual((site / "LICENSE").read_bytes(), self.licence.read_bytes())
         self.assertFalse(list(site.rglob("*.zip")))
         self.assertFalse((site / "labs/.env").exists())
 

@@ -32,6 +32,8 @@ Publication is explicit: building locally or pushing `main` alone does not deplo
 
 ## Publishing the lab
 
+The release ZIP includes the repository’s canonical `LICENSE` alongside the `labs/` folder. The Pages build also includes it at the site root. Do not maintain separate licence copies.
+
 The slides' **Download the lab** link downloads `pyspark-labs.zip` from the latest GitHub Release. The ZIP is a release attachment, not a committed file or part of the Pages build.
 
 1. Commit and validate the intended lab changes. Prepare the ZIP from a checkout matching the release tag, including the prepared data and `uv.lock`.

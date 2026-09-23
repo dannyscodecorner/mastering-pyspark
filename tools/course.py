@@ -92,7 +92,7 @@ def digest(path: Path) -> str:
 
 def input_hashes() -> dict[str, str]:
     """Record the authored build inputs without including generated lab downloads."""
-    result = {}
+    result = {"LICENSE": digest(ROOT / "LICENSE")}
     for folder in ("slides/src", "slides/web", "labs", "tools"):
         root = ROOT / folder
         paths = lab_files(root) if folder == "labs" else files_under(root)
@@ -312,6 +312,7 @@ def compile_slides(compiler: str) -> None:
 def populate_site(site: Path) -> None:
     """Assemble native documents, browser assets and the guided lab files."""
     shutil.copytree(ROOT / "slides/web", site)
+    shutil.copy2(ROOT / "LICENSE", site / "LICENSE")
     for filename, target in DOCUMENTS.items():
         (site / filename).write_bytes(native_document(target))
     for path in lab_files(ROOT / "labs"):
