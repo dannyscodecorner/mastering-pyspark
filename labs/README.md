@@ -12,12 +12,18 @@ Everyone uses the same notebooks and the same saved work. Choose how deeply to e
 
 You can mix these choices. There is no route to switch and no work to copy. Times are workshop budgets awaiting rehearsal; installation is pre-work.
 
+<!-- TODO: put links / references in a central location, making crosslinking easier -->
+
 ## Dependencies
 
-1. **Java 21 (JDK)** — installation for [Windows](TROUBLESHOOTING.md#windows), [macOS](TROUBLESHOOTING.md#java-21-macos) or [Linux](TROUBLESHOOTING.md#linux).
-2. **[VS Code](https://code.visualstudio.com/download)** with Microsoft's **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** and **[Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)** extensions.
-3. **[Git](https://git-scm.com/install/)** — to clone the repository; optional for the ZIP download.
-4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)** — [Windows uv instructions](TROUBLESHOOTING.md#uv-on-windows). uv downloads Python 3.12 if needed.
+1. **Java 21 (JDK)**
+    - [macOS installation instructions](TROUBLESHOOTING.md#java-21-macos).
+    - [Windows installation instructions](TROUBLESHOOTING.md#).
+2. **[VS Code](https://code.visualstudio.com/download)** with Microsoft's **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** and **[Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)** extensions installed.
+3. **[Git](https://git-scm.com/install/)** — to clone the repository.
+4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)**; uv downloads Python 3.12 if needed.
+    - [Windows uv instructions](TROUBLESHOOTING.md#uv-on-windows).
+    - [macOS uv instructions](TROUBLESHOOTING.md#)
 
 **Native Windows also needs Hadoop 3.5.0 native components.** These are not installed by uv or the JDK installer. Follow the [Windows installation steps](TROUBLESHOOTING.md#install-the-windows-components); the candidate x64 build still needs full lab validation on Windows.
 
@@ -39,27 +45,36 @@ After installing the dependencies, reopen VS Code. Choose **Terminal → New Ter
 
 ```text
 uv sync --locked --group notebook
+```
+
+This first command creates **labs/.venv**, installs Python 3.12 if needed, and installs the locked packages, including PySpark 4.2.0 and the notebook kernel. 
+
+```text
 uv run --locked check_setup.py
 ```
 
-The first command creates **labs/.venv**, installs Python 3.12 if needed, and installs the locked packages, including PySpark 4.2.0 and the notebook kernel. `uv run` uses that environment automatically; terminal activation is not needed.
+`uv run` uses that environment automatically; terminal activation is not needed.
 
-Wait for **Setup check passed**. If it fails, use [troubleshooting](TROUBLESHOOTING.md) before starting the exercises. See the [Windows status](TROUBLESHOOTING.md#windows-status) for remaining platform validation.
+Wait for **Setup check passed**. If it fails, use [troubleshooting](TROUBLESHOOTING.md) before starting the exercises.
 
 ## 3. Install the VS Code extensions
 
 Open **Extensions** with **Ctrl+Shift+X** (Windows/Linux) or **Cmd+Shift+X** (macOS). Install or enable **Python** (`ms-python.python`) and **Jupyter** (`ms-toolsai.jupyter`), both by Microsoft. Follow any reload prompt. These editor extensions are separate from the packages installed by uv.
 
+<!-- TODO: link the VS Code extensions here also -->
+
 ## 4. Open Exercise 0 and select the kernel
 
 In the Explorer, open **notebooks → 00-spark-session.ipynb**. Start here regardless of how much time you have.
 
+<!-- TODO: explain the different time paths and levels of detail. Rephrase the "regardless of how much time you have" sentence. -->
+
 Click **Select Kernel** at the notebook's top right, then **Python Environments → .venv**. If a kernel is already selected, click its name and choose **Select Another Kernel** first. Select this lab's Python 3.12:
 
-| System | Python executable inside `labs` |
-|---|---|
-| Windows | `.venv\Scripts\python.exe` |
-| macOS / Linux | `.venv/bin/python` |
+| System        | Python executable inside `labs` |
+| ------------- | ------------------------------- |
+| Windows       | `.venv\Scripts\python.exe`      |
+| macOS / Linux | `.venv/bin/python`              |
 
 Missing notebook controls or kernel? See [VS Code help](TROUBLESHOOTING.md#vs-code-cells-and-kernels).
 
@@ -74,20 +89,20 @@ Missing notebook controls or kernel? See [VS Code help](TROUBLESHOOTING.md#vs-co
 
 Do not use **Run All** on an unfinished exercise. Your saved functions live in **learner_work/**; later notebooks use your code, not an answer filled in behind the scenes. The checkpoint exercise also reuses the stream state saved by Exercise 6. Keep your edited notebooks and this folder if you take a break.
 
-Stuck during class? Use a hint first, then an explicit [catch-up step](RECOVERY.md) if needed. Completed answers are separate in **solutions/**. An AI assistant may help with setup and nudges; [you write the exercise answers](AGENTS.md).
+Stuck during class? Use a hint first, then an explicit [catch-up step](RECOVERY.md) if needed. Completed answers are separate in **solutions/**. An AI assistant may only help with setup and nudges; [you write the exercise answers](AGENTS.md).
 
 ## Exercises
 
-| Exercise | Optional zoom-in in the same notebook |
-|---|---|
-| [0. Create a SparkSession](notebooks/00-spark-session.ipynb) | Core introduction: create, use and stop the session |
-| [1. Inspect the inputs](notebooks/01-inspect.ipynb) | Row grain, schemas and data quality |
-| [2. Clean the keys](notebooks/02-clean-keys.ipynb) | Expressions, renaming, dropping and immutability |
-| [3. Validate the sales](notebooks/03-validate.ipynb) | Write tolerant parsing expressions |
-| [4. Join and aggregate](notebooks/04-join-aggregate.ipynb) | Compare inner and left joins |
-| [5. Inspect and save the report](notebooks/05-save-report.ipynb) | Read the physical plan |
-| [6. Process arriving files](notebooks/06-streaming.ipynb) | Inspect the running query and progress |
-| [7. Resume from a checkpoint](notebooks/07-checkpoint.ipynb) | Inspect checkpoint contents and explain recovery |
+| Exercise                                                         | Optional zoom-in in the same notebook               |
+| ---------------------------------------------------------------- | --------------------------------------------------- |
+| [0. Create a SparkSession](notebooks/00-spark-session.ipynb)     | Core introduction: create, use and stop the session |
+| [1. Inspect the inputs](notebooks/01-inspect.ipynb)              | Row grain, schemas and data quality                 |
+| [2. Clean the keys](notebooks/02-clean-keys.ipynb)               | Expressions, renaming, dropping and immutability    |
+| [3. Validate the sales](notebooks/03-validate.ipynb)             | Write tolerant parsing expressions                  |
+| [4. Join and aggregate](notebooks/04-join-aggregate.ipynb)       | Compare inner and left joins                        |
+| [5. Inspect and save the report](notebooks/05-save-report.ipynb) | Read the physical plan                              |
+| [6. Process arriving files](notebooks/06-streaming.ipynb)        | Inspect the running query and progress              |
+| [7. Resume from a checkpoint](notebooks/07-checkpoint.ipynb)     | Inspect checkpoint contents and explain recovery    |
 
 Each notebook links to related investigations under **notebooks/deeper/**, with prerequisites stated. These cover CSV schemas and parsing, product tags, duplicate lookup keys, daily aggregates, caching, persisted streaming output and fresh checkpoints. The [browser index](index.html) groups them by exercise and offers read-only previews.
 
