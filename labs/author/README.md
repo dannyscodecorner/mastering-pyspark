@@ -25,7 +25,7 @@ The chapter opens with an agenda and setup walkthrough. Everyone starts at `note
 6. **Process arriving files:** reuse the participant's functions and introduce files 01/02.
 7. **Resume from a checkpoint:** open a new notebook/kernel, restore the same stream configuration, and introduce file 03.
 
-Core exercises supply wrappers, parsing and some operational steps; participants write key expressions, filtering, joins/grouping and the streaming reader/start. Optional sections investigate expressions, parsing, join behaviour, plans, query progress and checkpoints. Participants may choose any zoom-in independently. Separate investigations have explicit prerequisites and never become dependencies of later core exercises. See the [design and timing budgets](../../docs/LAB-DESIGN.md); classroom rehearsal is still needed.
+Core exercises supply wrappers, parsing and some operational steps; participants write key expressions, filtering, joins/grouping, the streaming reader/start and the checkpoint restart writer. Optional sections investigate expressions, parsing, join behaviour, plans, query progress and checkpoints. Participants may choose any zoom-in independently. Separate investigations have explicit prerequisites and never become dependencies of later core exercises. See the [design and timing budgets](../../docs/LAB-DESIGN.md); classroom rehearsal is still needed.
 
 ### Cross-notebook handoffs
 

@@ -18,7 +18,7 @@ pub def slide_pyspark_streaming_restart() -> Slide:
                 heading("Your task", level=2),
                 node(NodeKind.OrderedList, children=[
                     node(NodeKind.ListItem, content="Exercise 6 saved the checkpoint and stopped its query."),
-                    node(NodeKind.ListItem, content="In this notebook, restart using the saved input and checkpoint."),
+                    node(NodeKind.ListItem, content="Rebuild the writer: Complete mode, saved checkpoint, memory table report."),
                     node(NodeKind.ListItem, content="Publish file 03, compare with the batch report, then stop the query."),
                 ], style="ho-steps"),
             ]),
@@ -59,7 +59,7 @@ pub def slide_pyspark_streaming_restart() -> Slide:
         ], style="ho-workgrid"),
             group([
             heading("Code to work with", level=2),
-            code_block("""# Setup restored the saved writer configuration.
+            code_block("""# Build your writer using CHECKPOINT_PATH.
 query = writer.start()
 publish_arrival(DATA_ROOT, INCOMING, 3)"""),
         ], style="ho-hint"),
@@ -68,5 +68,5 @@ publish_arrival(DATA_ROOT, INCOMING, 3)"""),
             span("114"),
         ]),
         ],
-        notes="Exercise 7 has a new notebook and kernel. Its setup loads the participant’s saved transformations and the existing stream input/checkpoint recorded at the end of Exercise 6. Start that writer, publish arrival 03, wait for input processing, and compare with the batch report. Finish saves the completed boundary for optional experiments and stops Spark. This is an orderly stop/restart, not crash injection. To finish the core, use the recap link to skip optional extensions.",
+        notes="Exercise 7 has a new notebook and kernel. Its setup loads the participant’s saved transformations and the existing stream input/checkpoint recorded at the end of Exercise 6. Setup supplies stream_report and CHECKPOINT_PATH; participants configure the writer, using Complete mode and memory table report. They start the query, publish arrival 03, wait for input processing, and compare with the batch report. Finish saves the completed boundary for optional experiments and stops Spark. This is an orderly stop/restart, not crash injection. To finish the core, use the recap link to skip optional extensions.",
     )

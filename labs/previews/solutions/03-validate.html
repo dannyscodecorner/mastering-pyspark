@@ -71,7 +71,7 @@
 <pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
 Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-26/09/23 10:10:24 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/09/23 10:50:21 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 </pre>
 </div>
 </div>
@@ -253,9 +253,10 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 </div>
 <div class="cell border-box-sizing text_cell rendered celltag_hint" id="cell-id=hints-3"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Slide reminder: <a href="https://dannyscodecorner.github.io/mastering-pyspark/#pyspark-types">Validate the sales</a>.</p>
 <details>
 <summary>Need a nudge? Hint 1</summary>
-<p>Use the tolerant parsing functions named in the task. Test parsed values for null.</p>
+<p>Look at the <code>reject_reason</code> column. What value does it hold for a sale that passed validation, and what does it hold for one that failed?</p>
 </details>
 <details>
 <summary>A little more help: Hint 2</summary>
@@ -381,7 +382,12 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Saved your functions to learner_work/solutions/answers.py
-Session stopped; exercise files are under runs/run-e937ed5b69
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Session stopped; exercise files are under runs/run-bd6ad6c42f
 </pre>
 </div>
 </div>

@@ -61,6 +61,35 @@
 <hr/>
 <p><a id="exercise-1"></a></p>
 <h2 id="Your-task">Your task<a class="anchor-link" href="#Your-task">¶</a></h2><p><strong>What needs attention before we can report on these sales?</strong></p>
+<p>By the end of this lab, you will have built a category sales report: one row per product category, with its number of sales and total sales amount. Before we can compute that, we need to understand the raw inputs and what needs fixing.</p>
+<p>This is the report we are working towards:</p>
+<table>
+<thead>
+<tr>
+<th>category</th>
+<th style="text-align:right">sales</th>
+<th style="text-align:right">total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>books</td>
+<td style="text-align:right">3</td>
+<td style="text-align:right">50.00</td>
+</tr>
+<tr>
+<td>games</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">40.00</td>
+</tr>
+<tr>
+<td>unmapped</td>
+<td style="text-align:right">1</td>
+<td style="text-align:right">10.00</td>
+</tr>
+</tbody>
+</table>
+<p><code>sales</code> counts accepted sales; <code>total</code> adds their amounts. The optional <a href="deeper/daily-report.html">daily report</a> also calculates <code>largest_sale</code>, the largest individual sale in each date/category group.</p>
 <p>Core budget: about 5 minutes.</p>
 <p>Read <code>data/sales.parquet</code> into <code>raw</code> and <code>data/products.parquet</code> into <code>raw_products</code>. Paths are supplied below. Inspect their schemas and a small sample of their rows before deciding what to clean.</p>
 </div>
@@ -151,6 +180,7 @@
 </div>
 <div class="cell border-box-sizing text_cell rendered celltag_hint" id="cell-id=hints-1"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>Slide reminder: <a href="https://dannyscodecorner.github.io/mastering-pyspark/#pyspark-inputs">Inspect the inputs</a>.</p>
 <details>
 <summary>Need a nudge? Hint 1</summary>
 <p>The batch reader belongs to <code>spark.read</code>. Parquet carries its stored schema.</p>

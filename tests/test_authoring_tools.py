@@ -268,6 +268,26 @@ class NotebookTests(unittest.TestCase):
         self.assertIn("SparkSession.builder", builder)
         self.assertIn("getOrCreate()", builder)
 
+    def test_checkpoint_exercise_leaves_writer_configuration_to_the_learner(self) -> None:
+        """Setup restores context without solving or replacing the restart task."""
+        script = (ROOT / "labs/author/hands_on.py").read_text()
+        for solved in (False, True):
+            with self.subTest(solved=solved):
+                cells = lesson.exercise_cells(script, "7", solved=solved)
+                by_id = {cell["id"]: cell for cell in cells}
+                setup = by_id["notebook-setup"]["source"]
+                self.assertIn("workspace.resume_stream(after=2)", setup)
+                self.assertIn("CHECKPOINT_PATH", setup)
+                self.assertNotIn("writeStream", setup)
+                self.assertNotIn("reference-stop-before-restart", by_id)
+                restart = by_id["restart-query"]
+                self.assertEqual(restart["role"], "task" if solved else "starter")
+                self.assertEqual(restart["source"].count("todo("), 0 if solved else 4)
+                if solved:
+                    self.assertIn("query = writer.start()", restart["source"])
+                else:
+                    self.assertNotIn("writer.start()", restart["source"])
+
     def test_saved_session_output_labels_the_validation_interpreter(self) -> None:
         """Published diagnostics must not include the author's private interpreter path."""
         raw = f"Python: {sys.executable}\nInput: {self.root}/data"

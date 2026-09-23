@@ -148,6 +148,18 @@ print(f"Spark {spark.version}; inputs: {DATA_ROOT.name}; fresh run prepared")
 #
 # **What needs attention before we can report on these sales?**
 #
+# By the end of this lab, you will have built a category sales report: one row per product category, with its number of sales and total sales amount. Before we can compute that, we need to understand the raw inputs and what needs fixing.
+#
+# This is the report we are working towards:
+#
+# | category | sales | total |
+# |---|---:|---:|
+# | books | 3 | 50.00 |
+# | games | 1 | 40.00 |
+# | unmapped | 1 | 10.00 |
+#
+# `sales` counts accepted sales; `total` adds their amounts. The optional [daily report](#extension-daily) also calculates `largest_sale`, the largest individual sale in each date/category group.
+#
 # Core budget: about 5 minutes.
 #
 # Read `data/sales.parquet` into `raw` and `data/products.parquet` into `raw_products`. Paths are supplied below. Inspect their schemas and a small sample of their rows before deciding what to clean.
@@ -216,6 +228,8 @@ check.inputs(raw, raw_products)
 
 
 # %% [markdown] id=hints-1 role=hint
+# Slide reminder: [Inspect the inputs](https://dannyscodecorner.github.io/mastering-pyspark/#pyspark-inputs).
+#
 # <details>
 # <summary>Need a nudge? Hint 1</summary>
 #
@@ -264,6 +278,8 @@ check.inputs(raw, raw_products)
 # %% [markdown] id=functions-note
 # `F` is the alias from `from pyspark.sql import functions as F`. These functions build Spark expressions. `F.col(...)` selects a column; `F.lit(...)` describes a literal value.
 #
+# The string functions you need for this exercise are listed in the [API reference](docs/API-REFERENCE.md) under **String operations**.
+#
 # ### Your code — the key expression
 
 
@@ -311,6 +327,8 @@ check.keys(raw, products, product_key)
 
 
 # %% [markdown] id=hints-2 role=hint
+# Slide reminder: [Clean the keys](https://dannyscodecorner.github.io/mastering-pyspark/#pyspark-cleaning).
+#
 # <details>
 # <summary>Need a nudge? Hint 1</summary>
 #
@@ -479,10 +497,12 @@ check.validation(raw, accepted, rejected)
 
 
 # %% [markdown] id=hints-3 role=hint
+# Slide reminder: [Validate the sales](https://dannyscodecorner.github.io/mastering-pyspark/#pyspark-types).
+#
 # <details>
 # <summary>Need a nudge? Hint 1</summary>
 #
-# Use the tolerant parsing functions named in the task. Test parsed values for null.
+# Look at the `reject_reason` column. What value does it hold for a sale that passed validation, and what does it hold for one that failed?
 #
 # </details>
 #
@@ -658,6 +678,8 @@ check.inner_join(inner_sales)
 
 
 # %% [markdown] id=hints-4 role=hint
+# Slide reminders: [Choose which rows to keep](https://dannyscodecorner.github.io/mastering-pyspark/#join-types) · [Group the rows. Calculate for each group.](https://dannyscodecorner.github.io/mastering-pyspark/#grouping-aggregates).
+#
 # <details>
 # <summary>Need a nudge? Hint 1</summary>
 #
@@ -745,6 +767,8 @@ saved_report.orderBy("category").show()
 
 
 # %% [markdown] id=hints-5 role=hint
+# Slide reminders: [Transformations and Actions](https://dannyscodecorner.github.io/mastering-pyspark/#transformations-actions) · [Explain the plan](https://dannyscodecorner.github.io/mastering-pyspark/#explain-plan).
+#
 # <details>
 # <summary>Need a nudge? Hint 1</summary>
 #
@@ -792,6 +816,8 @@ saved_report.orderBy("category").show()
 
 # %% [markdown] id=stream-reader-label
 # ### Your code — change the reader, reuse your transformations
+#
+# Slide reminder: [From a batch DataFrame to a streaming DataFrame](https://dannyscodecorner.github.io/mastering-pyspark/#streaming-conversion).
 
 
 # %% [starter] id=stream-reader-guided replaces=stream-reader
@@ -821,10 +847,12 @@ assert stream_report.isStreaming, "Use the streaming reader in Exercise 6."
 # A streaming DataFrame describes the computation; `start()` returns a running query. Do not call `show()` directly on the streaming DataFrame. We inspect the bounded memory table after processing each arrival.
 #
 # The memory sink is for this classroom demonstration, not durable output. The two-second trigger is a schedule, not a latency guarantee. Keep this writer configuration unchanged for Exercise 7.
+#
+# We covered Complete, Append and Update in the slides: [Streaming output modes](https://dannyscodecorner.github.io/mastering-pyspark/#streaming-output-modes). Revisit [Output mode: Complete](https://dannyscodecorner.github.io/mastering-pyspark/#streaming-complete) to see why we use it for the whole current report.
 
 
 # %% id=stream-paths
-TABLE_NAME = "sales_" + uuid4().hex[:10]
+TABLE_NAME = "report"
 CHECKPOINT_PATH = spark_path(RUN_ROOT / "report-checkpoint")
 
 
@@ -941,7 +969,7 @@ print("Source descriptions:", [item["description"] for item in progress["sources
 #
 # Core budget: about 5 minutes.
 #
-# Exercise 6 stopped the query. This notebook reconstructs its writer from your saved functions and the same input/checkpoint. Start it in this new session. Publish arrival 03 using the supplied cell. Compare the final stream report with the batch report.
+# Exercise 6 stopped the query. Setup rebuilds `stream_report` from your saved functions and restores the input directory and `CHECKPOINT_PATH` from that run. Write the output configuration yourself, then start it in this new session. Publish arrival 03 using the supplied cell and compare the final stream report with the batch report.
 #
 # This demonstrates an orderly restart in the same environment. It does not test an arbitrary crash, and it does not turn the memory sink into durable storage.
 
@@ -949,7 +977,7 @@ print("Source descriptions:", [item["description"] for item in progress["sources
 # %% [markdown] id=learning-7 role=learning
 # ## What you’ll learn
 #
-# - Resume a stopped streaming query from its existing checkpoint in a new SparkSession.
+# - Configure a streaming writer and resume the query from its existing checkpoint in a new SparkSession.
 # - Check that the next arrival updates the report without counting earlier input again.
 
 # %% [markdown] id=restart-prediction role=response
@@ -960,15 +988,49 @@ print("Source descriptions:", [item["description"] for item in progress["sources
 # Your answer: …
 
 
-# %% [markdown] id=restart-label
-# ### Supplied — restart the query
-#
-# The restart is supplied. Predict its result first, then run it. Do not create a new checkpoint here.
-
-
-# %% id=restart-query role=supplied
+# %% id=reference-stop-before-restart
+# Only the complete authoring script still has Exercise 6's query running.
+# Independent notebooks stop it in Exercise 6's Save and finish cell.
 query.stop()
 assert not query.isActive
+
+
+# %% [markdown] id=restart-label
+# ### Your code — configure and restart the query
+#
+# Start from `stream_report.writeStream` and build the writer:
+#
+# 1. Use `"complete"` output mode to publish the whole current report.
+# 2. Set `checkpointLocation` to the existing `CHECKPOINT_PATH` from Exercise 6. Do not create a new checkpoint.
+# 3. Choose the memory sink and name its table `"report"`.
+# 4. Call `.start()` on the configured writer and assign the running query to `query`.
+#
+# The same two-second trigger is supplied. Replace each `todo(...)` with the next call on your writer.
+#
+# Slide reminders: [Configuring the streaming query](https://dannyscodecorner.github.io/mastering-pyspark/#streaming-start) · [Restarting from a checkpoint](https://dannyscodecorner.github.io/mastering-pyspark/#streaming-checkpoint-recovery).
+
+
+# %% id=restart-table-name
+TABLE_NAME = "report"
+
+
+# %% [starter] id=restart-query-starter replaces=restart-query
+# writer = stream_report.writeStream
+# writer = todo("7: set complete output mode on writer")
+# writer = todo("7: reuse CHECKPOINT_PATH as the writer's checkpointLocation")
+# writer = todo('7: use the memory sink and name its table "report"')
+# writer = writer.trigger(processingTime="2 seconds")
+# query = todo("7: start the configured writer")
+
+
+# %% id=restart-query role=task
+writer = (
+    stream_report.writeStream.outputMode("complete")
+    .option("checkpointLocation", CHECKPOINT_PATH)
+    .format("memory")
+    .queryName(TABLE_NAME)
+    .trigger(processingTime="2 seconds")
+)
 query = writer.start()
 
 
@@ -979,6 +1041,8 @@ query = writer.start()
 
 
 # %% id=arrival-three
+assert query.isActive, "Start the query before publishing arrival 03."
+assert query.name == TABLE_NAME, 'Name the memory table "report".'
 publish_arrival(DATA_ROOT, INCOMING, 3)
 query.processAllAvailable()
 
@@ -996,14 +1060,14 @@ print("Batch and stream agree; query stopped.")
 # <details>
 # <summary>Need a nudge? Hint 1</summary>
 #
-# Keep the saved input directory, checkpoint and writer configuration from Exercise 6.
+# The writer chain is the same shape as in Exercise 6 — only the checkpoint location is already set for you.
 #
 # </details>
 #
 # <details>
 # <summary>A little more help: Hint 2</summary>
 #
-# Exercise 6 stopped its query. Use the reconstructed writer to start execution again. A fresh checkpoint would be a new query history.
+# See **Running query** in the [API reference](docs/API-REFERENCE.md) for starting and managing execution, and **Streaming reader** for how the input is defined. The reader is already supplied here; use Exercise 6 as the reminder for the writer configuration.
 #
 # </details>
 #

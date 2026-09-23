@@ -2,7 +2,7 @@
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Exercise-7-%E2%80%94-Resume-from-a-checkpoint">Exercise 7 — Resume from a checkpoint<a class="anchor-link" href="#Exercise-7-%E2%80%94-Resume-from-a-checkpoint">¶</a></h1><p><strong>Worked solution</strong> · <a href="../../index.html">All exercises</a> · <a href="../../README.md">Setup</a></p>
 <h2 id="What-you%E2%80%99ll-learn">What you’ll learn<a class="anchor-link" href="#What-you%E2%80%99ll-learn">¶</a></h2><ul>
-<li>Resume a stopped streaming query from its existing checkpoint in a new SparkSession.</li>
+<li>Configure a streaming writer and resume the query from its existing checkpoint in a new SparkSession.</li>
 <li>Check that the next arrival updates the report without counting earlier input again.</li>
 </ul>
 <p><strong>Core: about 5 minutes.</strong> The same baseline for everyone. <a href="#zoom">Optional zoom-in</a>: about 3 extra minutes; choose it here if the topic interests you.</p>
@@ -64,13 +64,6 @@
 <span class="n">stream_enriched</span> <span class="o">=</span> <span class="n">enrich_sales</span><span class="p">(</span><span class="n">accepted_sales</span><span class="p">(</span><span class="n">clean_sales</span><span class="p">(</span><span class="n">stream_raw</span><span class="p">)),</span> <span class="n">products</span><span class="p">)</span>
 <span class="n">stream_report</span> <span class="o">=</span> <span class="n">category_totals</span><span class="p">(</span><span class="n">stream_enriched</span><span class="p">)</span>
 <span class="n">CHECKPOINT_PATH</span> <span class="o">=</span> <span class="n">spark_path</span><span class="p">(</span><span class="n">RUN_ROOT</span> <span class="o">/</span> <span class="s2">"report-checkpoint"</span><span class="p">)</span>
-<span class="n">writer</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="n">stream_report</span><span class="o">.</span><span class="n">writeStream</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">queryName</span><span class="p">(</span><span class="n">TABLE_NAME</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s2">"complete"</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"checkpointLocation"</span><span class="p">,</span> <span class="n">CHECKPOINT_PATH</span><span class="p">)</span>
-    <span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">processingTime</span><span class="o">=</span><span class="s2">"2 seconds"</span><span class="p">)</span>
-<span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">; inputs: </span><span class="si">{</span><span class="n">DATA_ROOT</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">; notebook ready"</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -89,7 +82,7 @@
 <pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
 Setting default log level to "WARN".
 To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
-26/09/23 10:11:18 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+26/09/23 10:51:14 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
 </pre>
 </div>
 </div>
@@ -108,7 +101,7 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <p><a id="exercise-7"></a></p>
 <h2 id="Your-task">Your task<a class="anchor-link" href="#Your-task">¶</a></h2><p><strong>Will Spark count the first two arrivals again?</strong></p>
 <p>Core budget: about 5 minutes.</p>
-<p>Exercise 6 stopped the query. This notebook reconstructs its writer from your saved functions and the same input/checkpoint. Start it in this new session. Publish arrival 03 using the supplied cell. Compare the final stream report with the batch report.</p>
+<p>Exercise 6 stopped the query. Setup rebuilds <code>stream_report</code> from your saved functions and restores the input directory and <code>CHECKPOINT_PATH</code> from that run. Write the output configuration yourself, then start it in this new session. Publish arrival 03 using the supplied cell and compare the final stream report with the batch report.</p>
 <p>This demonstrates an orderly restart in the same environment. It does not test an arbitrary crash, and it does not turn the memory sink into durable storage.</p>
 </div>
 </div>
@@ -122,15 +115,40 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 </div>
 <div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=restart-label"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Supplied-%E2%80%94-restart-the-query">Supplied — restart the query<a class="anchor-link" href="#Supplied-%E2%80%94-restart-the-query">¶</a></h3><p>The restart is supplied. Predict its result first, then run it. Do not create a new checkpoint here.</p>
+<h3 id="Your-code-%E2%80%94-configure-and-restart-the-query">Your code — configure and restart the query<a class="anchor-link" href="#Your-code-%E2%80%94-configure-and-restart-the-query">¶</a></h3><p>Start from <code>stream_report.writeStream</code> and build the writer:</p>
+<ol>
+<li>Use <code>"complete"</code> output mode to publish the whole current report.</li>
+<li>Set <code>checkpointLocation</code> to the existing <code>CHECKPOINT_PATH</code> from Exercise 6. Do not create a new checkpoint.</li>
+<li>Choose the memory sink and name its table <code>"report"</code>.</li>
+<li>Call <code>.start()</code> on the configured writer and assign the running query to <code>query</code>.</li>
+</ol>
+<p>The same two-second trigger is supplied. Replace each <code>todo(...)</code> with the next call on your writer.</p>
+<p>Slide reminders: <a href="https://dannyscodecorner.github.io/mastering-pyspark/#streaming-start">Configuring the streaming query</a> · <a href="https://dannyscodecorner.github.io/mastering-pyspark/#streaming-checkpoint-recovery">Restarting from a checkpoint</a>.</p>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=restart-query">
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=restart-table-name">
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">query</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">TABLE_NAME</span> <span class="o">=</span> <span class="s2">"report"</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_task" id="cell-id=restart-query">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">writer</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">stream_report</span><span class="o">.</span><span class="n">writeStream</span><span class="o">.</span><span class="n">outputMode</span><span class="p">(</span><span class="s2">"complete"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">option</span><span class="p">(</span><span class="s2">"checkpointLocation"</span><span class="p">,</span> <span class="n">CHECKPOINT_PATH</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">"memory"</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">queryName</span><span class="p">(</span><span class="n">TABLE_NAME</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">trigger</span><span class="p">(</span><span class="n">processingTime</span><span class="o">=</span><span class="s2">"2 seconds"</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">query</span> <span class="o">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -146,7 +164,9 @@ To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLeve
 <div class="input">
 <div class="inner_cell">
 <div class="input_area">
-<div class="highlight hl-ipython3"><pre><span></span><span class="n">publish_arrival</span><span class="p">(</span><span class="n">DATA_ROOT</span><span class="p">,</span> <span class="n">INCOMING</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">assert</span> <span class="n">query</span><span class="o">.</span><span class="n">isActive</span><span class="p">,</span> <span class="s2">"Start the query before publishing arrival 03."</span>
+<span class="k">assert</span> <span class="n">query</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">TABLE_NAME</span><span class="p">,</span> <span class="s1">'Name the memory table "report".'</span>
+<span class="n">publish_arrival</span><span class="p">(</span><span class="n">DATA_ROOT</span><span class="p">,</span> <span class="n">INCOMING</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 <span class="n">query</span><span class="o">.</span><span class="n">processAllAvailable</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -192,11 +212,11 @@ Batch and stream agree; query stopped.
 <div class="text_cell_render border-box-sizing rendered_html">
 <details>
 <summary>Need a nudge? Hint 1</summary>
-<p>Keep the saved input directory, checkpoint and writer configuration from Exercise 6.</p>
+<p>The writer chain is the same shape as in Exercise 6 — only the checkpoint location is already set for you.</p>
 </details>
 <details>
 <summary>A little more help: Hint 2</summary>
-<p>Exercise 6 stopped its query. Use the reconstructed writer to start execution again. A fresh checkpoint would be a new query history.</p>
+<p>See <strong>Running query</strong> in the <a href="../../docs/API-REFERENCE.md">API reference</a> for starting and managing execution, and <strong>Streaming reader</strong> for how the input is defined. The reader is already supplied here; use Exercise 6 as the reminder for the writer configuration.</p>
 </details>
 <p>If you need to catch up during class, use the explicit <a href="../../docs/RECOVERY.md#exercise-7">recovery step</a>. <a href="07-checkpoint.html">Worked solution</a> — open it separately when you are ready to compare.</p>
 </div>
@@ -284,7 +304,7 @@ Batch and stream agree; query stopped.
 <div class="output">
 <div class="output_area">
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Session stopped; exercise files are under runs/run-9486203593
+<pre>Session stopped; exercise files are under runs/run-850eee56ee
 </pre>
 </div>
 </div>

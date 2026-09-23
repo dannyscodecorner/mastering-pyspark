@@ -266,18 +266,6 @@ def setup_source(exercise: str, *, solved: bool) -> str:
                 'CHECKPOINT_PATH = spark_path(RUN_ROOT / "report-checkpoint")',
             ]
         )
-    if exercise == "7":
-        lines.extend(
-            [
-                "writer = (",
-                '    stream_report.writeStream.format("memory")',
-                "    .queryName(TABLE_NAME)",
-                '    .outputMode("complete")',
-                '    .option("checkpointLocation", CHECKPOINT_PATH)',
-                '    .trigger(processingTime="2 seconds")',
-                ")",
-            ]
-        )
     lines.append('print(f"Spark {spark.version}; inputs: {DATA_ROOT.name}; notebook ready")')
     return "\n".join(lines)
 
@@ -436,10 +424,8 @@ def exercise_cells(script: str, exercise: str, *, solved: bool = False) -> list[
         source=re.sub(r"^## .+$", "## Your task", body[0]["source"], count=1, flags=re.MULTILINE),
     )
     if exercise == "7":
-        body = [
-            dict(cell, source="query = writer.start()") if cell["id"] == "restart-query" else cell
-            for cell in body
-        ]
+        # Exercise 6's notebook already stops its query before the kernel is closed.
+        body = [cell for cell in body if cell["id"] != "reference-stop-before-restart"]
     core = [cell for cell in body if cell["depth"] == "core"]
     optional = [cell for cell in body if cell["depth"] == "zoom"]
     if exercise.isdigit() and optional:
