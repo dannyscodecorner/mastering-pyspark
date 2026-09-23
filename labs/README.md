@@ -53,13 +53,13 @@ Alternatively, [download the lab from a GitHub Release](https://github.com/danny
 
 After installing the dependencies, reopen VS Code. Choose **Terminal → New Terminal** and run these commands from the **labs** folder, waiting for each to finish:
 
-```text
+```bash
 uv sync --locked --group notebook
 ```
 
 This first command creates **labs/.venv**, installs Python 3.12 if needed, and installs the locked packages, including PySpark 4.2.0 and the notebook kernel. 
 
-```text
+```bash
 uv run --locked check_setup.py
 ```
 
