@@ -1,5 +1,38 @@
 # Authoring the course
 
+For the course slides and learner starting points, see the [course README](../README.md). This guide covers local builds, content changes and verification; [publishing](PUBLISHING.md) covers GitHub Pages and lab releases.
+
+## Build and preview
+
+Use Python 3.10 or newer for the repository tools and an installed Incan compiler. The baseline is **Incan 0.5.1**; `INCAN_BINARY` can select a different compiler explicitly.
+
+From the repository root:
+
+```text
+python3 tools/course.py build
+python3 tools/course.py serve
+```
+
+Open the address printed by the server, normally <http://127.0.0.1:8766/>. The server binds only to this machine. Stop it with Ctrl+C. On systems where Python is named `python`, use that command instead of `python3`.
+
+The build checks and compiles the Incan program, then runs its native executable to generate the main presentation and both reference decks. Python packages the browser assets and portable lab files into `dist/`; it does not render the slides. The built directory can be served on its own. The lab download is a GitHub Release attachment; building does not publish anything to GitHub.
+
+The historical core-reference deck retains its original material; it is not an additional modernised chapter.
+
+## Repository layout
+
+```text
+slides/src/          Incan slide content, components and HTML renderer
+slides/web/          Styles, interaction controllers, fonts and artwork
+labs/                Locked uv project, notebooks and prepared data
+docs/                Authoring, publishing and course design guidance
+tools/course.py      Build, verify and serve commands
+dist/                Generated website (ignored by Git)
+.build/              Local compiler state and build evidence (ignored by Git)
+```
+
+`slides/src/` is the presentation’s source of truth. Edit its chapter modules, then rebuild. Do not edit `dist/` or continue editing the old archive’s HTML.
+
 ## Presentation sources
 
 | Content                                | Location in `slides/src/`                      |
@@ -30,6 +63,18 @@ python3 tools/course.py verify --compare-original /path/to/preserved/html/deck
 ```
 
 The supplied directory must contain the three original HTML documents. That comparison is optional and should not be required after intentional content edits.
+
+## Verify changes
+
+After building, run this from the repository root:
+
+```text
+python3 tools/course.py verify
+```
+
+Verification checks that the build matches the current source files, native outputs reproduce the three documents, local HTML/SVG/CSS resources and fragments resolve inside the site, and every exercise notebook matches its authored exercise. It also checks that learner notebooks contain no saved outputs. It does not execute Spark or replace a visual review of changed slides.
+
+For a lesson-code change, run its setup check and exercises using the lab’s locked environment, regenerate the exercise notebooks and HTML previews, then rebuild the course. Previous notebook outputs are not evidence for changed code. The commands are in the next section.
 
 ## Exercises and notebooks
 
@@ -89,3 +134,13 @@ the course build/verifier and the relevant native or Spark checks.
 The baseline compiler is Incan 0.5.1. All local compiler/cache output goes under this checkout’s ignored build directories. Do not share a Cargo target directory with another checkout or copy a previous experiment’s native executable into it.
 
 `dist/` is the deployable static site; `slides/src/` is the authored presentation. Building or serving does not push commits, configure GitHub Pages or publish a release. The original archive and earlier experiments remain external fallbacks.
+
+## Presenting
+
+- Arrow keys, Space and Page Up/Down move between slides.
+- **O** opens the slide overview; **F** enters full screen; **B** blanks the screen.
+- **N** shows notes on the presentation screen, visible to the audience.
+- Diagram controls advance their own teaching steps. The bottom arrows leave the slide.
+- Reduced-motion and static views retain a complete illustration.
+
+Fonts and presentation assets are local. Attribution and bundled licence notices are listed in [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
