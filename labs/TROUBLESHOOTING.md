@@ -108,11 +108,13 @@ For errors mentioning `winutils`, `hadoop.dll` or `NativeIO$Windows.access0`.
 **Windows x64 only.** This uses a third-party Hadoop build; Windows validation is still pending.
 
 1. Install the [Visual C++ x64 runtime](https://aka.ms/vc14/vc_redist.x64.exe).
-2. Download [Hadoop 3.5.0](https://github.com/notepass/hadoop-native-win-libs/releases/download/rel/release-3.5.0/hadoop-win-utils.zip). Extract it into your user folder so these files exist:
+2. Download and unpack Hadoop 3.5.0 in PowerShell:
 
-   ```text
-   C:\Users\<your-name>\hadoop-3.5.0\bin\hadoop.dll
-   C:\Users\<your-name>\hadoop-3.5.0\bin\winutils.exe
+   ```powershell
+   $archive = "$env:TEMP\hadoop-3.5.0.zip"
+   $url = "https://github.com/notepass/hadoop-native-win-libs/releases/download/rel/release-3.5.0/hadoop-win-utils.zip"
+   Invoke-WebRequest -Uri $url -OutFile $archive -UseBasicParsing
+   Expand-Archive -LiteralPath $archive -DestinationPath "$env:USERPROFILE\hadoop-3.5.0"
    ```
 
 3. Save your notebooks and **close VS Code completely**. Open normal PowerShell and run:
@@ -141,7 +143,7 @@ For errors mentioning `winutils`, `hadoop.dll` or `NativeIO$Windows.access0`.
 <summary>Download checksum</summary>
 
 ```powershell
-Get-FileHash "$env:USERPROFILE\Downloads\hadoop-win-utils.zip" -Algorithm SHA256
+Get-FileHash "$env:TEMP\hadoop-3.5.0.zip" -Algorithm SHA256
 ```
 
 Expected SHA256:
