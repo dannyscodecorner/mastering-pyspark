@@ -10,7 +10,7 @@ pub def slide_spark_connect() -> Slide:
         styles="slide ",
         content=[
             group([
-            text("09 / SPARK IN AWS GLUE"),
+            text("09 / RUNNING SPARK IN PRODUCTION"),
         ], style="eyebrow"),
             heading("Spark Connect", level=1),
             prose("Classic PySpark and the client–server architecture", style="subtitle"),

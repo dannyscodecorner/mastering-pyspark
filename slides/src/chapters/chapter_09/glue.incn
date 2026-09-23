@@ -10,7 +10,7 @@ pub def slide_glue() -> Slide:
         styles="slide ",
         content=[
             group([
-            text("09 / SPARK IN AWS GLUE"),
+            text("09 / RUNNING SPARK IN PRODUCTION"),
         ], style="eyebrow"),
             heading("Spark in AWS Glue", level=1),
             node(NodeKind.OrderedList, children=[
@@ -45,5 +45,5 @@ pub def slide_glue() -> Slide:
             span("121"),
         ]),
         ],
-        notes="The final chapter applies the Spark concepts already taught to AWS Glue. Reuse the earlier query and execution vocabulary while introducing the service-specific runtime, workers and APIs. Runtime-specific claims remain to be verified against the client environment.",
+        notes="AWS Glue is one concrete deployment example within Running Spark in Production. Reuse the earlier query and execution vocabulary to orient a separate live walkthrough around runtime, workers, dependencies, data access and monitoring. Keep this short in the current session. Runtime-specific claims remain to be verified against the chosen environment.",
     )

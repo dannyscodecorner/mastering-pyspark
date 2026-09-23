@@ -2,8 +2,10 @@
 
 from surface import Chapter
 from chapters.closing.closing import slide_closing
+from chapters.closing.not_covered_yet import slide_not_covered_yet
 
 pub def closing_chapter() -> Chapter:
     return Chapter(number="0", title="DCC / SPARK TRAINING", first_page=1, slides=[
+        slide_not_covered_yet(),
         slide_closing(),
     ])

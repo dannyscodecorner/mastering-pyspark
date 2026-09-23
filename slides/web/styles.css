@@ -431,7 +431,7 @@ pre code{font:inherit;color:inherit;white-space:pre;tab-size:4}
 .ag-roles{margin-top:26px}.ag-roles p{display:flex;gap:20px;margin:18px 0;font-size:23px;align-items:baseline}.ag-roles code{min-width:102px;font-weight:700;color:#087b8b}
 .ag-bottom{border-left:4px solid #087b8b;padding-left:18px;margin-top:18px;font-size:24px}
 
-/* Final Glue chapter and nine-chapter agenda. */
+/* Production chapter and nine-chapter agenda. */
 :root{--s9:#a66714}
 [data-section="9"]{--accent:var(--s9);--accent-light:#e2b366}
 #roadmap .roadmap{grid-template-rows:repeat(5,auto)}

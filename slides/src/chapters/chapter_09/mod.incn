@@ -9,7 +9,7 @@ from chapters.chapter_09.query_evidence import slide_query_evidence
 from chapters.chapter_09.glue_recap import slide_glue_recap
 
 pub def chapter_09_chapter() -> Chapter:
-    return Chapter(number="9", title="09 / SPARK IN AWS GLUE", first_page=1, slides=[
+    return Chapter(number="9", title="09 / RUNNING SPARK IN PRODUCTION", first_page=1, slides=[
         slide_section_9(),
         slide_spark_connect(),
         slide_production(),

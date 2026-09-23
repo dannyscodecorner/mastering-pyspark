@@ -5,22 +5,22 @@ from surface import Frame, NodeKind, Slide, group, line_break, node, prose, rich
 pub def slide_section_9() -> Slide:
     return Slide(
         slug="section-9",
-        title="Spark in AWS Glue",
+        title="Running Spark in Production",
         frame=Frame.Composed,
         styles="slide dark",
         content=[
             group([
-            text("09 / SPARK IN AWS GLUE"),
+            text("09 / RUNNING SPARK IN PRODUCTION"),
         ], style="eyebrow"),
             group([
             span("09", style="chapter-number"),
             group([
                 rich_heading([
-                    text("Spark in"),
+                    text("Running Spark"),
                     line_break(),
-                    text("AWS Glue"),
+                    text("in Production"),
                 ], level=1),
-                prose("Running and monitoring Spark applications in AWS Glue"),
+                prose("A brief look at deployment, dependencies, access and monitoring"),
             ]),
         ], style="divider"),
             node(NodeKind.Footer, children=[
@@ -28,5 +28,5 @@ pub def slide_section_9() -> Slide:
             span("118"),
         ]),
         ],
-        notes="Bring the course together by applying the Spark execution model, query reasoning and streaming concepts to AWS Glue. This is a separate final chapter, following the general Working with PySpark material. The next two slides are retained content outlines for development, not completed demonstrations.",
+        notes="Use this chapter as a brief orientation to what changes when the lab pipeline runs in production: runtime and dependency choices, resources, data access, monitoring and recovery. AWS Glue is a concrete example within the wider topic. A separate live demonstration can show how these concerns appear in one environment. The detailed walkthroughs remain outlines; do not try to teach every operational detail in this session.",
     )

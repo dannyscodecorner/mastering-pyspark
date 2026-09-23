@@ -27,5 +27,5 @@ pub def slide_section_8() -> Slide:
             span("104"),
         ]),
         ],
-        notes="We have explored how Spark executes a query. Now use that understanding to build a pipeline. Use the local uv project and prepared Parquet inputs. Complete the setup check before class. Introduce functions as F, transform and validate the data, and write the result. Chapter 09 will reuse the pipeline in AWS Glue, where we configure its environment and inspect execution. The quarry is chapter artwork expressing active work, not a diagram of Spark internals.",
+        notes="We have explored how Spark executes a query. Now use that understanding to build a pipeline. Use the local uv project and prepared Parquet inputs. Complete the setup check before class. Introduce functions as F, transform and validate the data, and write the result. Chapter 09 gives a brief overview of running the pipeline in production, with AWS Glue as one concrete example. The quarry is chapter artwork expressing active work, not a diagram of Spark internals.",
     )

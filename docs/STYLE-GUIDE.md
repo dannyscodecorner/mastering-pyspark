@@ -29,7 +29,7 @@ The concept images establish the direction, not exact font geometry. Roboto Slab
 | 06 Grouping, joining and aggregating | #167F91 teal    | #6ED5DF            |
 | 07 Structured Streaming              | #4B7C35 sage    | #A3C987            |
 | 08 Working with PySpark              | #B35141 clay    | #E39B88            |
-| 09 Spark in AWS Glue                 | #A66714 ochre   | #E2B366            |
+| 09 Running Spark in Production      | #A66714 ochre   | #E2B366            |
 
 Use accents for section markers, thin top rules, selected diagram elements and takeaways. Keep primary headings charcoal on paper. The original logo retains its own brand colours. Labels and numbers carry section identity alongside colour.
 

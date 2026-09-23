@@ -74,15 +74,15 @@ pub def slide_roadmap() -> Slide:
                 span("08"),
                 group([
                     heading("Working with PySpark", level=2),
-                    prose("Data preparation, Spark Connect and deployment"),
+                    prose("Build a batch and streaming sales pipeline"),
                 ]),
                 node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
             ], attributes=[attr("href", "#section-8"), attr("style", "--item-accent:var(--s8)")]),
             node(NodeKind.Link, children=[
                 span("09"),
                 group([
-                    heading("Spark in AWS Glue", level=2),
-                    prose("Jobs, workers, data access and monitoring"),
+                    heading("Running Spark in Production", level=2),
+                    prose("Deployment, dependencies, access and monitoring"),
                 ]),
                 node(NodeKind.Bold, content="↗", attributes=[attr("aria-hidden", "true")]),
             ], attributes=[attr("href", "#section-9"), attr("style", "--item-accent:var(--s9)")]),

@@ -38,7 +38,7 @@ pub def slide_working_pyspark_recap() -> Slide:
                 ]),
             ]),
         ], style="chapter-recap-table"),
-            prose("Next: take this pipeline to AWS Glue and configure how it runs.", style="chapter-recap-takeaway"),
+            prose("Next: what changes when this pipeline runs in production?", style="chapter-recap-takeaway"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
             span("117"),
