@@ -16,6 +16,8 @@ You can mix these choices. There is no route to switch and no work to copy. Time
 
 ## Dependencies
 
+<!-- TODO: dependencies should be above Exercise 0; order needs changing -->
+
 1. **Java 21 (JDK)**
     - [macOS installation instructions](TROUBLESHOOTING.md#java-21-macos).
     - [Windows installation instructions](TROUBLESHOOTING.md#).
