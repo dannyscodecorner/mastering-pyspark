@@ -76,11 +76,11 @@ These are topic branches, not a second version of the core exercises. They use t
 
 ## Getting unstuck
 
-A participant may deliberately choose a supplied catch-up boundary through keys, validation or reporting. The helper backs up their saved functions before replacing that boundary; it never silently completes an exercise or overwrites notebook edits. [Recovery instructions](../labs/RECOVERY.md) explain safe replay and checkpoint reuse. Choosing an optional zoom-in does not require catch-up or a new workspace.
+A participant may deliberately choose a supplied catch-up boundary through keys, validation or reporting. The helper backs up their saved functions before replacing that boundary; it never silently completes an exercise or overwrites notebook edits. [Recovery instructions](../labs/docs/RECOVERY.md) explain safe replay and checkpoint reuse. Choosing an optional zoom-in does not require catch-up or a new workspace.
 
 ## Authoring and verification
 
-`labs/hands_on.py` is the one annotated lesson source and runnable reference. Each task has exactly one comment-only `[starter]`; completed code belongs to the solution edition. `depth=zoom` marks an optional teaching unit. `author/lesson_source.py` selects exercise boundaries, places optional units after the core, and generates independent setup/finish cells.
+`labs/author/hands_on.py` is the one annotated lesson source and runnable reference. Each task has exactly one comment-only `[starter]`; completed code belongs to the solution edition. `depth=zoom` marks an optional teaching unit. `author/lesson_source.py` selects exercise boundaries, places optional units after the core, and generates independent setup/finish cells.
 
 The generated layout is:
 
@@ -95,6 +95,12 @@ labs/
       schemas-and-parsing.ipynb
       ...
   solutions/                  # Matching completed notebooks
+  previews/                   # Generated HTML and stylesheet
+    notebooks/
+    solutions/
+  docs/                       # Participant help and reference
+  lab_support/                # Shared Python helpers
+  author/                     # Lesson source and authoring tools
   learner_work/               # Local participant work; never published
 ```
 
@@ -102,7 +108,7 @@ The generator creates one learner and one solution notebook per exercise, with l
 
 Validate the baseline with `--execute --core-only`: eight fresh kernels, skipping every optional section. Then run `--execute`: all zoom-ins and deeper notebooks, visiting investigations at their associated exercise boundaries. This proves that optional work can be skipped and that exploring it does not disrupt the remaining core. Blank learner worksheets deliberately cannot pass Run All.
 
-Tests cover one starter per task, learner-output exclusion, one notebook per exercise, shared learner functions, solution isolation, recovery backups, minimal topic prerequisites and checkpoint boundaries. `pipeline.py` remains the reference module and chapter 09 handoff; AST checks keep its seven transformation functions aligned with the lesson.
+Tests cover one starter per task, learner-output exclusion, one notebook per exercise, shared learner functions, solution isolation, recovery backups, minimal topic prerequisites and checkpoint boundaries. `lab_support/pipeline.py` remains the reference module and chapter 09 handoff; AST checks keep its seven transformation functions aligned with the lesson.
 
 Build and verify the native Incan course after publishing-source changes. Check links, the ZIP contents and changed slides in a browser. Do not publish learner answers, local environments, caches, runs or checkpoints. Runtime validation and classroom pacing are separate claims; record both honestly.
 

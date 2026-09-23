@@ -8,7 +8,7 @@ preview = true
 explicit-preview-rules = true
 
 [lint.isort]
-known-first-party = ["arrival_files", "lab_checks", "lab_workspace", "course", "labs", "pipeline", "tools", "workshop_runtime"]
+known-first-party = ["author", "course", "lab_support", "labs", "tools"]
 
 [lint.pydocstyle]
 convention = "google"

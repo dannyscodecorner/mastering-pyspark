@@ -69,5 +69,5 @@ report = enriched.groupBy("category").agg(
             span("111"),
         ]),
         ],
-        notes="The short code seed omits the category replacement so participants add it: F.coalesce(\"category\", F.lit(\"unmapped\")). coalesce here is a column expression, not DataFrame.coalesce for partitions. Validate normalized lookup-key uniqueness before joining. An inner join removes M1/10.00, leaving four sales and total90.00. The full reference and pipeline.py include the left join, unmapped label and selected output columns.",
+        notes="The short code seed omits the category replacement so participants add it: F.coalesce(\"category\", F.lit(\"unmapped\")). coalesce here is a column expression, not DataFrame.coalesce for partitions. Validate normalized lookup-key uniqueness before joining. An inner join removes M1/10.00, leaving four sales and total90.00. The full reference and lab_support/pipeline.py include the left join, unmapped label and selected output columns.",
     )

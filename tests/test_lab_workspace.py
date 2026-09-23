@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from labs import lab_workspace
+from labs.lab_support import workspace as lab_workspace
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -22,7 +22,10 @@ class WorkspaceTests(unittest.TestCase):
         patcher = patch.object(lab_workspace, "LAB_ROOT", self.root)
         patcher.start()
         self.addCleanup(patcher.stop)
-        (self.root / "pipeline.py").write_text((ROOT / "labs/pipeline.py").read_text())
+        (self.root / "lab_support").mkdir()
+        (self.root / "lab_support/pipeline.py").write_text(
+            (ROOT / "labs/lab_support/pipeline.py").read_text()
+        )
         path = self.root / "student.py"
         path.write_text(
             'def product_key(value):\n    """An observable student implementation."""\n    return value + "/student"\n\n'

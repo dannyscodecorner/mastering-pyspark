@@ -118,25 +118,25 @@ Each notebook links to related investigations under **notebooks/deeper/**, with 
 
 <!-- Link destinations: define each once and reuse its label above. -->
 
-[java-macos]: TROUBLESHOOTING.md#java-21-macos
-[java-windows]: TROUBLESHOOTING.md#windows
+[java-macos]: docs/TROUBLESHOOTING.md#java-21-macos
+[java-windows]: docs/TROUBLESHOOTING.md#windows
 [vscode]: https://code.visualstudio.com/download
 [python-extension]: https://marketplace.visualstudio.com/items?itemName=ms-python.python
 [jupyter-extension]: https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter
 [git]: https://git-scm.com/install/
 [uv]: https://docs.astral.sh/uv/getting-started/installation/
-[uv-windows]: TROUBLESHOOTING.md#uv-on-windows
-[uv-macos]: TROUBLESHOOTING.md#uv-on-macos
-[hadoop-windows]: TROUBLESHOOTING.md#install-the-windows-components
+[uv-windows]: docs/TROUBLESHOOTING.md#uv-on-windows
+[uv-macos]: docs/TROUBLESHOOTING.md#uv-on-macos
+[hadoop-windows]: docs/TROUBLESHOOTING.md#install-the-windows-components
 [parquet-explorer]: https://marketplace.visualstudio.com/items?itemName=AdamViola.parquet-explorer
-[api-reference]: API-REFERENCE.md
-[troubleshooting]: TROUBLESHOOTING.md
+[api-reference]: docs/API-REFERENCE.md
+[troubleshooting]: docs/TROUBLESHOOTING.md
 [instructor-notes]: author/README.md
 [sparse-checkout]: https://git-scm.com/docs/git-sparse-checkout
 [lab-download]: https://github.com/dannyscodecorner/mastering-pyspark/releases/latest/download/pyspark-labs.zip
 [exercise-0]: notebooks/00-spark-session.ipynb
-[kernel-help]: TROUBLESHOOTING.md#vs-code-cells-and-kernels
-[recovery]: RECOVERY.md
+[kernel-help]: docs/TROUBLESHOOTING.md#vs-code-cells-and-kernels
+[recovery]: docs/RECOVERY.md
 [agent-guidance]: AGENTS.md
 [exercise-1]: notebooks/01-inspect.ipynb
 [exercise-2]: notebooks/02-clean-keys.ipynb

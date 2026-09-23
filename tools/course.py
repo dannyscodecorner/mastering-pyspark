@@ -197,10 +197,10 @@ def verify_links(site: Path) -> dict[Path, Markup]:
 
 def verify_lab(lab: Path) -> None:
     """Verify every generated exercise and prevent answers/outputs leaking into learner copies."""
-    script = lab / "hands_on.py"
+    script = lab / "author/hands_on.py"
     parser = lab / "author/lesson_source.py"
     if not script.is_file() or not parser.is_file():
-        raise ValueError(f"Lab needs hands_on.py and author/lesson_source.py: {lab}")
+        raise ValueError(f"Lab needs author/hands_on.py and author/lesson_source.py: {lab}")
     model = runpy.run_path(str(parser))
     source = script.read_text(encoding="utf-8")
     expected_files = {
@@ -215,6 +215,15 @@ def verify_lab(lab: Path) -> None:
         raise ValueError(
             "Lab needs exactly one learner and one solution notebook per exercise; remove stale route copies and regenerate missing exercises."
         )
+    expected_previews = {
+        lab / "previews" / path.relative_to(lab).with_suffix(".html") for path in expected_files
+    }
+    actual_previews = set((lab / "previews").rglob("*.html"))
+    misplaced = [
+        path for folder in ("notebooks", "solutions") for path in (lab / folder).rglob("*.html")
+    ]
+    if actual_previews != expected_previews or misplaced:
+        raise ValueError("Lab HTML previews must mirror notebooks and solutions under previews/.")
     for exercise in model["exercise_ids"]():
         for solved in (False, True):
             folder = "solutions" if solved else "notebooks"

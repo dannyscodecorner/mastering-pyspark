@@ -129,12 +129,15 @@ class NotebookTests(unittest.TestCase):
         source_root = ROOT / "labs"
         notebook = notebooks.build_notebook(source_root, "2")
         path = self.root / "notebooks/02-clean-keys.ipynb"
-        (self.root / "hands_on.py").touch()
-        notebooks.save_notebook(notebook, path)
-        expected = lesson.exercise_cells((source_root / "hands_on.py").read_text(), "2")
+        notebooks.save_notebook(notebook, path, root=self.root)
+        expected = lesson.exercise_cells((source_root / "author/hands_on.py").read_text(), "2")
         course.verify_exercise(path, expected, solved=False)
-        preview = path.with_suffix(".html")
+        preview = self.root / "previews/notebooks/02-clean-keys.html"
         self.assertIn("Clean the keys", preview.read_text())
+        self.assertFalse(path.with_suffix(".html").exists())
+        self.assertIn('href="../notebook.css"', preview.read_text())
+        self.assertIn('href="../../README.md"', preview.read_text())
+        self.assertIn('href="../solutions/02-clean-keys.html"', preview.read_text())
         ids = course.Markup(preview).ids
         self.assertEqual(len(ids), len(set(ids)))
         self.assertTrue(any("todo(" in cell.source for cell in notebook.cells))
@@ -146,11 +149,67 @@ class NotebookTests(unittest.TestCase):
             )
         )
 
+    def test_preview_navigation_handles_core_and_deeper_locations(self) -> None:
+        """Moving HTML must preserve setup, next-exercise and worked-solution navigation."""
+        cases = {
+            "notebooks/02-clean-keys.ipynb": {
+                "../README.md": "../../README.md",
+                "../docs/RECOVERY.md#exercise-2": "../../docs/RECOVERY.md#exercise-2",
+                "deeper/product-tags.ipynb": "deeper/product-tags.html",
+                "../solutions/02-clean-keys.ipynb": "../solutions/02-clean-keys.html",
+                "03-validate.ipynb?download=1#finish": "03-validate.html?download=1#finish",
+                "#finish": "#finish",
+                "https://example.com/other.ipynb": "https://example.com/other.ipynb",
+            },
+            "solutions/deeper/product-tags.ipynb": {
+                "../../index.html": "../../../index.html",
+                "../02-clean-keys.ipynb": "../02-clean-keys.html",
+                "../../notebooks/deeper/product-tags.ipynb": "../../notebooks/deeper/product-tags.html",
+                "../../lab_support/runtime.py": "../../../lab_support/runtime.py",
+                "../../data/example%20file.png": "../../../data/example%20file.png",
+            },
+        }
+        for filename, links in cases.items():
+            for original, expected in links.items():
+                with self.subTest(notebook=filename, link=original):
+                    self.assertEqual(
+                        notebooks.preview_url(original, self.root / filename, self.root),
+                        expected,
+                    )
+
+    def test_preview_rewrites_urls_without_changing_code_or_link_labels(self) -> None:
+        """Notebook extensions in visible prose or code must not become HTML filenames."""
+        body = (
+            '<a href="03-validate.ipynb?a=1&amp;b=2">03-validate.ipynb</a>'
+            '<pre>print("03-validate.ipynb")</pre>'
+            '<img src="../data/sample.png" alt="Input">'
+        )
+        actual = notebooks.preview_links(body, self.root / "notebooks/02.ipynb", self.root)
+        self.assertEqual(
+            actual,
+            '<a href="03-validate.html?a=1&amp;b=2">03-validate.ipynb</a>'
+            '<pre>print("03-validate.ipynb")</pre>'
+            '<img src="../../data/sample.png" alt="Input">',
+        )
+
+    def test_support_changes_invalidate_results_but_learner_work_does_not(self) -> None:
+        """Nested support code affects saved evidence; local participant work must not."""
+        helper = self.root / "lab_support/nested/helper.py"
+        helper.parent.mkdir(parents=True)
+        helper.write_text("value = 1\n")
+        original = notebooks.source_digest(self.root)
+        learner = self.root / "learner_work/answers.py"
+        learner.parent.mkdir()
+        learner.write_text("participant_answer = 42\n")
+        self.assertEqual(notebooks.source_digest(self.root), original)
+        helper.write_text("value = 2\n")
+        self.assertNotEqual(notebooks.source_digest(self.root), original)
+
     def test_verifier_rejects_saved_answers_and_outputs(self) -> None:
         """Participant answers and execution outputs must never enter a published starter."""
         source_root = ROOT / "labs"
         notebook = notebooks.build_notebook(source_root, "2")
-        expected = lesson.exercise_cells((source_root / "hands_on.py").read_text(), "2")
+        expected = lesson.exercise_cells((source_root / "author/hands_on.py").read_text(), "2")
         path = self.root / "test.ipynb"
         code = next(cell for cell in notebook.cells if cell.cell_type == "code")
         code.outputs = [nbformat.v4.new_output("stream", name="stdout", text="answer")]
@@ -167,7 +226,7 @@ class NotebookTests(unittest.TestCase):
 
     def test_every_exercise_has_one_standalone_notebook(self) -> None:
         """Exercises lead the structure; optional depth does not duplicate a notebook."""
-        script = (ROOT / "labs/hands_on.py").read_text()
+        script = (ROOT / "labs/author/hands_on.py").read_text()
         self.assertEqual(lesson.exercise_ids(core_only=True), [str(i) for i in range(8)])
         slugs = [spec.slug for spec in lesson.EXERCISES.values()]
         self.assertEqual(len(slugs), len(set(slugs)))
@@ -191,7 +250,7 @@ class NotebookTests(unittest.TestCase):
 
     def test_session_exercise_leaves_startup_to_the_learner(self) -> None:
         """Exercise zero must teach startup before later notebooks use the helper."""
-        script = (ROOT / "labs/hands_on.py").read_text()
+        script = (ROOT / "labs/author/hands_on.py").read_text()
         cells = lesson.exercise_cells(script, "0")
         by_id = {cell["id"]: cell for cell in cells}
         setup = by_id["notebook-setup"]["source"]
@@ -222,7 +281,8 @@ class NotebookTests(unittest.TestCase):
         lab = self.root / "labs"
         notebook_dir = lab / "notebooks/deeper"
         notebook_dir.mkdir(parents=True)
-        (lab / "workshop_runtime.py").touch()
+        (lab / "lab_support").mkdir()
+        (lab / "lab_support/runtime.py").touch()
         bootstrap = lesson.setup_source("1", solved=False).split("from uuid import uuid4")[0]
         for directory in (self.root, lab, notebook_dir):
             with (
@@ -235,7 +295,7 @@ class NotebookTests(unittest.TestCase):
 
     def test_optional_tasks_share_the_core_without_changing_saved_answers(self) -> None:
         """A participant can skip or explore the zoom-in without switching workspaces."""
-        script = (ROOT / "labs/hands_on.py").read_text()
+        script = (ROOT / "labs/author/hands_on.py").read_text()
         cells = lesson.exercise_cells(script, "3")
         by_id = {cell["id"]: cell for cell in cells}
         self.assertEqual(by_id["clean-sales"]["role"], "supplied")
@@ -270,8 +330,8 @@ class NotebookTests(unittest.TestCase):
 
     def test_taught_transformations_match_pipeline_module(self) -> None:
         """Keep the reference module and the functions learners see behaviourally aligned."""
-        reference = ast.parse((ROOT / "labs/pipeline.py").read_text())
-        lesson = ast.parse((ROOT / "labs/hands_on.py").read_text())
+        reference = ast.parse((ROOT / "labs/lab_support/pipeline.py").read_text())
+        lesson = ast.parse((ROOT / "labs/author/hands_on.py").read_text())
         taught = {node.name: node for node in lesson.body if isinstance(node, ast.FunctionDef)}
         for node in reference.body:
             if isinstance(node, ast.FunctionDef):
@@ -287,7 +347,12 @@ class PackagingTests(unittest.TestCase):
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name) / "labs"
         for name in (
-            "hands_on.py",
+            "author/hands_on.py",
+            "lab_support/runtime.py",
+            "docs/TROUBLESHOOTING.md",
+            "notebooks/01-inspect.ipynb",
+            "previews/notebooks/01-inspect.html",
+            "previews/notebook.css",
             "data/part.parquet",
             ".vscode/settings.json",
             ".venv/bin/python",
@@ -314,7 +379,12 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(
                 set(archive.namelist()),
                 {
-                    "labs/hands_on.py",
+                    "labs/author/hands_on.py",
+                    "labs/lab_support/runtime.py",
+                    "labs/docs/TROUBLESHOOTING.md",
+                    "labs/notebooks/01-inspect.ipynb",
+                    "labs/previews/notebooks/01-inspect.html",
+                    "labs/previews/notebook.css",
                     "labs/data/part.parquet",
                     "labs/.vscode/settings.json",
                 },
@@ -344,7 +414,7 @@ class PackagingTests(unittest.TestCase):
     def test_only_explicit_command_creates_release_attachment(self) -> None:
         """Importing is inert; running the command writes outside the lab source tree."""
         source = self.root / "author/package_lab.py"
-        source.parent.mkdir()
+        source.parent.mkdir(exist_ok=True)
         shutil.copy2(Path(packaging.__file__), source)
         output = self.root.parent / ".build/releases/pyspark-labs.zip"
         runpy.run_path(str(source), run_name="imported_packager")

@@ -7,7 +7,7 @@ from unittest.mock import MagicMock, patch
 
 from py4j.protocol import Py4JJavaError
 
-from labs import workshop_runtime as runtime
+from labs.lab_support import runtime
 
 
 class WindowsHadoopTests(unittest.TestCase):

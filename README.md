@@ -17,7 +17,7 @@ Open [Exercise 0](labs/notebooks/00-spark-session.ipynb) and select the lab’s 
 
 For optional Parquet inspection in VS Code, install [Parquet Explorer](https://marketplace.visualstudio.com/items?itemName=AdamViola.parquet-explorer). The [lab setup guide](labs/README.md#explore-parquet-files--optional) explains which files to open.
 
-The [troubleshooting guide](labs/TROUBLESHOOTING.md) covers platform setup; the [instructor notes](labs/author/README.md#validation-performed) record validation. Native Windows still needs a representative-machine check with the matching Hadoop components.
+The [troubleshooting guide](labs/docs/TROUBLESHOOTING.md) covers platform setup; the [instructor notes](labs/author/README.md#validation-performed) record validation. Native Windows still needs a representative-machine check with the matching Hadoop components.
 
 ## Build and view the presentation
 

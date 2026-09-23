@@ -1,6 +1,6 @@
 # Lab instructor notes
 
-[Participant setup](../README.md) · [Setup troubleshooting](../TROUBLESHOOTING.md)
+[Participant setup](../README.md) · [Setup troubleshooting](../docs/TROUBLESHOOTING.md)
 
 Run the commands below from the **labs** folder.
 
@@ -33,7 +33,7 @@ Each notebook owns its SparkSession. Exercise 2 saves the participant's key/look
 
 Exercise 6 stops its query and saves its input directory, checkpoint, table name and a hash of the saved functions. Exercise 7 starts in another kernel and resumes that state; changing saved transformations requires replaying Exercise 6 with fresh state. Solution runs use the separate `learner_work/solutions/` folder. Learner work, checkpoints and local runs are excluded from Git, Pages and ZIPs.
 
-[Recovery](../RECOVERY.md) offers explicit supplied-code boundaries with backups; it never silently replaces an unfinished answer. Participant agents should not choose a reference recovery on the learner's behalf.
+[Recovery](../docs/RECOVERY.md) offers explicit supplied-code boundaries with backups; it never silently replaces an unfinished answer. Participant agents should not choose a reference recovery on the learner's behalf.
 
 ## Local runtime
 
@@ -41,7 +41,7 @@ Exercise 0 uses `SparkSession.builder` directly. From Exercise 1 onward, the set
 
 Every pipeline run creates a fresh directory under `runs/`; prepared inputs and earlier runs are never overwritten. The arrival helper stages completed files, then publishes each through a hard link. Use a local filesystem supporting hard links. Spark paths use absolute paths with forward slashes, preserving spaces and Windows drive letters without URL-encoding them.
 
-`pipeline.py` contains only transformations. Chapter 09 will reuse it in AWS Glue with separately configured storage, identity, runtime and monitoring. The local file publisher and session helper are workshop scaffolding, not deployment code.
+`lab_support/pipeline.py` contains only transformations. Chapter 09 will reuse it in AWS Glue with separately configured storage, identity, runtime and monitoring. The local file publisher and session helper are workshop scaffolding, not deployment code.
 
 ## Data and checkpoints
 
@@ -73,9 +73,11 @@ Reviewed the original PowerPoints and the corresponding public notebooks at revi
 
 The original files were preserved. Twitter acquisition, credentials and sentiment analysis are excluded. Prepared Parquet inputs replace the Twitter JSON. The exercise adds explicit rejected-record handling, repeatable arrivals, expected results and checkpoint/output checks. It removes the unconditional single-file coalesce, legacy one-time trigger and notebook display polling loop.
 
-`pipeline.py` contains only transformations and is the handoff to chapter 09. `prepare_inputs.py` is an author-only fixture generator; students do not need its DataFrame-construction syntax. `arrival_files.py` is exercise scaffolding.
+`lab_support/pipeline.py` contains only transformations and is the handoff to chapter 09. `author/prepare_inputs.py` is an author-only fixture generator; students do not need its DataFrame-construction syntax. `lab_support/arrival_files.py` is exercise scaffolding.
 
 ## Validation performed
+
+After reorganising the lab on **23 September 2026**, all **15 worked notebooks** completed with every optional section on macOS. A freshly packaged and extracted lab, in a directory containing spaces, passed `check_setup.py` and all **eight core notebooks** with optional sections skipped. All 43 regression tests and Python lint/format checks passed. Preview navigation, styling and saved outputs were checked in the browser; all local preview links resolve. Prepared inputs and existing participant work were unchanged. This does not establish native Windows support.
 
 After adding **Exercise 0** on **22 September 2026**, all eight core notebooks completed in separate kernels with optional sections skipped, followed by all 15 solution notebooks with full depth. The new session exercise created Spark 4.2.0 directly through the builder, displayed IDs 0/1/2, observed session reuse and stopped successfully. All 34 authoring/workspace tests and Python lint/format checks passed. The learner preview and chapter 08 introduction were visually reviewed. This is local macOS validation, not evidence of a successful Windows run or a measured five-minute classroom duration.
 
@@ -114,9 +116,21 @@ Instruction-file conventions: [Codex AGENTS.md](https://learn.chatgpt.com/docs/a
 
 ## Maintaining the lab
 
-Edit `hands_on.py` as the teaching source; `pipeline.py` is the matching reusable transformation module for chapter 09. The source remains a complete runnable reference. Annotated `# %%` cells have stable IDs and roles; comment-only `[starter]` cells replace a named task; `depth=zoom` marks optional cells. Missing/ambiguous starters fail generation. Operational setup, saved-code handoffs and notebook boundaries are defined in `author/lesson_source.py`.
+| Folder | Contents |
+|---|---|
+| `notebooks/` | Learner notebooks, with larger investigations in `deeper/` |
+| `solutions/` | Worked notebooks |
+| `data/` | Prepared inputs |
+| `docs/` | Setup troubleshooting, catch-up help and API reference |
+| `lab_support/` | Session setup, exercise checks, saved-work helpers and reference transformations |
+| `author/` | Lesson source, fixture preparation and build/package tools |
+| `previews/` | Generated HTML mirroring `notebooks/` and `solutions/`, plus their stylesheet |
 
-Generate learner and solution notebooks and lightweight HTML previews from the **labs** folder:
+`index.html` remains the browser entry point. The setup command remains `uv run --locked check_setup.py`. Participant-owned `learner_work/` and `runs/` stay in the lab root and are excluded from distribution.
+
+Edit `author/hands_on.py` as the teaching source; `lab_support/pipeline.py` is the matching reusable transformation module for chapter 09. The source remains a complete runnable reference (`uv run --locked -m author.hands_on` from labs). Annotated `# %%` cells have stable IDs and roles; comment-only `[starter]` cells replace a named task; `depth=zoom` marks optional cells. Missing/ambiguous starters fail generation. Operational setup, saved-code handoffs and notebook boundaries are defined in `author/lesson_source.py`.
+
+Generate learner and solution notebooks and lightweight HTML previews under `previews/` from the **labs** folder:
 
 ```text
 uv run --locked --group notebook --group author -m author.build_notebook
@@ -131,6 +145,6 @@ uv run --locked --group notebook --group author -m author.build_notebook --execu
 
 Use `--execute --core-only` first to skip every zoom-in and validate the complete baseline. Then use `--execute` to run all sections plus the deeper notebooks. These are validation modes over the same notebook files, not alternative learner routes. This intentionally executes solutions, not blank learner exercises. Learner notebooks always have empty outputs. Saved output uses the labelled placeholders `<lab-root>` for this machine’s lab directory and `<validation-python>` for the interpreter path. Results are otherwise retained as executed. Saved solution output is preserved only when the lesson and supporting Python sources are unchanged; generation alone is not execution evidence. Do not regenerate over a participant's edited notebooks.
 
-Keep the seven transformation definitions aligned with `pipeline.py`; the AST parity test checks this. Tests also cover missing starters, solution isolation and optional prerequisites, saving learner functions, recovery backups and checkpoint boundaries. Rebuild and verify the course after changing published lab assets.
+Keep the seven transformation definitions aligned with `lab_support/pipeline.py`; the AST parity test checks this. Tests also cover missing starters, solution isolation and optional prerequisites, saving learner functions, recovery backups and checkpoint boundaries. Rebuild and verify the course after changing published lab assets.
 
 Include `uv.lock` with the project. Dependency changes require a new preflight and core and full-depth execution. The lab ZIP is generated only for a release; see [Publishing the lab](https://github.com/dannyscodecorner/mastering-pyspark/blob/main/docs/PUBLISHING.md#publishing-the-lab).

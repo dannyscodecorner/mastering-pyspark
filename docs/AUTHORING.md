@@ -35,7 +35,7 @@ The supplied directory must contain the three original HTML documents. That comp
 
 The [lab design](LAB-DESIGN.md) defines Exercise 0 on SparkSession creation followed by seven pipeline exercises with optional depth. Each exercise has its own notebook. Participant setup and exercise links are in [labs/README.md](../labs/README.md); provenance and validation records remain in the [instructor notes](../labs/author/README.md).
 
-Edit `labs/hands_on.py`, the runnable worked source with annotated `# %%` teaching cells. Every task has one comment-only `[starter]`. Optional cells use `depth=zoom`; a larger investigation has its own exercise boundary. `labs/author/lesson_source.py` selects cells and supplies independent setup/finish steps. Learner functions are saved between notebooks, not assumed to survive in a shared kernel.
+Edit `labs/author/hands_on.py`, the runnable worked source with annotated `# %%` teaching cells. Every task has one comment-only `[starter]`. Optional cells use `depth=zoom`; a larger investigation has its own exercise boundary. `labs/author/lesson_source.py` selects cells and supplies independent setup/finish steps. Learner functions are saved between notebooks, not assumed to survive in a shared kernel.
 
 From **labs**, generate notebooks and previews:
 
@@ -50,7 +50,9 @@ uv run --locked check_setup.py
 uv run --locked --group notebook --group author -m author.build_notebook --execute
 ```
 
-Each solution notebook executes in a new kernel. First run with `--execute --core-only` to prove that all eight exercises work while skipping every optional section; then run `--execute` to validate all zoom-ins and separate investigations. Inspect the resulting notebook/HTML, including setup, task/hint separation and the stream restart across notebooks. Blank learner tasks are intentionally not executable end-to-end. Keep the reference transformations in `pipeline.py` aligned with their taught definitions.
+Each solution notebook executes in a new kernel. First run with `--execute --core-only` to prove that all eight exercises work while skipping every optional section; then run `--execute` to validate all zoom-ins and separate investigations. Inspect the resulting notebook/HTML, including setup, task/hint separation and the stream restart across notebooks. Blank learner tasks are intentionally not executable end-to-end. Keep the reference transformations in `lab_support/pipeline.py` aligned with their taught definitions.
+
+Runnable notebooks live under `labs/notebooks/` and `labs/solutions/`; their generated HTML mirrors live under `labs/previews/`. `labs/index.html` links to both formats. Shared Python helpers are in `labs/lab_support/`, participant reference guides in `labs/docs/`, and authoring tools and sources in `labs/author/`.
 
 The course copies portable lab files into `dist/labs/`. `learner_work/`, run directories, environments and caches are excluded from publication and release ZIPs. Never regenerate a participant's edited notebooks. The slide download points to a GitHub Release attachment; [release preparation](PUBLISHING.md#publishing-the-lab) is separate from building Pages.
 
@@ -74,7 +76,7 @@ For supported fixes, change `check .` to `check --fix .` in the first command;
 to apply formatting, omit `--check` from the second command.
 The nesting rule currently requires Ruff's lint preview; the commands above pin
 the version used to check this repository. Notebook and HTML files are generated
-from `hands_on.py`, so format the Python lesson and regenerate its outputs rather
+from `author/hands_on.py`, so format the Python lesson and regenerate its outputs rather
 than formatting the notebook independently.
 
 The focused tests cover notebook output invalidation, temporary kernel settings,

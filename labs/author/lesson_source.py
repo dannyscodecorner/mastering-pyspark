@@ -189,14 +189,14 @@ def setup_source(exercise: str, *, solved: bool) -> str:
             ]
         )
     lines = [
-        "from pathlib import Path",
         "import sys",
+        "from pathlib import Path",
         "",
         "# Support opening the complete repository or its labs folder in VS Code.",
         "LAB_ROOT = next(",
         "    (candidate for parent in (Path.cwd(), *Path.cwd().parents)",
         "     for candidate in (parent, parent / 'labs')",
-        "     if (candidate / 'workshop_runtime.py').is_file()),",
+        "     if (candidate / 'lab_support/runtime.py').is_file()),",
         "    None,",
         ")",
         "if LAB_ROOT is None:",
@@ -209,11 +209,11 @@ def setup_source(exercise: str, *, solved: bool) -> str:
         "from pyspark.sql import Column, DataFrame",
         "from pyspark.sql import functions as F",
         "",
-        "import lab_checks as check",
-        "from arrival_files import publish_arrival",
-        "from lab_checks import todo",
-        "from lab_workspace import Workspace",
-        "from workshop_runtime import DATA_ROOT, create_spark, finish_query, new_run, spark_path",
+        "from lab_support import checks as check",
+        "from lab_support.arrival_files import publish_arrival",
+        "from lab_support.checks import todo",
+        "from lab_support.runtime import DATA_ROOT, create_spark, finish_query, new_run, spark_path",
+        "from lab_support.workspace import Workspace",
         "",
         f"workspace = Workspace(solutions={solved})",
     ]
@@ -313,7 +313,12 @@ def relative_link(exercise: str, destination: str, *, solved: bool) -> str:
 def rewrite_links(source: str, exercise: str, *, solved: bool) -> str:
     """Point local help, solutions and topic links at one exercise-based tree."""
     folder = "solutions" if solved else "notebooks"
-    for filename in ("README.md", "RECOVERY.md", "API-REFERENCE.md", "workshop_runtime.py"):
+    for filename in (
+        "README.md",
+        "docs/RECOVERY.md",
+        "docs/API-REFERENCE.md",
+        "lab_support/runtime.py",
+    ):
         source = source.replace(
             f"({filename}", f"({relative_link(exercise, filename, solved=solved)}"
         )
@@ -441,7 +446,7 @@ def exercise_cells(script: str, exercise: str, *, solved: bool = False) -> list[
         core.extend(zoom_cells(exercise, optional))
     elif optional:
         raise ValueError("A separate investigation should not contain a second depth selector")
-    setup_heading = "## Setup — supplied\n\nSelect the lab's `.venv` kernel. Stop Spark in the previous notebook before closing it. This uses the `create_spark` helper explained in [Exercise 0](#exercise-0). Missing earlier work? Use an explicit [catch-up step](RECOVERY.md)."
+    setup_heading = "## Setup — supplied\n\nSelect the lab's `.venv` kernel. Stop Spark in the previous notebook before closing it. This uses the `create_spark` helper explained in [Exercise 0](#exercise-0). Missing earlier work? Use an explicit [catch-up step](docs/RECOVERY.md)."
     finish_heading = '<a id="finish"></a>\n## Save and finish\n\nRun once the core checks pass, whether or not you did the optional section. This saves your functions or stream handoff, then stops this notebook’s queries and Spark. Your work remains in `learner_work/`.'
     if exercise == "0":
         setup_heading = "## Setup — check the Python kernel\n\nComplete the [installation and setup check](README.md#2-create-the-virtual-environment) first. Select the lab's `.venv` kernel, then run this cell. On Windows the printed path should end in `labs\\.venv\\Scripts\\python.exe`; on macOS/Linux, `labs/.venv/bin/python`. If it points at uv's base Python instead, use [kernel selection help](README.md#4-open-exercise-0-and-select-the-kernel). Importing `SparkSession` makes the class available; this cell does not start Spark."

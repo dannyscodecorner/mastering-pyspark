@@ -1,0 +1,311 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Inspect the inputs</title><link rel="stylesheet" href="../notebook.css"></head><body><main><div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=notebook-intro"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Exercise-1-%E2%80%94-Inspect-the-inputs">Exercise 1 — Inspect the inputs<a class="anchor-link" href="#Exercise-1-%E2%80%94-Inspect-the-inputs">¶</a></h1><p><strong>Worked solution</strong> · <a href="../../index.html">All exercises</a> · <a href="../../README.md">Setup</a></p>
+<h2 id="What-you%E2%80%99ll-learn">What you’ll learn<a class="anchor-link" href="#What-you%E2%80%99ll-learn">¶</a></h2><ul>
+<li>Read Parquet into DataFrames and inspect schemas and sample rows.</li>
+<li>Describe what one row represents in each input and spot data quality problems before cleaning.</li>
+</ul>
+<p><strong>Core: about 5 minutes.</strong> The same baseline for everyone. <a href="#zoom">Optional zoom-in</a>: about 3 extra minutes; choose it here if the topic interests you.</p>
+<p>Completed answers use a separate solution workspace and do not replace participant work.</p>
+<p>Run the supplied setup first. End with <strong>Save and finish</strong>; the next notebook loads your saved functions, so this kernel can be closed.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=setup-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Setup-%E2%80%94-supplied">Setup — supplied<a class="anchor-link" href="#Setup-%E2%80%94-supplied">¶</a></h2><p>Select the lab's <code>.venv</code> kernel. Stop Spark in the previous notebook before closing it. This uses the <code>create_spark</code> helper explained in <a href="00-spark-session.html">Exercise 0</a>. Missing earlier work? Use an explicit <a href="../../docs/RECOVERY.md">catch-up step</a>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=notebook-setup">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+<span class="c1"># Support opening the complete repository or its labs folder in VS Code.</span>
+<span class="n">LAB_ROOT</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+    <span class="p">(</span><span class="n">candidate</span> <span class="k">for</span> <span class="n">parent</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">(),</span> <span class="o">*</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parents</span><span class="p">)</span>
+     <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">parent</span> <span class="o">/</span> <span class="s1">'labs'</span><span class="p">)</span>
+     <span class="k">if</span> <span class="p">(</span><span class="n">candidate</span> <span class="o">/</span> <span class="s1">'lab_support/runtime.py'</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()),</span>
+    <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">if</span> <span class="n">LAB_ROOT</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s1">'Open the complete labs project in VS Code; a notebook alone is not enough.'</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">uuid</span><span class="w"> </span><span class="kn">import</span> <span class="n">uuid4</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">Column</span><span class="p">,</span> <span class="n">DataFrame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyspark.sql</span><span class="w"> </span><span class="kn">import</span> <span class="n">functions</span> <span class="k">as</span> <span class="n">F</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support</span><span class="w"> </span><span class="kn">import</span> <span class="n">checks</span> <span class="k">as</span> <span class="n">check</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.arrival_files</span><span class="w"> </span><span class="kn">import</span> <span class="n">publish_arrival</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.checks</span><span class="w"> </span><span class="kn">import</span> <span class="n">todo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.runtime</span><span class="w"> </span><span class="kn">import</span> <span class="n">DATA_ROOT</span><span class="p">,</span> <span class="n">create_spark</span><span class="p">,</span> <span class="n">finish_query</span><span class="p">,</span> <span class="n">new_run</span><span class="p">,</span> <span class="n">spark_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">lab_support.workspace</span><span class="w"> </span><span class="kn">import</span> <span class="n">Workspace</span>
+
+<span class="n">workspace</span> <span class="o">=</span> <span class="n">Workspace</span><span class="p">(</span><span class="n">solutions</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">RUN_ROOT</span> <span class="o">=</span> <span class="n">new_run</span><span class="p">()</span>
+<span class="n">spark</span> <span class="o">=</span> <span class="n">create_spark</span><span class="p">(</span><span class="n">RUN_ROOT</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Spark </span><span class="si">{</span><span class="n">spark</span><span class="o">.</span><span class="n">version</span><span class="si">}</span><span class="s2">; inputs: </span><span class="si">{</span><span class="n">DATA_ROOT</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">; notebook ready"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>WARNING: Using incubator modules: jdk.incubator.vector
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Using Spark's default log4j profile: org/apache/spark/log4j2-defaults.properties
+Setting default log level to "WARN".
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).
+26/09/23 10:10:08 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Spark 4.2.0; inputs: data; notebook ready
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_prompt" id="cell-id=exercise-1"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<hr/>
+<p><a id="exercise-1"></a></p>
+<h2 id="Your-task">Your task<a class="anchor-link" href="#Your-task">¶</a></h2><p><strong>What needs attention before we can report on these sales?</strong></p>
+<p>Core budget: about 5 minutes.</p>
+<p>Read <code>data/sales.parquet</code> into <code>raw</code> and <code>data/products.parquet</code> into <code>raw_products</code>. Paths are supplied below. Inspect their schemas and a small sample of their rows before deciding what to clean.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=input-paths">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">SALES_PATH</span> <span class="o">=</span> <span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"sales.parquet"</span><span class="p">)</span>
+<span class="n">PRODUCTS_PATH</span> <span class="o">=</span> <span class="n">spark_path</span><span class="p">(</span><span class="n">DATA_ROOT</span> <span class="o">/</span> <span class="s2">"products.parquet"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_prompt" id="cell-id=read-task"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-code-%E2%80%94-read-both-inputs">Your code — read both inputs<a class="anchor-link" href="#Your-code-%E2%80%94-read-both-inputs">¶</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_task" id="cell-id=read-inputs">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">raw</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">SALES_PATH</span><span class="p">)</span>
+<span class="n">raw_products</span> <span class="o">=</span> <span class="n">spark</span><span class="o">.</span><span class="n">read</span><span class="o">.</span><span class="n">parquet</span><span class="p">(</span><span class="n">PRODUCTS_PATH</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=inspect-task"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Inspect-the-result">Inspect the result<a class="anchor-link" href="#Inspect-the-result">¶</a></h3><p>Run these supplied inspection cells. Which problems are visible in the schema, and which only appear in the values?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=inspect-sales">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">raw</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+<span class="n">raw</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"sale_id"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>root
+ |-- sale_id: string (nullable = true)
+ |-- product_id: string (nullable = true)
+ |-- amount_raw: string (nullable = true)
+ |-- sold_at_raw: string (nullable = true)
+
+</pre>
+</div>
+</div>
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>+-------+----------+----------+-------------------+
+|sale_id|product_id|amount_raw|sold_at_raw        |
++-------+----------+----------+-------------------+
+|s1     | b1       |25.00     |2026-09-01 09:00:00|
+|s2     |g1        |40.00     |2026-09-01 09:05:00|
+|s3     |B1        |15.00     |2026-09-02 10:00:00|
+|s4     |M1        |10.00     |2026-09-02 11:00:00|
+|s5     |B1        |10.00     |2026-09-02 12:00:00|
+|s6     |B1        |oops      |2026-09-02 12:05:00|
+|s7     |G1        |NULL      |2026-09-02 12:10:00|
+|s8     |B1        |5.00      |not-a-date         |
++-------+----------+----------+-------------------+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=inspect-products">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">raw_products</span><span class="o">.</span><span class="n">printSchema</span><span class="p">()</span>
+<span class="n">raw_products</span><span class="o">.</span><span class="n">orderBy</span><span class="p">(</span><span class="s2">"product_id"</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">truncate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>root
+ |-- product_id: string (nullable = true)
+ |-- category: string (nullable = true)
+
++----------+-----------+
+|product_id|category   |
++----------+-----------+
+|B1        | Books     |
+|G1        |GAMES      |
+|X1        |accessories|
++----------+-----------+
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_response" id="cell-id=input-observations"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Your-observations">Your observations<a class="anchor-link" href="#Your-observations">¶</a></h3><p>Double-click this Markdown cell and record at least two things you would investigate:</p>
+<ul>
+<li>…</li>
+<li>…</li>
+</ul>
+<p>What does one row represent in each input?</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=input-check-label"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Check">Check<a class="anchor-link" href="#Check">¶</a></h3><p>You should have eight sales and three product rows. The raw sales have four columns.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_check" id="cell-id=check-inputs">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="n">check</span><span class="o">.</span><span class="n">inputs</span><span class="p">(</span><span class="n">raw</span><span class="p">,</span> <span class="n">raw_products</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Input check passed: eight sales and three product rows.
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_hint" id="cell-id=hints-1"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<details>
+<summary>Need a nudge? Hint 1</summary>
+<p>The batch reader belongs to <code>spark.read</code>. Parquet carries its stored schema.</p>
+</details>
+<details>
+<summary>A little more help: Hint 2</summary>
+<p>Look at key casing and spaces, the types of amount/timestamp fields, and values that do not fit those types.</p>
+</details>
+<p>If you need to catch up during class, use the explicit <a href="../../docs/RECOVERY.md#exercise-1">recovery step</a>. <a href="01-inspect.html">Worked solution</a> — open it separately when you are ready to compare.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=core-complete"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Core-complete">Core complete<a class="anchor-link" href="#Core-complete">¶</a></h2><p>For the 60-minute lab, <a href="#finish">skip to Save and finish</a>. To explore this topic further, continue with the optional section below. Later core exercises do not need any of its variables.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading celltag_optional" id="cell-id=zoom-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="zoom"></a></p>
+<h2 id="Optional-zoom-in-%C2%B7-about-3-minutes">Optional zoom-in · about 3 minutes<a class="anchor-link" href="#Optional-zoom-in-%C2%B7-about-3-minutes">¶</a></h2><p>These investigations make up the extra depth in a 90-minute session. Choose them independently; keep your working pipeline unchanged.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading celltag_optional" id="cell-id=input-depth"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Why-inspect-before-cleaning?">Why inspect before cleaning?<a class="anchor-link" href="#Why-inspect-before-cleaning?">¶</a></h3><p><code>raw</code> describes one attempted sale per row. <code>raw_products</code> describes one product category per key. A string schema can faithfully store both <code>"25.00"</code> and <code>"oops"</code>; it cannot tell you that either is a valid amount. Do not infer data quality from a successful file read.</p>
+<p>The optional <a href="deeper/schemas-and-parsing.html">schemas experiment</a> revisits the same records as CSV. That notebook is available after Exercise 3, when your validation function is saved.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_supplied" id="cell-id=finish-heading"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a id="finish"></a></p>
+<h2 id="Save-and-finish">Save and finish<a class="anchor-link" href="#Save-and-finish">¶</a></h2><p>Run once the core checks pass, whether or not you did the optional section. This saves your functions or stream handoff, then stops this notebook’s queries and Spark. Your work remains in <code>learner_work/</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered celltag_supplied" id="cell-id=save-and-finish">
+<div class="input">
+<div class="inner_cell">
+<div class="input_area">
+<div class="highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">active_query</span> <span class="ow">in</span> <span class="n">spark</span><span class="o">.</span><span class="n">streams</span><span class="o">.</span><span class="n">active</span><span class="p">:</span>
+    <span class="n">active_query</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="n">spark</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Session stopped; exercise files are under"</span><span class="p">,</span> <span class="n">RUN_ROOT</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">LAB_ROOT</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="output_wrapper">
+<div class="output">
+<div class="output_area">
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Session stopped; exercise files are under runs/run-8df44073f9
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered celltag_reading" id="cell-id=next-exercise"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Next: <a href="02-clean-keys.html">Exercise 2 — Clean the keys</a>.</p>
+</div>
+</div>
+</div>
+</main></body></html>

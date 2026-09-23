@@ -11,11 +11,14 @@ import hashlib
 import html
 import json
 import os
+import posixpath
+import re
 import sys
 import tempfile
 from collections.abc import Iterator
 from contextlib import contextmanager
 from pathlib import Path
+from urllib.parse import quote, unquote, urlsplit
 
 import nbformat
 from nbclient import NotebookClient
@@ -46,7 +49,12 @@ def preserve_cell_state(previous: NotebookNode, current: NotebookNode) -> None:
 def source_digest(root: Path) -> str:
     """Invalidate all saved solution results if a lesson or supporting implementation changes."""
     digest = hashlib.sha256()
-    for path in [*sorted(root.glob("*.py")), *sorted((root / "author").glob("*.py"))]:
+    sources = [
+        *root.glob("*.py"),
+        *(root / "author").rglob("*.py"),
+        *(root / "lab_support").rglob("*.py"),
+    ]
+    for path in sorted(sources):
         digest.update(str(path.relative_to(root)).encode())
         digest.update(path.read_bytes())
     return digest.hexdigest()
@@ -55,7 +63,7 @@ def source_digest(root: Path) -> str:
 def build_notebook(root: Path, exercise: str, *, solved: bool = False) -> NotebookNode:
     """Select one exercise's cells; never retain answers or outputs in a learner copy."""
     selected = exercise_cells(
-        (root / "hands_on.py").read_text(encoding="utf-8"), exercise, solved=solved
+        (root / "author/hands_on.py").read_text(encoding="utf-8"), exercise, solved=solved
     )
     cells = []
     for item in selected:
@@ -175,9 +183,39 @@ def normalise_output_paths(notebook: NotebookNode, root: Path) -> None:
     )
 
 
-def save_notebook(notebook: NotebookNode, path: Path) -> None:
-    """Save a validated notebook and a lightweight, offline HTML preview."""
-    root = next(parent for parent in path.parents if (parent / "hands_on.py").is_file())
+def preview_path(root: Path, notebook: Path) -> Path:
+    """Mirror the notebook tree under previews, leaving runnable folders uncluttered."""
+    return root / "previews" / notebook.relative_to(root).with_suffix(".html")
+
+
+def preview_url(url: str, notebook: Path, root: Path) -> str:
+    """Rebase local resources and keep exercise navigation within the HTML previews."""
+    parts = urlsplit(url)
+    if parts.scheme or parts.netloc or not parts.path or parts.path.startswith("/"):
+        return url
+    original = notebook.relative_to(root).as_posix()
+    destination = posixpath.normpath(
+        posixpath.join(posixpath.dirname(original), unquote(parts.path))
+    )
+    if destination.startswith(("notebooks/", "solutions/")) and destination.endswith(".ipynb"):
+        destination = "previews/" + destination.removesuffix(".ipynb") + ".html"
+    parent = preview_path(root, notebook).parent.relative_to(root).as_posix()
+    return parts._replace(path=quote(posixpath.relpath(destination, parent), safe="/")).geturl()
+
+
+def preview_links(body: str, notebook: Path, root: Path) -> str:
+    """Rewrite generated HTML URL attributes, preserving code, labels and notebook sources."""
+
+    def replace(match: re.Match[str]) -> str:
+        """Resolve one quoted href or src emitted by the HTML exporter."""
+        url = preview_url(html.unescape(match[2]), notebook, root)
+        return f'{match[1]}="{html.escape(url, quote=True)}"'
+
+    return re.sub(r'\b(href|src)="([^"]*)"', replace, body)
+
+
+def save_notebook(notebook: NotebookNode, path: Path, *, root: Path) -> None:
+    """Save a validated notebook and a separate lightweight, offline HTML preview."""
     normalise_output_paths(notebook, root)
     nbformat.validate(notebook)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -186,14 +224,17 @@ def save_notebook(notebook: NotebookNode, path: Path) -> None:
         template_name="basic", exclude_input_prompt=True, exclude_output_prompt=True
     )
     body, _ = exporter.from_notebook_node(notebook)
-    # Preview navigation stays in HTML; the index offers explicit notebook downloads.
-    body = body.replace(".ipynb", ".html")
+    body = preview_links(body, path, root)
     title = html.escape(EXERCISES[notebook.metadata.workshop.exercise].title)
-    stylesheet = "../" * len(path.parent.relative_to(root).parts) + "notebook.css"
+    preview = preview_path(root, path)
+    stylesheet = posixpath.relpath(
+        "previews/notebook.css", preview.parent.relative_to(root).as_posix()
+    )
     page = f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{title}</title><link rel="stylesheet" href="{stylesheet}"></head><body><main>{body}</main></body></html>'
     # Spark's text plans can end lines with spaces; the HTML keeps their visible content.
     page = "\n".join(line.rstrip() for line in page.splitlines()) + "\n"
-    path.with_suffix(".html").write_text(page, encoding="utf-8")
+    preview.parent.mkdir(parents=True, exist_ok=True)
+    preview.write_text(page, encoding="utf-8")
 
 
 def save_index(root: Path) -> None:
@@ -202,10 +243,10 @@ def save_index(root: Path) -> None:
     for key, exercise in EXERCISES.items():
         if not key.isdigit():
             continue
-        links = f'<a href="notebooks/{exercise.slug}.ipynb" download>Notebook</a> · <a href="notebooks/{exercise.slug}.html">Preview</a>'
+        links = f'<a href="notebooks/{exercise.slug}.ipynb" download>Notebook</a> · <a href="previews/notebooks/{exercise.slug}.html">Preview</a>'
         core, zoom = exercise.minutes
         deeper = [
-            f'<li><a href="notebooks/{item.slug}.ipynb" download>{html.escape(item.title)}</a> · <a href="notebooks/{item.slug}.html">Preview</a></li>'
+            f'<li><a href="notebooks/{item.slug}.ipynb" download>{html.escape(item.title)}</a> · <a href="previews/notebooks/{item.slug}.html">Preview</a></li>'
             for item in EXERCISES.values()
             if item.after == key and "/" in item.slug
         ]
@@ -222,10 +263,10 @@ def save_index(root: Path) -> None:
         sections.append(
             f'<section id="exercise-{key}"><h2>{key}. {html.escape(exercise.title)}</h2><p>{links}</p><p>{timing}</p>{extra}</section>'
         )
-    body = '<h1>Working with PySpark</h1><p>Create a SparkSession, then build one sales pipeline from Parquet inputs to a restarted stream.</p><p><strong>Start with Exercise 0.</strong> Then work through Exercises 1–7, with optional zoom-ins inside each notebook. Choose more depth topic by topic; your saved work stays in one workspace.</p><p><strong>About 60 minutes:</strong> Exercises 0–7, with time for discussion and catch-up. <strong>About 90 minutes:</strong> add the optional zoom-ins. <strong>At your own pace:</strong> follow the deeper investigation links beside each exercise. These budgets still need a classroom rehearsal; installation is pre-work.</p><p><a href="README.md">Setup</a> · <a href="RECOVERY.md">Catch-up help</a> · <a href="API-REFERENCE.md">Small API reference</a></p>'
+    body = '<h1>Working with PySpark</h1><p>Create a SparkSession, then build one sales pipeline from Parquet inputs to a restarted stream.</p><p><strong>Start with Exercise 0.</strong> Then work through Exercises 1–7, with optional zoom-ins inside each notebook. Choose more depth topic by topic; your saved work stays in one workspace.</p><p><strong>About 60 minutes:</strong> Exercises 0–7, with time for discussion and catch-up. <strong>About 90 minutes:</strong> add the optional zoom-ins. <strong>At your own pace:</strong> follow the deeper investigation links beside each exercise. These budgets still need a classroom rehearsal; installation is pre-work.</p><p><a href="README.md">Setup</a> · <a href="docs/RECOVERY.md">Catch-up help</a> · <a href="docs/API-REFERENCE.md">Small API reference</a></p>'
     body += "".join(sections)
     body += "<p>Completed answers are separate under <code>solutions/</code>. Each notebook links to its matching solution for comparison after your attempt.</p>"
-    page = f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PySpark exercises</title><link rel="stylesheet" href="notebook.css"></head><body><main>{body}</main></body></html>'
+    page = f'<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>PySpark exercises</title><link rel="stylesheet" href="previews/notebook.css"></head><body><main>{body}</main></body></html>'
     (root / "index.html").write_text(page, encoding="utf-8")
 
 
@@ -241,7 +282,7 @@ def build_exercise(root: Path, exercise: str, *, execute: bool, core_only: bool 
                 flush=True,
             )
             execute_notebook(notebook, path.parent, core_only=core_only)
-        save_notebook(notebook, path)
+        save_notebook(notebook, path, root=root)
     print(f"Built exercise {exercise}", flush=True)
 
 

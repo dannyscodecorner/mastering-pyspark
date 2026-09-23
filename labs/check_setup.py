@@ -9,9 +9,15 @@ from decimal import Decimal
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from arrival_files import publish_arrival
-from pipeline import accepted_sales, category_totals, clean_products, clean_sales, enrich_sales
-from workshop_runtime import (
+from lab_support.arrival_files import publish_arrival
+from lab_support.pipeline import (
+    accepted_sales,
+    category_totals,
+    clean_products,
+    clean_sales,
+    enrich_sales,
+)
+from lab_support.runtime import (
     DATA_ROOT,
     create_spark,
     finish_query,
@@ -126,7 +132,7 @@ def main() -> int:
     except Exception:
         traceback.print_exc()
         print(
-            "\nSetup check failed. Keep this output and see TROUBLESHOOTING.md.",
+            "\nSetup check failed. Keep this output and see docs/TROUBLESHOOTING.md.",
             file=sys.stderr,
         )
         return 1
