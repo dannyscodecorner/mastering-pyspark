@@ -109,28 +109,77 @@ The locked Spark 4.2.0 distribution includes Hadoop 3.5.0 Java libraries. Native
 
 The Java runtime cannot resolve a native Windows file-access function. The Hadoop DLL may be absent, incompatible with the loaded Hadoop/Java architecture, or unable to load because a dependency is missing. `winutils.exe` alone cannot supply this DLL function. Hadoop’s [file-access implementation](https://github.com/apache/hadoop/blob/rel/release-3.5.0/hadoop-common-project/hadoop-common/src/main/java/org/apache/hadoop/fs/FileUtil.java) calls it while checking local paths, before Parquet rows are read.
 
-1. In the VS Code PowerShell terminal, inspect the current environment:
+In PowerShell, inspect the current environment:
+
+```powershell
+$env:HADOOP_HOME
+where.exe winutils
+where.exe hadoop.dll
+```
+
+Blank `HADOOP_HOME` or a “could not find files” result means the components are not configured in this session. Finding the files does not prove that Java can load them or that their versions match.
+
+### Install the Windows components
+
+These steps use a [third-party Hadoop 3.5.0 build](https://github.com/notepass/hadoop-native-win-libs/releases/tag/rel/release-3.5.0) for **Windows x64 and an x64 JDK**. Its archive checksum, architecture and native dependencies have been inspected, but **the full lab still needs Windows runtime validation**. This is a candidate for the instructor's test, not an Apache-provided binary distribution. Do not mix files from different Hadoop releases.
+
+1. Install Microsoft's [Visual C++ x64 runtime](https://aka.ms/vc14/vc_redist.x64.exe). The Hadoop binaries depend on it; see [Microsoft's runtime documentation](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist).
+
+2. Download [`hadoop-win-utils.zip`](https://github.com/notepass/hadoop-native-win-libs/releases/download/rel/release-3.5.0/hadoop-win-utils.zip). If saved in your Downloads folder, check the archive in PowerShell:
 
    ```powershell
-   $env:HADOOP_HOME
-   where.exe winutils
-   where.exe hadoop.dll
+   Get-FileHash "$env:USERPROFILE\Downloads\hadoop-win-utils.zip" -Algorithm SHA256
    ```
 
-   Blank `HADOOP_HOME` or a “could not find files” result is a useful clue. Finding the files does not prove that Java can load them or that their versions match.
-
-2. Use an instructor-approved Hadoop **3.5.0** Windows build matching the Java architecture, including both native files and its runtime dependencies. **This repository does not yet supply a validated build or download link.** The instructor must provide and test one before native Windows can be the workshop default. Do not mix files from unrelated Hadoop releases.
-
-3. With that build installed, set `HADOOP_HOME` to its root directory and add its `bin` directory to your user PATH. For example, a build at `C:\tools\hadoop-3.5.0` would have these files:
+   The SHA256 must match the pinned release below; stop if it differs. This checks that you downloaded the inspected archive, not that Windows setup has passed.
 
    ```text
-   C:\tools\hadoop-3.5.0\bin\hadoop.dll
-   C:\tools\hadoop-3.5.0\bin\winutils.exe
+   5432bd5fe4c305cbac2251039d8c60f737a3d3937519df21585a13a3f223a27c
    ```
 
-   Use your actual installation location. Do not copy the DLL into the JDK directory. Fully exit VS Code and reopen it after changing user environment variables; the running Java process will not pick up a new PATH. Restarting only the failed cell is insufficient.
+3. Extract the archive into a folder named **hadoop-3.5.0** in your Windows user folder. The layout must be:
 
-4. From **labs**, run `uv run --locked check_setup.py`. Require **Setup check passed**, which includes Parquet reads/writes and streaming checkpoint recovery, before resuming the notebook. The shared session helper now detects missing native support during Setup and keeps the underlying Java error when a file-access call fails.
+   ```text
+   C:\Users\<your-user-name>\hadoop-3.5.0\bin\hadoop.dll
+   C:\Users\<your-user-name>\hadoop-3.5.0\bin\winutils.exe
+   ```
+
+   Keep the archive's `bin` folder directly inside `hadoop-3.5.0`, without an extra `hadoop-win-utils` directory. Do not copy the DLL into the JDK directory.
+
+4. Save your notebooks and **fully close VS Code**. Open a normal PowerShell window, then run this block. It sets `HADOOP_HOME` and adds the Hadoop `bin` directory to your user PATH and this terminal's PATH; it preserves the existing PATH entries.
+
+   ```powershell
+   $hadoopDir = "$env:USERPROFILE\hadoop-3.5.0"
+   $hadoopBin = "$hadoopDir\bin"
+
+   # Make these available to future sessions.
+   [Environment]::SetEnvironmentVariable("HADOOP_HOME", $hadoopDir, "User")
+   $userPath = [Environment]::GetEnvironmentVariable("Path", "User")
+   if (($userPath -split ";") -notcontains $hadoopBin) {
+       [Environment]::SetEnvironmentVariable("Path", "$hadoopBin;$userPath", "User")
+   }
+
+   # Also apply them to this PowerShell session.
+   $env:HADOOP_HOME = $hadoopDir
+   $env:Path = "$hadoopBin;$env:Path"
+   ```
+
+5. In the same PowerShell window, go to your lab folder and run the setup check. This example assumes you cloned into your user folder; adjust the first line if your checkout is elsewhere.
+
+   ```powershell
+   cd "$env:USERPROFILE\mastering-pyspark\labs"
+   uv run --locked check_setup.py
+   ```
+
+   Require **Setup check passed** before resuming the notebook. This checks actual Parquet reads/writes and streaming checkpoint recovery. The shared session helper also checks native Hadoop file access during Setup.
+
+6. After the check passes, reopen VS Code from that same terminal:
+
+   ```powershell
+   code .
+   ```
+
+   Select the lab's `.venv` kernel and rerun the notebook's Setup cell. Restarting only the failed cell in an old Java process is insufficient after changing the environment.
 
 If the files are present but loading still fails, keep the full setup-check output and check the build’s architecture and dependent DLLs. Running VS Code as administrator does not supply a missing native function. Keep your exercise answers and existing checkpoints; changing the read expression or deleting data will not repair this dependency.
 

@@ -14,12 +14,12 @@ You can mix these choices. There is no route to switch and no work to copy. Time
 
 ## Dependencies
 
-1. **Java 21 (JDK)** — [installation instructions](TROUBLESHOOTING.md#java).
+1. **Java 21 (JDK)** — installation for [Windows](TROUBLESHOOTING.md#windows), [macOS](TROUBLESHOOTING.md#java-21-macos) or [Linux](TROUBLESHOOTING.md#linux).
 2. **[VS Code](https://code.visualstudio.com/download)** with Microsoft's **[Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)** and **[Jupyter](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter)** extensions.
 3. **[Git](https://git-scm.com/install/)** — to clone the repository; optional for the ZIP download.
 4. **Python 3.12 and [uv](https://docs.astral.sh/uv/getting-started/installation/)** — [Windows uv instructions](TROUBLESHOOTING.md#uv-on-windows). uv downloads Python 3.12 if needed.
 
-**Native Windows also needs Hadoop 3.5.0 native components.** These are not installed by uv or the JDK installer. A validated course bundle is not supplied yet; read [Windows native Hadoop](TROUBLESHOOTING.md#windows-native-hadoop) before starting the exercises.
+**Native Windows also needs Hadoop 3.5.0 native components.** These are not installed by uv or the JDK installer. Follow the [Windows installation steps](TROUBLESHOOTING.md#install-the-windows-components); the candidate x64 build still needs full lab validation on Windows.
 
 ## 1. Open the lab
 
