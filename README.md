@@ -30,7 +30,7 @@ Keep the [API reference](labs/docs/API-REFERENCE.md) nearby, and use [troublesho
 - DataFrames, transformations, actions and lazy evaluation.
 - Query plans, joins, grouping and aggregation — including shuffles and skew.
 - Structured Streaming: execution modes, output modes and checkpointing.
-- Building a PySpark pipeline and taking Spark into AWS Glue.
+- Building a PySpark pipeline, with a brief look at running Spark in production.
 
 ## Licence
 

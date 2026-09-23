@@ -33,8 +33,8 @@ pub def slide_not_covered_yet() -> Slide:
                         node(NodeKind.Cell, content="Preparing features, training models and evaluating predictions."),
                     ]),
                     node(NodeKind.Row, children=[
-                        node(NodeKind.HeaderCell, content="Spark in AWS Glue", attributes=[attr("scope", "row")]),
-                        node(NodeKind.Cell, content="Deploying jobs, choosing workers, managing dependencies and data access."),
+                        node(NodeKind.HeaderCell, content="Production in depth", attributes=[attr("scope", "row")]),
+                        node(NodeKind.Cell, content="Detailed deployment, resource sizing, dependency management and recovery."),
                     ]),
                 ]),
             ], style="chapter-recap-table"),
@@ -44,5 +44,5 @@ pub def slide_not_covered_yet() -> Slide:
                 span("124"),
             ]),
         ],
-        notes="This slide describes the scope of the public materials. They mention these capabilities but do not yet contain full guided lessons on them. Additional live demonstrations may cover some topics, including a separate AWS Glue walkthrough. Reading explain output and streaming progress in the lab is not a Spark UI lesson. Spark Connect is a separate client interface; do not imply that the chosen Glue environment supports it without checking. MLlib coverage would use the DataFrame-based API. Chapter 09 remains an outline. Invite questions and interests for future coverage without promising a delivery date.",
+        notes="This slide describes the scope of the public materials. They mention these capabilities but do not yet contain full guided lessons on them. Additional live demonstrations may cover some topics, including a separate AWS Glue walkthrough. Reading explain output and streaming progress in the lab is not a Spark UI lesson. Spark Connect is a separate client interface; do not imply that the chosen Glue environment supports it without checking. MLlib coverage would use the DataFrame-based API. Chapter 09 is a brief production overview with outlines for further development; AWS Glue is one concrete example. Invite questions and interests for future coverage without promising a delivery date.",
     )

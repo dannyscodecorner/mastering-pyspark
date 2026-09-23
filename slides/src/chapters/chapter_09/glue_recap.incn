@@ -1,18 +1,18 @@
-"""Glue recap slide."""
+"""Production overview recap, retaining its existing slide URL."""
 
 from surface import Frame, NodeKind, Slide, attr, code, group, heading, node, prose, span, text
 
 pub def slide_glue_recap() -> Slide:
     return Slide(
         slug="glue-recap",
-        title="Spark in AWS Glue: recap",
+        title="Running Spark in Production: recap",
         frame=Frame.Composed,
         styles="slide chapter-recap recap-draft",
         content=[
             group([
-            text("09 / SPARK IN AWS GLUE"),
+            text("09 / RUNNING SPARK IN PRODUCTION"),
         ], style="eyebrow"),
-            heading("Spark in AWS Glue: recap", level=1),
+            heading("Running Spark in Production: recap", level=1),
             prose("Draft recap · chapter 09 is still an outline", style="recap-status"),
             node(NodeKind.Table, children=[
             node(NodeKind.Columns, children=[
@@ -22,28 +22,28 @@ pub def slide_glue_recap() -> Slide:
             node(NodeKind.TableBody, children=[
                 node(NodeKind.Row, children=[
                     node(NodeKind.HeaderCell, content="Runtime", attributes=[attr("scope", "row")]),
-                    node(NodeKind.Cell, content="Match the code and dependencies to the Glue runtime selected for the job."),
+                    node(NodeKind.Cell, content="Match the code and dependencies to the Spark runtime used by the application."),
                 ]),
                 node(NodeKind.Row, children=[
-                    node(NodeKind.HeaderCell, content="Workers", attributes=[attr("scope", "row")]),
-                    node(NodeKind.Cell, content="Connect the worker configuration to the driver, executors and tasks."),
+                    node(NodeKind.HeaderCell, content="Resources", attributes=[attr("scope", "row")]),
+                    node(NodeKind.Cell, content="Relate the available cores and memory to the driver, executors and tasks."),
                 ]),
                 node(NodeKind.Row, children=[
                     node(NodeKind.HeaderCell, content="Data access", attributes=[attr("scope", "row")]),
-                    node(NodeKind.Cell, content="Check the catalog, connectors and permissions needed by the job."),
+                    node(NodeKind.Cell, content="Check the storage, connectors and permissions needed by the application."),
                 ]),
                 node(NodeKind.Row, children=[
                     node(NodeKind.HeaderCell, content="Diagnosis", attributes=[attr("scope", "row")]),
-                    node(NodeKind.Cell, content="Use the Spark UI to connect a slow Glue run to its stages, tasks and data movement."),
+                    node(NodeKind.Cell, content="Use the Spark UI to connect a slow run to its stages, tasks and data movement."),
                 ]),
             ]),
         ], style="chapter-recap-table"),
-            prose("Apply the same questions about execution, correctness and performance to the Glue job.", style="chapter-recap-takeaway"),
+            prose("Deployment adds decisions about the runtime, resources, access and operations.", style="chapter-recap-takeaway"),
             node(NodeKind.Footer, children=[
             span("Danny’s Code Corner"),
             span("123"),
         ]),
         ],
-        notes="""Draft closing points for chapter 09. Revisit after the Glue job and Spark UI walkthroughs are built. These points apply the earlier Spark material to the selected Glue environment. Verify exact runtime versions, worker behaviour, access policies and console steps when developing the demonstrations. Recovery coverage remains in the Glue overview and needs a workload-specific example.
+        notes="""Close the brief production overview. Runtime, dependencies, resources, data access and monitoring apply across deployment environments; AWS Glue is the concrete example retained in this chapter. Detailed operational walkthroughs remain to be developed. Verify runtime versions, worker behaviour, access policies and console steps for the chosen environment. Recovery needs a workload-specific example.
 https://docs.aws.amazon.com/glue/latest/dg/monitor-spark-ui.html""",
     )

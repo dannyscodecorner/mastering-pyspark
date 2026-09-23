@@ -10,7 +10,7 @@ pub def slide_production() -> Slide:
         styles="slide ",
         content=[
             group([
-            text("09 / SPARK IN AWS GLUE"),
+            text("09 / RUNNING SPARK IN PRODUCTION"),
         ], style="eyebrow"),
             heading("Running Spark in Production", level=1),
             node(NodeKind.OrderedList, children=[
@@ -41,5 +41,5 @@ pub def slide_production() -> Slide:
             span("120"),
         ]),
         ],
-        notes="Apply the chapter08 pipeline to the selected deployment environment. This preserved outline now belongs to chapter09; develop it with the Glue runtime, permissions, dependencies and monitoring walkthrough.",
+        notes="Use the chapter08 pipeline to introduce the decisions needed in a production environment: how to launch it, package dependencies, configure execution, monitor progress and recover. Keep this a brief overview. AWS Glue can illustrate those decisions in a separate demonstration; the detailed operational walkthrough remains to be developed.",
     )
