@@ -43,6 +43,8 @@ Clone the repository if you do not already have it:
 git clone https://github.com/dannyscodecorner/mastering-pyspark.git
 ```
 
+<!-- TODO: consider checking out only the labs folder at this stage; makes it just a bit easier to digest for the reader (sparse checkout) -->
+
 In VS Code, choose **File → Open Folder** and select **mastering-pyspark/labs**. You should see `pyproject.toml`, `notebooks` and `data` in the Explorer sidebar.
 
 Alternatively, [download the lab from a GitHub Release](https://github.com/dannyscodecorner/mastering-pyspark/releases/latest/download/pyspark-labs.zip), extract it and open the **labs** folder inside.
