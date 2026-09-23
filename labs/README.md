@@ -27,6 +27,14 @@ You can mix these choices. There is no route to switch and no work to copy. Time
 
 **Native Windows:** also [install the Hadoop components](TROUBLESHOOTING.md#install-the-windows-components).
 
+### Explore Parquet files — optional
+
+The lab ships with various `.parquet` files. If you install [Parquet Explorer](https://marketplace.visualstudio.com/items?itemName=AdamViola.parquet-explorer), it allows you to open a `part-*.parquet` file inside the `data` folder and run SQL queries on the data. For instance `data/sales.parquet` or `data/products.parquet`.
+
+<!-- TODO: consider linking the image from the https://marketplace.visualstudio.com/items?itemName=AdamViola.parquet-explorer page showing how this feature works -->
+
+[Small API reference](API-REFERENCE.md) · [Troubleshooting](TROUBLESHOOTING.md) · [Instructor notes](author/README.md)
+
 ## 1. Open the lab
 
 Clone the repository if you do not already have it:
@@ -105,9 +113,3 @@ Stuck during class? Use a hint first, then an explicit [catch-up step](RECOVERY.
 | [7. Resume from a checkpoint](notebooks/07-checkpoint.ipynb)     | Inspect checkpoint contents and explain recovery    |
 
 Each notebook links to related investigations under **notebooks/deeper/**, with prerequisites stated. These cover CSV schemas and parsing, product tags, duplicate lookup keys, daily aggregates, caching, persisted streaming output and fresh checkpoints. The [browser index](index.html) groups them by exercise and offers read-only previews.
-
-## Explore Parquet files — optional
-
-Install [Parquet Explorer](https://marketplace.visualstudio.com/items?itemName=AdamViola.parquet-explorer) and open a `part-*.parquet` file inside `data/sales.parquet` or `data/products.parquet`.
-
-[Small API reference](API-REFERENCE.md) · [Troubleshooting](TROUBLESHOOTING.md) · [Instructor notes](author/README.md)
